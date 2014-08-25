@@ -1,11 +1,12 @@
 VAGRANTFILE_API_VERSION = "2"
-VAGRANT_DEFAULT_PROVIDER = "libvirt"
+
+ENV["VAGRANT_DEFAULT_PROVIDER"] = "libvirt"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.define :mybox do |mybox|
-    mybox.vm.box = "my-box"
+  config.vm.define :buildbox do |buildbox|
+    buildbox.vm.box = "kiwi-build-box"
 
-    mybox.vm.provider :libvirt do |domain|
+    buildbox.vm.provider :libvirt do |domain|
       domain.memory = 1024
       domain.cpus = 1
       domain.nested = false
@@ -13,8 +14,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-#  config.vm.synced_folder "./", "/vagrant"
-#  config.vm.provision "shell", path: "build.sh"
 end
 
 
