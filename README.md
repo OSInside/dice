@@ -1,5 +1,7 @@
 # Dice
 
+!!! code under development, not yet ready for use !!!
+
 dice is a simple build system for kiwi images using vagrant
 
 ## Contents
