@@ -2,6 +2,18 @@
 
 require_relative '../lib/dice'
 
+system = BuildSystem.new("./recipes/suse-13.1-JeOS")
+if !system.is_locked?
+  system.up
+  system.provision
+  job = Job.new(system)
+  job.build
+  job.bundle_result
+  system.halt
+else
+  puts "System is locked"
+end
+
 begin
   Cli.run(ARGV)
 end
