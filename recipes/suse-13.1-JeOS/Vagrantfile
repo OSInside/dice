@@ -1,0 +1,20 @@
+VAGRANTFILE_API_VERSION = "2"
+VAGRANT_DEFAULT_PROVIDER = "libvirt"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.define :mybox do |mybox|
+    mybox.vm.box = "my-box"
+
+    mybox.vm.provider :libvirt do |domain|
+      domain.memory = 1024
+      domain.cpus = 1
+      domain.nested = false
+      domain.volume_cache = 'none'
+    end
+  end
+
+#  config.vm.synced_folder "./", "/vagrant"
+#  config.vm.provision "shell", path: "build.sh"
+end
+
+

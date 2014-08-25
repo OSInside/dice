@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/dice'
+
+begin
+  Cli.run(ARGV)
+end
