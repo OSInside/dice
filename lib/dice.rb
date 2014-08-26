@@ -1,6 +1,7 @@
 require "cheetah"
 require "gli"
 require "pathname"
+require "fileutils"
 
 require_relative "run_command"
 require_relative "version"

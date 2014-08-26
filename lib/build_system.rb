@@ -60,12 +60,12 @@ class BuildSystem
   private
 
   def ok?
-    @basepath = @recipe.realpath.to_s
-    if !File.directory?(@basepath)
+    if !File.exists?(@recipe) || !File.directory?(@recipe.realpath)
       raise Dice::Errors::NoDirectory.new(
         "Need a description directory"
       )
     end
+    @basepath = @recipe.realpath.to_s
     if !File.file?(@basepath + "/Vagrantfile")
       raise Dice::Errors::NoVagrantFile.new(
         "Need a Vagrantfile"

@@ -10,6 +10,5 @@ module Dice
     class VagrantUpFailed < DiceError; end
     class VagrantHaltFailed < DiceError; end
     class VagrantProvisionFailed < DiceError; end
-    class BundleBuildFailed < DiceError; end
   end
 end

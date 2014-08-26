@@ -4,38 +4,25 @@ class Job
       raise
     end
     @system = system
-    @job_id = 1
     ok?
   end
 
   def build
+    prepare_build
     puts "Starting build..."
-    @job_id++
+    build_opts = "--nocolor --build /vagrant -d /image --logfile /buildlog"
     begin
-      output = Command.run("vagrant", "ssh", "-c",
-        "sudo /usr/sbin/kiwi --nocolor --build /vagrant -d /image", :stdout => :capture
+      Command.run("vagrant", "ssh", "-c",
+        "sudo /usr/sbin/kiwi #{build_opts} "
       )
     rescue Cheetah::ExecutionFailed => e
+      puts "Build failed"
+      get_buildlog
       @system.halt
       raise Dice::Errors::BuildFailed.new(
-        "Build job failed with: #{e.stderr}"
+        "Build job failed for details check: #{@buildlog}"
       )
     end
-    puts output
-  end
-
-  def bundle_result
-    puts "Bundle result..."
-    begin
-      output = Command.run("vagrant", "ssh", "-c",
-        "sudo /usr/sbin/kiwi --nocolor --bundle-build /image --bundle-id #{@job_id} -d /build_result", :stdout => :capture)
-    rescue Cheetah::ExecutionFailed => e
-      @system.halt
-      raise Dice::Errors::BundleBuildFailed.new(
-        "Bundle result failed with: #{e.stderr}"
-      )
-    end
-    puts output
   end
 
   def extract_result(host, destination)
@@ -46,11 +33,28 @@ class Job
 
   def ok?
     @basepath = @system.get_description
+    @buildlog = @basepath + "/buildlog"
     if !File.file?(@basepath + "/config.xml")
       raise Dice::Errors::NoKIWIConfig.new(
         "Need a kiwi config.xml"
       )
     end
     Dir.chdir(@basepath)
+  end
+
+  def prepare_build
+    puts "Preparing build..."
+    FileUtils.rm(@buildlog) if File.file?(@buildlog)
+    Command.run("vagrant", "ssh", "-c",
+      "sudo rm -rf /image; sudo touch /buildlog"
+    )
+  end
+
+  def get_buildlog
+    puts "Retrieving build log..."
+    logfile = File.open(@buildlog, "w")
+    Command.run("vagrant", "ssh", "-c",
+      "sudo cat /buildlog", :stdout => logfile
+    )
   end
 end
