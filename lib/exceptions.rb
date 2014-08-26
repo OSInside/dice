@@ -13,5 +13,6 @@ module Dice
     class ResultRetrievalFailed < DiceError; end
     class PrepareBuildFailed < DiceError; end
     class LogFileRetrievalFailed < DiceError; end
+    class GetIPFailed < DiceError; end
   end
 end

@@ -3,6 +3,7 @@ require "gli"
 require "pathname"
 require "fileutils"
 
+require_relative "constants"
 require_relative "recipe"
 require_relative "run_command"
 require_relative "version"
