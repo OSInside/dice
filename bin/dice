@@ -8,6 +8,7 @@ if !system.is_locked?
   system.provision
   job = Job.new(system)
   job.build
+  job.get_result
   system.halt
 else
   puts "System is locked"

@@ -10,5 +10,8 @@ module Dice
     class VagrantUpFailed < DiceError; end
     class VagrantHaltFailed < DiceError; end
     class VagrantProvisionFailed < DiceError; end
+    class ResultRetrievalFailed < DiceError; end
+    class PrepareBuildFailed < DiceError; end
+    class LogFileRetrievalFailed < DiceError; end
   end
 end
