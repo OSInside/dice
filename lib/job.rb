@@ -1,4 +1,4 @@
-class Job < Recipe
+class Job
   def initialize(system)
     if !system.is_a?(BuildSystem)
       raise
@@ -8,7 +8,6 @@ class Job < Recipe
     @archive  = recipe_path + "/build_results.tar"
     @buildsystem = system
     @ip = system.get_ip
-    super(recipe_path)
   end
 
   def build

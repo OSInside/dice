@@ -7,8 +7,8 @@ class Recipe
       )
     end
     @basepath = recipe.realpath.to_s
+    @cwd = Dir.pwd
     recipe_ok?
-    change_working_dir
   end
 
   def recipe_ok?
@@ -26,6 +26,10 @@ class Recipe
 
   def change_working_dir
     Dir.chdir(@basepath)
+  end
+
+  def reset_working_dir
+    Dir.chdir(@cwd)
   end
 
   def get_basepath

@@ -1,6 +1,7 @@
 class BuildSystem < Recipe
   def initialize(description)
     super(description)
+    change_working_dir
   end
 
   def up
@@ -40,6 +41,7 @@ class BuildSystem < Recipe
       )
     end
     puts output
+    reset_working_dir
   end
 
   def is_locked?
