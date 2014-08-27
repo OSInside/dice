@@ -29,6 +29,6 @@ class Recipe
   end
 
   def get_basepath
-    return @basepath
+    @basepath
   end
 end
