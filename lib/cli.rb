@@ -25,7 +25,12 @@ class Cli
       exit 1
     else
       STDERR.puts "dice unexpected error"
-      STDERR.puts e.message
+      result = ""
+      if e.backtrace && !e.backtrace.empty?
+        result << "Backtrace:\n"
+        result << "#{e.backtrace.join("\n")}\n\n"
+      end
+      STDERR.puts result
       exit 1
     end
     true
