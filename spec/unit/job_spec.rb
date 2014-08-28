@@ -27,6 +27,7 @@ describe Job do
 
   describe "#get_result" do
     it "raises if result retrieval failed" do
+      expect(File).to receive(:open)
       expect(Command).to receive(:run).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
