@@ -5,7 +5,7 @@ class Job
     end
     recipe_path = system.get_basepath
     @buildlog = recipe_path + "/buildlog"
-    @archive  = recipe_path + "/build_results.tar"
+    @archive  = recipe_path + ".build_results.tar"
     @buildsystem = system
     @ip = system.get_ip
   end
