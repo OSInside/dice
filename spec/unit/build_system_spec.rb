@@ -4,6 +4,9 @@ describe BuildSystem do
   before(:each) do
     expect_any_instance_of(BuildSystem).to receive(:change_working_dir)
     @system = BuildSystem.new("spec/helper/recipe_good")
+    @system.instance_variable_set(
+      :@up_output, "[jeos_sle12_build] -- 22 => 2200 (adapter 1)"
+    )
   end
 
   describe "#up" do
@@ -76,6 +79,14 @@ describe BuildSystem do
     it "returns false if status is not running" do
       expect(Command).to receive(:run).and_return("shutoff")
       expect(@system.is_locked?).to eq(false)
+    end
+  end
+
+  describe "#get_port" do
+    it "extracts forwarded port from vagrant up output" do
+      expect(@system.get_port).to eq("2200")
+      @system.instance_variable_set(:@up_output, "foo")
+      expect { @system.get_port }.to raise_error(Dice::Errors::GetPortFailed)
     end
   end
 

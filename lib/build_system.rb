@@ -8,19 +8,21 @@ class BuildSystem < Recipe
     basepath = get_basepath
     puts "Starting up buildsystem for #{basepath}..."
     begin
-      output = Command.run("vagrant", "up", :stdout => :capture)
+      @up_output = Command.run("vagrant", "up", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::VagrantUpFailed.new(
         "Starting up system failed with: #{e.stderr}"
       )
     end
-    puts output
+    puts @up_output
   end
 
   def provision
     puts "Provision build system..."
     begin
-      output = Command.run("vagrant", "provision", :stdout => :capture)
+      provision_output = Command.run(
+        "vagrant", "provision", :stdout => :capture
+      )
     rescue Cheetah::ExecutionFailed => e
       puts "Provisioning failed"
       halt
@@ -28,19 +30,19 @@ class BuildSystem < Recipe
         "Provisioning system failed with: #{e.stderr}"
       )
     end
-    puts output
+    puts provision_output
   end
 
   def halt
     puts "Initiate shutdown..."
     begin
-      output = Command.run("vagrant", "halt", "-f", :stdout => :capture)
+      halt_output = Command.run("vagrant", "halt", "-f", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::VagrantHaltFailed.new(
         "Stopping system failed with: #{e.stderr}"
       )
     end
-    puts output
+    puts halt_output
     reset_working_dir
   end
 
@@ -55,6 +57,18 @@ class BuildSystem < Recipe
       lock_status = true
     end
     lock_status
+  end
+
+  def get_port
+    port = ""
+    if @up_output =~ /--.*=> (\d+).*/
+      port = $1
+    else
+      raise Dice::Errors::GetPortFailed.new(
+        "Port retrieval failed, no match in machine up output: #{@up_output}"
+      )
+    end
+    port
   end
 
   def get_ip
