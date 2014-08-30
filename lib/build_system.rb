@@ -2,6 +2,7 @@ class BuildSystem < Recipe
   def initialize(description)
     super(description)
     change_working_dir
+    @use_ssh_forwarding = true
   end
 
   def up
@@ -60,18 +61,24 @@ class BuildSystem < Recipe
   end
 
   def get_port
-    port = ""
-    if @up_output =~ /--.*=> (\d+).*/
-      port = $1
-    else
-      raise Dice::Errors::GetPortFailed.new(
-        "Port retrieval failed, no match in machine up output: #{@up_output}"
-      )
+    port = 22
+    if @use_ssh_forwarding
+      if @up_output =~ /--.*=> (\d+).*/
+        port = $1
+      else
+        raise Dice::Errors::GetPortFailed.new(
+          "Port retrieval failed, no match in machine up output: #{@up_output}"
+        )
+      end
     end
     port
   end
 
   def get_ip
+    ip = "127.0.0.1"
+    if @use_ssh_forwarding
+      return ip
+    end
     begin
       ip = Command.run("vagrant", "ssh", "-c",
         "ip -o -4 addr show dev lan0", :stdout => :capture
@@ -89,5 +96,6 @@ class BuildSystem < Recipe
         "IP retrieval failed in match for #{ip}"
       )
     end
+    ip
   end
 end

@@ -8,6 +8,7 @@ class Job
     @archive  = recipe_path + ".build_results.tar"
     @buildsystem = system
     @ip = system.get_ip
+    @port = system.get_port
   end
 
   def build
@@ -15,7 +16,7 @@ class Job
     puts "Starting build..."
     build_opts = "--nocolor --build /vagrant -d /image --logfile /buildlog"
     begin
-      Command.run("ssh", "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
+      Command.run("ssh", "-p", @port, "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
         "sudo /usr/sbin/kiwi #{build_opts} "
       )
     rescue Cheetah::ExecutionFailed => e
@@ -32,7 +33,7 @@ class Job
     puts "Retrieving results in #{@archive}..."
     result = File.open(@archive, "w")
     begin
-      Command.run("ssh", "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
+      Command.run("ssh", "-p", @port, "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
         "sudo tar --exclude image-root -C /image -c .",
         :stdout => result
       )
@@ -52,7 +53,7 @@ class Job
     FileUtils.rm(@buildlog) if File.file?(@buildlog)
     FileUtils.rm(@archive) if File.file?(@archive)
     begin
-      Command.run("ssh", "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
+      Command.run("ssh", "-p", @port, "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
         "sudo rm -rf /image; sudo touch /buildlog"
       )
     rescue Cheetah::ExecutionFailed => e
@@ -68,7 +69,7 @@ class Job
     puts "Retrieving build log..."
     logfile = File.open(@buildlog, "w")
     begin
-      Command.run("ssh", "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
+      Command.run("ssh", "-p", @port, "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
         "sudo cat /buildlog", :stdout => logfile
       )
     rescue Cheetah::ExecutionFailed => e

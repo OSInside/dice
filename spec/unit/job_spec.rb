@@ -4,7 +4,11 @@ describe Job do
   before(:each) do
     expect_any_instance_of(BuildSystem).to receive(:change_working_dir)
     expect_any_instance_of(BuildSystem).to receive(:get_ip)
-    @job = Job.new(BuildSystem.new("spec/helper/recipe_good"))
+    system = BuildSystem.new("spec/helper/recipe_good")
+    system.instance_variable_set(
+      :@up_output, "[jeos_sle12_build] -- 22 => 2200 (adapter 1)"
+    )
+    @job = Job.new(system)
   end
 
   describe "#initialize" do

@@ -82,7 +82,7 @@ describe BuildSystem do
     end
   end
 
-  describe "#get_port" do
+  describe "#get_port (with ssh forwarding)" do
     it "extracts forwarded port from vagrant up output" do
       expect(@system.get_port).to eq("2200")
       @system.instance_variable_set(:@up_output, "foo")
@@ -90,12 +90,26 @@ describe BuildSystem do
     end
   end
 
-  describe "#get_ip" do
+  describe "#get_port (no ssh forwarding)" do
+    it "returns ssh default port" do
+      @system.instance_variable_set(:@use_ssh_forwarding, false)
+      expect(@system.get_port).to eq(22)
+    end
+  end
+
+  describe "#get_ip (no ssh forwarding)" do
     it "extracts IP from output of ip command" do
+      @system.instance_variable_set(:@use_ssh_forwarding, false)
       expect(Command).to receive(:run).and_return("foo")
       expect { @system.get_ip }.to raise_error(Dice::Errors::GetIPFailed)
       expect(Command).to receive(:run).and_return("2: eth0    inet 169.254.7.246/16 brd 169.254.255.255 scope link eth0:avahi\       valid_lft forever preferred_lft forever")
       expect(@system.get_ip).to eq("169.254.7.246")
+    end
+  end
+
+  describe "#get_ip (with ssh forwarding)" do
+    it "returns loopback address" do
+      expect(@system.get_ip).to eq("127.0.0.1")
     end
   end
 end
