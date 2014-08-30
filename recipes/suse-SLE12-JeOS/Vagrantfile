@@ -1,10 +1,9 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.define :jeos_13_1_build do |jeos_13_1_build|
-    jeos_13_1_build.vm.box = "kiwi-build-box"
-
-    jeos_13_1_build.vm.provider :virtualbox do |domain|
+  config.vm.define :jeos_sle12_build do |jeos_sle12_build|
+    jeos_sle12_build.vm.box = "kiwi-build-box"
+    jeos_sle12_build.vm.provider :virtualbox do |domain|
       domain.memory = 1024
       domain.cpus = 1
       domain.nested = false
