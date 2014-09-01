@@ -2,13 +2,10 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define :jeos_13_1_build do |jeos_13_1_build|
-    jeos_13_1_build.vm.box = "kiwi-build-box"
+    jeos_13_1_build.vm.box = "kiwi-13.1-build-box"
 
-    jeos_13_1_build.vm.provider :virtualbox do |domain|
-      domain.memory = 1024
-      domain.cpus = 1
-      domain.nested = false
-      domain.volume_cache = 'none'
+    jeos_13_1_build.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "1024"]
     end
   end
 end
