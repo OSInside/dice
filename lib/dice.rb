@@ -2,6 +2,8 @@ require "cheetah"
 require "gli"
 require "pathname"
 require "fileutils"
+require "digest"
+require "find"
 
 require_relative "constants"
 require_relative "recipe"

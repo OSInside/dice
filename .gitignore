@@ -1,3 +1,4 @@
 .vagrant
 buildlog
 *.build_results.tar
+.checksum.sha256
