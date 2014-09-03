@@ -3,10 +3,13 @@
 require_relative '../lib/dice'
 
 system = BuildSystem.new("./recipes/suse-13.1-JeOS")
+solver = Solve.new(system)
+solver.writeScan
+
 if system.is_locked?
    puts "System is locked, job running"
 elsif !system.job_required?
-   puts "System us up to date, no job required"
+   puts "System is up to date, no job required"
 else
   system.up
   system.provision

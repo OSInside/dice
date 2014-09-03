@@ -13,7 +13,7 @@ class Job
 
   def build
     prepare_build
-    puts "Starting build..."
+    puts "Building..."
     build_opts = "--nocolor --build /vagrant -d /image --logfile /buildlog"
     begin
       Command.run("ssh", "-p", @port, "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
@@ -74,6 +74,7 @@ class Job
       )
     rescue Cheetah::ExecutionFailed => e
       puts "Retrieving build log failed"
+      FileUtils.rm logfile
       @buildsystem.halt
       raise Dice::Errors::LogFileRetrievalFailed.new(
         "Reading log file failed with: #{e.stderr}"

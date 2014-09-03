@@ -15,5 +15,8 @@ module Dice
     class LogFileRetrievalFailed < DiceError; end
     class GetIPFailed < DiceError; end
     class GetPortFailed < DiceError; end
+    class SolvePackagesFailed < DiceError; end
+    class SolveCreateRecipeResultFailed < DiceError; end
+    class SolveCleanUpFailed < DiceError; end
   end
 end
