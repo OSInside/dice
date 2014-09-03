@@ -9,6 +9,7 @@ describe Job do
       :@up_output, "[jeos_sle12_build] -- 22 => 2200 (adapter 1)"
     )
     @job = Job.new(system)
+    @basepath = system.get_basepath
   end
 
   describe "#initialize" do
@@ -43,8 +44,28 @@ describe Job do
   end
 
   describe "#prepare_build" do
+    it "cleans up the buildsystem environment" do
+      expect(Command).to receive(:run).
+        with("ssh", "-p", "2200", "-i", Dice::VAGRANT_KEY,
+          "vagrant@", "sudo rm -rf /image; sudo touch /buildlog"
+        ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
+      expect_any_instance_of(BuildSystem).to receive(:halt)
+      expect { @job.instance_eval{ prepare_build }}.
+        to raise_error(Dice::Errors::PrepareBuildFailed)
+    end
   end
 
   describe "#get_buildlog" do
+    it "retrieves the buildlog form the buildsystem" do
+      expect(File).to receive(:open).with(@basepath + "/buildlog", "w")
+      expect(Command).to receive(:run).
+        with("ssh", "-p", "2200", "-i", Dice::VAGRANT_KEY,
+          "vagrant@", "sudo cat /buildlog", :stdout=>nil
+        ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
+      expect(FileUtils).to receive(:rm)
+      expect_any_instance_of(BuildSystem).to receive(:halt)
+      expect { @job.instance_eval{ get_buildlog }}.
+        to raise_error(Dice::Errors::LogFileRetrievalFailed)
+    end
   end
 end
