@@ -48,23 +48,20 @@ describe Recipe do
 
   describe "createDigest" do
     it "creates expected sha256 digest" do
-      expect(@recipe.createDigest).to eq(
-        "config.xml:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n"
+      expect(Find).to receive(:find).with(".").
+        and_return(["spec/helper/recipe_good/config.xml"])
+      expect(@recipe.instance_eval{ createDigest }).to eq(
+        "spec/helper/recipe_good/config.xml:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n"
       )
     end
   end
 
   describe "writeDigest" do
     it "wants to create .checksum.sha256" do
+      expect(@recipe).to receive(:createDigest).and_return("foo")
       expect(File).to receive(:new).with(".checksum.sha256", "w").
         and_return(File.new("/tmp/foo", "w"))
-      @recipe.writeDigest("foo")
-    end
-
-    it "want to create .checksum.sha256.xxx" do
-      expect(File).to receive(:new).with(".checksum.sha256.xxx", "w").
-        and_return(File.new("/tmp/foo", "w"))
-      @recipe.writeDigest("foo", ".xxx")
+      @recipe.writeDigest
     end
   end
 
@@ -72,15 +69,15 @@ describe Recipe do
     it "reads and returns current digest" do
       expect(File).to receive(:read).with(".checksum.sha256").
         and_return("foo")
-      expect(@recipe.readDigest).to eq("foo")
+      expect(@recipe.instance_eval{ readDigest }).to eq("foo")
     end
   end
 
-  describe "validateDigest" do
+  describe "job_required?" do
     it "compares two digests" do
       expect(@recipe).to receive(:readDigest).and_return("foo")
       expect(@recipe).to receive(:createDigest).and_return("foo")
-      expect(@recipe.validateDigest).to eq(true)
+      expect(@recipe.job_required?).to eq(false)
     end
   end
 end

@@ -3,15 +3,16 @@
 require_relative '../lib/dice'
 
 system = BuildSystem.new("./recipes/suse-13.1-JeOS")
-if !system.is_locked?
+if !system.is_locked? && system.job_required?
   system.up
   system.provision
   job = Job.new(system)
   job.build
   job.get_result
+  system.writeDigest
   system.halt
 else
-  puts "System is locked"
+  puts "System is locked or no job is needed"
 end
 
 begin
