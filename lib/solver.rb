@@ -13,11 +13,11 @@ class Solve
     begin
       Command.run(
         "sudo", "/usr/sbin/kiwi", "--info", @recipe_path,
-        "--select", "packages"
+        "--select", "packages", "--logfile", "terminal"
       )
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::SolvePackagesFailed.new(
-        "kiwi packager solver failed with:\n #{e.stdout}"
+        "kiwi packager solver failed with:\n#{e.stdout}"
       )
     end
     store_to_receipt

@@ -56,12 +56,12 @@ describe Recipe do
     end
   end
 
-  describe "writeDigest" do
+  describe "writeRecipeChecksum" do
     it "wants to create .checksum.sha256" do
       expect(@recipe).to receive(:createDigest).and_return("foo")
       expect(File).to receive(:new).with(".checksum.sha256", "w").
         and_return(File.new("/tmp/foo", "w"))
-      @recipe.writeDigest
+      @recipe.writeRecipeChecksum
     end
   end
 

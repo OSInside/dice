@@ -13,7 +13,7 @@ describe Solve do
       expect(@solve).to receive(:cleanup)
       expect(Command).to receive(:run).with(
         "sudo", "/usr/sbin/kiwi", "--info", @recipe_path,
-        "--select", "packages"
+        "--select", "packages", "--logfile", "terminal"
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )

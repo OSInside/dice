@@ -39,4 +39,30 @@ class Cli
   on_error do |e|
     Cli.handle_error(e)
   end
+
+  def self.shift_arg(args, name)
+    if !res = args.shift
+      raise GLI::BadCommandLine.new(
+        "dice was called with missing argument #{name}."
+      )
+    end
+    res
+  end
+
+  desc "Build from recipe"
+  long_desc <<-LONGDESC
+    Build image from a given recipe and store the result in a tarball
+    with the extension <recipe-path>.build_results.tar. A recipe is a
+    kiwi image description extended by a Vagrantfile
+  LONGDESC
+  arg "RECIPE-PATH"
+  command :build do |c|
+    c.action do |global_options,options,args|
+      recipe = shift_arg(args, "RECIPE-PATH")
+      task = BuildTask.new(recipe)
+      if task.build?
+        task.run
+      end
+    end
+  end
 end

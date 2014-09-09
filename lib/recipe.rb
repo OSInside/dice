@@ -35,7 +35,7 @@ class Recipe
     false
   end
 
-  def writeDigest
+  def writeRecipeChecksum
     digest = createDigest
     digest_file = File.new(@@digest, "w")
     digest_file.puts digest

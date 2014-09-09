@@ -7,7 +7,7 @@ class BuildSystem < Recipe
 
   def up
     basepath = get_basepath
-    puts "Starting up buildsystem for #{basepath}..."
+    Logger.info "Starting up buildsystem for #{basepath}..."
     begin
       @up_output = Command.run("vagrant", "up", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
@@ -15,27 +15,27 @@ class BuildSystem < Recipe
         "Starting up system failed with: #{e.stderr}"
       )
     end
-    puts @up_output
+    Logger.info @up_output
   end
 
   def provision
-    puts "Provision build system..."
+    Logger.info "Provision build system..."
     begin
       provision_output = Command.run(
         "vagrant", "provision", :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
-      puts "Provisioning failed"
+      Logger.info "Provisioning failed"
       halt
       raise Dice::Errors::VagrantProvisionFailed.new(
         "Provisioning system failed with: #{e.stderr}"
       )
     end
-    puts provision_output
+    Logger.info provision_output
   end
 
   def halt
-    puts "Initiate shutdown..."
+    Logger.info "Initiate shutdown..."
     begin
       halt_output = Command.run("vagrant", "halt", "-f", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
@@ -43,7 +43,7 @@ class BuildSystem < Recipe
         "Stopping system failed with: #{e.stderr}"
       )
     end
-    puts halt_output
+    Logger.info halt_output
     reset_working_dir
   end
 

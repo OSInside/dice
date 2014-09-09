@@ -13,14 +13,14 @@ class Job
 
   def build
     prepare_build
-    puts "Building..."
-    build_opts = "--nocolor --build /vagrant -d /image --logfile /buildlog"
+    Logger.info "Building..."
+    build_opts = "--build /vagrant -d /image --logfile /buildlog"
     begin
       Command.run("ssh", "-p", @port, "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
         "sudo /usr/sbin/kiwi #{build_opts} "
       )
     rescue Cheetah::ExecutionFailed => e
-      puts "Build failed"
+      Logger.info "Build failed"
       get_buildlog
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
@@ -30,7 +30,7 @@ class Job
   end
 
   def get_result
-    puts "Retrieving results in #{@archive}..."
+    Logger.info "Retrieving results in #{@archive}..."
     result = File.open(@archive, "w")
     begin
       Command.run("ssh", "-p", @port, "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
@@ -38,7 +38,7 @@ class Job
         :stdout => result
       )
     rescue Cheetah::ExecutionFailed => e
-      puts "Archiving failed"
+      Logger.info "Archiving failed"
       @buildsystem.halt
       raise Dice::Errors::ResultRetrievalFailed.new(
         "Archiving results failed with: #{e.stderr}"
@@ -49,7 +49,7 @@ class Job
   private
 
   def prepare_build
-    puts "Preparing build..."
+    Logger.info "Preparing build..."
     FileUtils.rm(@buildlog) if File.file?(@buildlog)
     FileUtils.rm(@archive) if File.file?(@archive)
     begin
@@ -57,7 +57,7 @@ class Job
         "sudo rm -rf /image; sudo touch /buildlog"
       )
     rescue Cheetah::ExecutionFailed => e
-      puts "Preparation failed"
+      Logger.info "Preparation failed"
       @buildsystem.halt
       raise Dice::Errors::PrepareBuildFailed.new(
         "Prepare build env failed with: #{e.stderr}"
@@ -66,14 +66,14 @@ class Job
   end
 
   def get_buildlog
-    puts "Retrieving build log..."
+    Logger.info "Retrieving build log..."
     logfile = File.open(@buildlog, "w")
     begin
       Command.run("ssh", "-p", @port, "-i", Dice::VAGRANT_KEY, "vagrant@#{@ip}",
         "sudo cat /buildlog", :stdout => logfile
       )
     rescue Cheetah::ExecutionFailed => e
-      puts "Retrieving build log failed"
+      Logger.info "Retrieving build log failed"
       FileUtils.rm logfile
       @buildsystem.halt
       raise Dice::Errors::LogFileRetrievalFailed.new(

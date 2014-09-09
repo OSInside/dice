@@ -18,9 +18,9 @@ describe BuildSystem do
     end
 
     it "puts headline and up output on normal operation" do
-      expect(@system).to receive(:puts)
+      expect(Logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
-      expect(@system).to receive(:puts).with("foo")
+      expect(Logger).to receive(:info).with("foo")
       @system.up
     end
   end
@@ -37,9 +37,9 @@ describe BuildSystem do
     end
 
     it "puts headline and provision output on normal operation" do
-      expect(@system).to receive(:puts)
+      expect(Logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
-      expect(@system).to receive(:puts).with("foo")
+      expect(Logger).to receive(:info).with("foo")
       @system.provision
     end
   end
@@ -55,9 +55,9 @@ describe BuildSystem do
     end
 
     it "puts headline and halt output on normal operation, reset_working_dir" do
-      expect(@system).to receive(:puts)
+      expect(Logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
-      expect(@system).to receive(:puts).with("foo")
+      expect(Logger).to receive(:info).with("foo")
       expect(@system).to receive(:reset_working_dir)
       @system.halt
     end
