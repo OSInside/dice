@@ -4,7 +4,7 @@ class BuildTask
     @repos_solver = Solve.new(@build_system)
   end
 
-  def build?
+  def build_status
     status = ""
     @repos_solver.writeScan
     if @build_system.is_locked?

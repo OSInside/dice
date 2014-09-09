@@ -60,8 +60,11 @@ class Cli
     c.action do |global_options,options,args|
       recipe = shift_arg(args, "RECIPE-PATH")
       task = BuildTask.new(recipe)
-      if task.build?
+      status = task.build_status
+      if status.is_a?(Dice::Status::BuildRequired)
         task.run
+      else
+        puts status.message
       end
     end
   end

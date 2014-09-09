@@ -1,5 +1,5 @@
 class BuildStatus
-  def status
+  def message
     message = "Build-System status is: #{self.class}"
     message
   end

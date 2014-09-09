@@ -5,52 +5,32 @@ class Solve
     end
     @recipe_path = system.get_basepath
     @recipe_solv = @recipe_path + "/config.scan"
-    @info_pattern = "/tmp/kiwi-xmlinfo*"
   end
 
   def writeScan
-    cleanup
+    solver_info = ""
     begin
-      Command.run(
+      solver_info = Command.run(
         "sudo", "/usr/sbin/kiwi", "--info", @recipe_path,
-        "--select", "packages", "--logfile", "terminal"
+        "--select", "packages", "--logfile", "terminal", :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::SolvePackagesFailed.new(
         "kiwi packager solver failed with:\n#{e.stdout}"
       )
     end
-    store_to_receipt
+    store_to_receipt(solver_info)
   end
 
   private
 
-  def get_info_files
-    return Dir.glob @info_pattern
-  end
-
-  def cleanup
-    file_list = get_info_files
-    file_list.each do |file|
-      begin
-        Command.run("sudo", "rm", "-f", file)
-      rescue Cheetah::ExecutionFailed => e
-        raise Dice::Errors::SolveCleanUpFailed.new(
-          "Can't remove tmp data: #{e.stderr}"
-        )
+  def store_to_receipt(solver_info)
+    recipe_scan = File.open(@recipe_solv, "w")
+    solver_info.split("\n").each do |line|
+      if line =~ /<package/
+        recipe_scan.write(line+"\n")
       end
     end
-  end
-
-  def store_to_receipt
-    result = get_info_files.first
-    recipe_scan = File.open(@recipe_solv, "w")
-    begin
-      Command.run("sudo", "cat", result, :stdout => recipe_scan)
-    rescue Cheetah::ExecutionFailed => e
-      raise Dice::Errors::SolveCreateRecipeResultFailed.new(
-        "Can't create recipe scan result: #{e.stderr}"
-      )
-    end
+    recipe_scan.close
   end
 end
