@@ -19,12 +19,12 @@ class Solve
         "kiwi packager solver failed with:\n#{e.stdout}"
       )
     end
-    store_to_receipt(solver_info)
+    store_to_recipe(solver_info)
   end
 
   private
 
-  def store_to_receipt(solver_info)
+  def store_to_recipe(solver_info)
     recipe_scan = File.open(@recipe_solv, "w")
     solver_info.split("\n").each do |line|
       if line =~ /<package/

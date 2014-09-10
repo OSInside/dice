@@ -21,20 +21,22 @@ describe Solve do
       )
     end
 
-    it "calls store_to_receipt on success" do
+    it "calls store_to_recipe on success" do
       expect(Command).to receive(:run)
-      expect(@solve).to receive(:store_to_receipt)
+      expect(@solve).to receive(:store_to_recipe)
       @solve.writeScan
     end
   end
 
-  describe "#store_to_receipt" do
+  describe "#store_to_recipe" do
     it "stores config.scan in recipe directory" do
-      recipe_scan = @recipe_path + "/config.scan"
-      expect(File).to receive(:open).with(recipe_scan, "w").
-        and_return(File.new(recipe_scan, "w"))
-      expect_any_instance_of(File).to receive(:write).with("<package=foo\n")
-      @solve.instance_eval{ store_to_receipt("bob <imagescan\n<package=foo") }
+      recipe_solv = @recipe_path + "/config.scan"
+      recipe_scan = double(File)
+      expect(File).to receive(:open).with(recipe_solv, "w").
+        and_return(recipe_scan)
+      expect(recipe_scan).to receive(:write).with("<package=foo\n")
+      expect(recipe_scan).to receive(:close)
+      @solve.instance_eval{ store_to_recipe("bob <imagescan\n<package=foo") }
     end
   end
 end
