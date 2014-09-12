@@ -1,6 +1,8 @@
 class BuildTask
-  def initialize(recipe, buildhost = nil)
+  def initialize(recipe, buildhost = nil, user = nil, private_key = nil)
     @build_system = nil
+    @user = user
+    @private_key = private_key
     if !buildhost
       @build_system = VagrantBuildSystem.new(recipe)
     else
@@ -34,7 +36,9 @@ class BuildTask
   private
 
   def run_job
-    @job = Job.new(@build_system)
+    @job = Job.new(
+      @build_system, @user, @private_key
+    )
     @job.build
   end
 
