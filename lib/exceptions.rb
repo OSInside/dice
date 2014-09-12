@@ -18,5 +18,7 @@ module Dice
     class SolvePackagesFailed < DiceError; end
     class SolveCreateRecipeResultFailed < DiceError; end
     class SolveCleanUpFailed < DiceError; end
+    class HostProvisionFailed < DiceError; end
+    class MethodNotImplemented < DiceError; end
   end
 end

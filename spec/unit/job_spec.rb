@@ -3,8 +3,7 @@ require_relative "spec_helper"
 describe Job do
   before(:each) do
     expect_any_instance_of(BuildSystem).to receive(:change_working_dir)
-    expect_any_instance_of(BuildSystem).to receive(:get_ip)
-    system = BuildSystem.new("spec/helper/recipe_good")
+    system = VagrantBuildSystem.new("spec/helper/recipe_good")
     system.instance_variable_set(
       :@up_output, "[jeos_sle12_build] -- 22 => 2200 (adapter 1)"
     )
@@ -47,7 +46,7 @@ describe Job do
     it "cleans up the buildsystem environment" do
       expect(Command).to receive(:run).
         with("ssh", "-p", "2200", "-i", Dice::SSH_PRIVATE_KEY,
-          "vagrant@", "sudo rm -rf /image; sudo touch /buildlog"
+          "vagrant@127.0.0.1", "sudo rm -rf /image; sudo touch /buildlog"
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.instance_eval{ prepare_build }}.
@@ -60,7 +59,7 @@ describe Job do
       expect(File).to receive(:open).with(@basepath + "/buildlog", "w")
       expect(Command).to receive(:run).
         with("ssh", "-p", "2200", "-i", Dice::SSH_PRIVATE_KEY,
-          "vagrant@", "sudo cat /buildlog", :stdout=>nil
+          "vagrant@127.0.0.1", "sudo cat /buildlog", :stdout=>nil
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect(FileUtils).to receive(:rm)
       expect_any_instance_of(BuildSystem).to receive(:halt)

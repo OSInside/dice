@@ -1,6 +1,11 @@
 class BuildTask
-  def initialize(recipe)
-    @build_system = BuildSystem.new(recipe)
+  def initialize(recipe, buildhost = nil)
+    @build_system = nil
+    if !buildhost
+      @build_system = VagrantBuildSystem.new(recipe)
+    else
+      @build_system = HostBuildSystem.new(recipe)
+    end
     @repos_solver = Solve.new(@build_system)
   end
 

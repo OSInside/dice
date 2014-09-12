@@ -3,7 +3,7 @@ require_relative "spec_helper"
 describe Solve do
   before(:each) do
     expect_any_instance_of(BuildSystem).to receive(:change_working_dir)
-    system = BuildSystem.new("spec/helper/recipe_good")
+    system = VagrantBuildSystem.new("spec/helper/recipe_good")
     @solve = Solve.new(system)
     @recipe_path = system.get_basepath
   end
