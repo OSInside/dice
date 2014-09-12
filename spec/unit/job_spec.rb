@@ -46,7 +46,7 @@ describe Job do
   describe "#prepare_build" do
     it "cleans up the buildsystem environment" do
       expect(Command).to receive(:run).
-        with("ssh", "-p", "2200", "-i", Dice::VAGRANT_KEY,
+        with("ssh", "-p", "2200", "-i", Dice::SSH_PRIVATE_KEY,
           "vagrant@", "sudo rm -rf /image; sudo touch /buildlog"
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect_any_instance_of(BuildSystem).to receive(:halt)
@@ -59,7 +59,7 @@ describe Job do
     it "retrieves the buildlog form the buildsystem" do
       expect(File).to receive(:open).with(@basepath + "/buildlog", "w")
       expect(Command).to receive(:run).
-        with("ssh", "-p", "2200", "-i", Dice::VAGRANT_KEY,
+        with("ssh", "-p", "2200", "-i", Dice::SSH_PRIVATE_KEY,
           "vagrant@", "sudo cat /buildlog", :stdout=>nil
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect(FileUtils).to receive(:rm)
