@@ -16,7 +16,7 @@ describe Recipe do
 
     it "raises if Vagrantfile is missing" do
       expect { Recipe.new("spec/helper/recipe_missing_vagrantfile") }.
-        to raise_error(Dice::Errors::NoVagrantFile)      
+        to raise_error(Dice::Errors::NoConfigFile)
     end
 
     it "raises if config.xml is missing" do
@@ -25,20 +25,20 @@ describe Recipe do
     end
   end
 
-  describe "get_basepath" do
+  describe "#get_basepath" do
     it "returns absolut path name containing helper/recipe_good" do
       expect(@recipe.get_basepath).to match(/^\/.*\/helper\/recipe_good/)
     end
   end
 
-  describe "change_working_dir" do
+  describe "#change_working_dir" do
     it "receives a Dir.chdir containing helper/recipe_good" do
       expect(Dir).to receive(:chdir).with(/^\/.*\/helper\/recipe_good/)
       @recipe.change_working_dir
     end
   end
 
-  describe "reset_working_dir" do
+  describe "#reset_working_dir" do
     it "receives a Dir.chdir containing current dir" do
       cwd = Dir.pwd
       expect(Dir).to receive(:chdir).with(cwd)
@@ -46,7 +46,7 @@ describe Recipe do
     end
   end
 
-  describe "createDigest" do
+  describe "#createDigest" do
     it "creates expected sha256 digest" do
       expect(Find).to receive(:find).with(".").
         and_return(["spec/helper/recipe_good/config.xml"])
@@ -56,7 +56,7 @@ describe Recipe do
     end
   end
 
-  describe "writeRecipeChecksum" do
+  describe "#writeRecipeChecksum" do
     it "wants to create .checksum.sha256" do
       digest_file = double(File)
       expect(@recipe).to receive(:createDigest).and_return("foo")
@@ -68,7 +68,7 @@ describe Recipe do
     end
   end
 
-  describe "readDigest" do
+  describe "#readDigest" do
     it "reads and returns current digest" do
       expect(File).to receive(:read).with(".checksum.sha256").
         and_return("foo")
@@ -76,7 +76,28 @@ describe Recipe do
     end
   end
 
-  describe "job_required?" do
+  describe "#haveVagrantFile?" do
+    it "checks for Vagrantfile" do
+      expect(File).to receive(:file?).with(/Vagrantfile$/)
+      @recipe.instance_eval{ haveVagrantFile? }
+    end
+  end
+
+  describe "#haveDiceFile?" do
+    it "checks for Dicefile" do
+      expect(File).to receive(:file?).with(/Dicefile$/)
+      @recipe.instance_eval{ haveDiceFile? }
+    end
+  end
+
+  describe "#haveKIWIConfigFile?" do
+    it "checks for config.xml" do
+      expect(File).to receive(:file?).with(/config.xml$/)
+      @recipe.instance_eval{ haveKIWIConfigFile? }
+    end
+  end
+
+  describe "#job_required?" do
     it "compares two digests" do
       expect(@recipe).to receive(:readDigest).and_return("foo")
       expect(@recipe).to receive(:createDigest).and_return("foo")

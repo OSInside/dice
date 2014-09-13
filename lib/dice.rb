@@ -20,3 +20,16 @@ require_relative "build_status"
 require_relative "states"
 require_relative "logger"
 require_relative "build_task"
+require_relative "diceconfig"
+
+module Dice
+  @config = DiceConfig.new
+
+  def self.config
+    @config
+  end
+
+  def self.configure
+    yield @config
+  end
+end

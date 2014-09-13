@@ -1,7 +1,7 @@
 class HostBuildSystem < BuildSystem
-  def initialize(description, host)
+  def initialize(description)
     super(description)
-    @host = host
+    @host = Dice.config.buildhost
   end
 
   def up

@@ -1,14 +1,10 @@
 class Job
-  def initialize(system, job_user = nil, job_ssh_private_key = nil)
+  def initialize(system)
     if !system.is_a?(BuildSystem)
       raise
     end
-    if !job_user
-      @job_user = Dice::DEFAULT_USER
-    end
-    if !job_ssh_private_key
-      @job_ssh_private_key = Dice::SSH_PRIVATE_KEY
-    end
+    @job_user = Dice.config.ssh_user
+    @job_ssh_private_key = Dice.config.ssh_private_key
     recipe_path = system.get_basepath
     @buildlog = recipe_path + "/buildlog"
     @archive  = recipe_path + ".build_results.tar"

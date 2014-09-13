@@ -5,7 +5,7 @@ module Dice
 
     class BuildFailed < DiceError; end
     class NoDirectory < DiceError; end
-    class NoVagrantFile < DiceError; end
+    class NoConfigFile < DiceError; end
     class NoKIWIConfig < DiceError; end
     class VagrantUpFailed < DiceError; end
     class VagrantHaltFailed < DiceError; end

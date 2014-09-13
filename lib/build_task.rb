@@ -1,9 +1,7 @@
 class BuildTask
-  def initialize(recipe, buildhost = nil, user = nil, private_key = nil)
+  def initialize(recipe)
     @build_system = nil
-    @user = user
-    @private_key = private_key
-    if !buildhost
+    if Dice.config.buildhost == Dice::VAGRANT_BUILD
       @build_system = VagrantBuildSystem.new(recipe)
     else
       @build_system = HostBuildSystem.new(recipe)
@@ -36,9 +34,7 @@ class BuildTask
   private
 
   def run_job
-    @job = Job.new(
-      @build_system, @user, @private_key
-    )
+    @job = Job.new(@build_system)
     @job.build
   end
 

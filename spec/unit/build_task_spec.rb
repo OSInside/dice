@@ -33,7 +33,7 @@ describe BuildTask do
   describe "#run_job" do
     it "runs a job" do
       job = double(Job)
-      expect(Job).to receive(:new).with(@build_system, nil, nil).and_return(job)
+      expect(Job).to receive(:new).with(@build_system).and_return(job)
       expect(job).to receive(:build)
       @task.instance_eval{ run_job }
     end
