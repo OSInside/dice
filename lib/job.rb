@@ -16,7 +16,7 @@ class Job
   def build
     prepare_build
     Logger.info "Building..."
-    build_opts = "--build /vagrant -d /image --logfile /buildlog"
+    build_opts = "--build /vagrant -d /tmp/image --logfile /buildlog"
     begin
       Command.run(
         "ssh", "-p", @port, "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
@@ -38,7 +38,7 @@ class Job
     begin
       Command.run(
         "ssh", "-p", @port, "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo tar --exclude image-root -C /image -c .",
+        "sudo tar --exclude image-root -C /tmp/image -c .",
         :stdout => result
       )
     rescue Cheetah::ExecutionFailed => e
@@ -59,7 +59,7 @@ class Job
     begin
       Command.run(
         "ssh", "-p", @port, "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo rm -rf /image; sudo touch /buildlog"
+        "sudo rm -rf /tmp/image; sudo touch /buildlog"
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info "Preparation failed"

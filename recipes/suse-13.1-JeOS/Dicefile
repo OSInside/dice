@@ -1,3 +1,4 @@
 Dice.configure do |config|
-  config.buildhost = "__VAGRANT__"
+  config.buildhost = "localhost"
+  config.ssh_user = "root"
 end

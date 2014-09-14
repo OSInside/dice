@@ -2,18 +2,23 @@ class HostBuildSystem < BuildSystem
   def initialize(description)
     super(description)
     @host = Dice.config.buildhost
+    @user = Dice.config.ssh_user
+    @ssh_private_key = Dice.config.ssh_private_key
+    @basepath = get_basepath
   end
 
   def up
-    basepath = get_basepath
-    Logger.info "Using buildsystem #{@host} for #{basepath}..."
+    Logger.info "Using buildsystem #{@host} for #{@basepath}..."
   end
 
   def provision
     Logger.info "Provision build system..."
     begin
-      # TODO: rsync recipe to build system
-      provision_output = Command.run("false")
+      provision_output = Command.run(
+        "rsync", "-e", "ssh -i #{@ssh_private_key}", "-z", "-a", "-v",
+        "--exclude", ".*", ".", "#{@user}@#{@host}:/vagrant",
+        :stdout => :capture
+      )
     rescue Cheetah::ExecutionFailed => e
       Logger.info "Provisioning failed"
       halt
@@ -29,21 +34,20 @@ class HostBuildSystem < BuildSystem
   end
 
   def is_locked?
-    lock_status = false
+    lock_status = true
     begin
-      #TODO: check if a kiwi process runs there
-      output = Command.run( "false" )
+      Command.run(
+        "ssh", "-i", @ssh_private_key, "#{@user}@#{@host}",
+        "pidof -x kiwi"
+      )
     rescue Cheetah::ExecutionFailed
-      # continue, handle as not locked
-    end
-    if output =~ /running/
-      lock_status = true
+      lock_status = false
     end
     lock_status
   end
 
   def get_port
-    port = 22
+    port = "22"
     port
   end
 

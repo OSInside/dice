@@ -13,14 +13,16 @@ describe Recipe do
     it "returns a Recipe for good recipe" do
       expect(@recipe).to be_a(Recipe)
     end
+  end
 
+  describe "#ok?" do
     it "raises if Vagrantfile is missing" do
-      expect { Recipe.new("spec/helper/recipe_missing_vagrantfile") }.
+      expect { Recipe.ok?("spec/helper/recipe_missing_vagrantfile") }.
         to raise_error(Dice::Errors::NoConfigFile)
     end
 
     it "raises if config.xml is missing" do
-      expect { Recipe.new("spec/helper/recipe_missing_config.xml") }.
+      expect { Recipe.ok?("spec/helper/recipe_missing_config.xml") }.
         to raise_error(Dice::Errors::NoKIWIConfig)
     end
   end
@@ -73,27 +75,6 @@ describe Recipe do
       expect(File).to receive(:read).with(".checksum.sha256").
         and_return("foo")
       expect(@recipe.instance_eval{ readDigest }).to eq("foo")
-    end
-  end
-
-  describe "#haveVagrantFile?" do
-    it "checks for Vagrantfile" do
-      expect(File).to receive(:file?).with(/Vagrantfile$/)
-      @recipe.instance_eval{ haveVagrantFile? }
-    end
-  end
-
-  describe "#haveDiceFile?" do
-    it "checks for Dicefile" do
-      expect(File).to receive(:file?).with(/Dicefile$/)
-      @recipe.instance_eval{ haveDiceFile? }
-    end
-  end
-
-  describe "#haveKIWIConfigFile?" do
-    it "checks for config.xml" do
-      expect(File).to receive(:file?).with(/config.xml$/)
-      @recipe.instance_eval{ haveKIWIConfigFile? }
     end
   end
 

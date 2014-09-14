@@ -1,9 +1,12 @@
 class BuildTask
   def initialize(recipe)
+    Recipe.ok?(recipe)
     @build_system = nil
     if Dice.config.buildhost == Dice::VAGRANT_BUILD
+      Logger.info("Running Vagrant virtualized buildsystem")
       @build_system = VagrantBuildSystem.new(recipe)
     else
+      Logger.info("Running build on host: #{Dice.config.buildhost}")
       @build_system = HostBuildSystem.new(recipe)
     end
     @repos_solver = Solve.new(@build_system)

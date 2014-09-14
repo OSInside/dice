@@ -46,7 +46,7 @@ describe Job do
     it "cleans up the buildsystem environment" do
       expect(Command).to receive(:run).
         with("ssh", "-p", "2200", "-i", Dice.config.ssh_private_key,
-          "vagrant@127.0.0.1", "sudo rm -rf /image; sudo touch /buildlog"
+          "vagrant@127.0.0.1", "sudo rm -rf /tmp/image; sudo touch /buildlog"
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.instance_eval{ prepare_build }}.

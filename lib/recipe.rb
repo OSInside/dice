@@ -10,23 +10,26 @@ class Recipe
     end
     @basepath = recipe.realpath.to_s
     @cwd = Pathname.new(Dir.pwd).realpath.to_s
-    recipe_ok?
-    if haveDiceFile?
-      load @basepath + "/Dicefile"
-    end
   end
 
-  def recipe_ok?
-    if !haveVagrantFile? && !haveDiceFile?
-      raise Dice::Errors::NoConfigFile.new(
-        "Need a Vagrantfile or Dicefile"
-      )
-    end
-    if !haveKIWIConfigFile?
+  def self.ok?(description)
+    vagrantFile = File.file?(description + "/Vagrantfile")
+    diceFile = File.file?(description + "/Dicefile")
+    kiwiFile = File.file?(description + "/config.xml")
+    if !kiwiFile
       raise Dice::Errors::NoKIWIConfig.new(
         "Need a kiwi config.xml"
       )
     end
+    if !vagrantFile && !diceFile
+      raise Dice::Errors::NoConfigFile.new(
+        "Need a Vagrantfile or Dicefile"
+      )
+    end
+    if diceFile
+      load description + "/Dicefile"
+    end
+    true
   end
 
   def job_required?
@@ -58,18 +61,6 @@ class Recipe
   end
 
   private
-
-  def haveVagrantFile?
-    File.file?(@basepath + "/Vagrantfile")
-  end
-
-  def haveDiceFile?
-    File.file?(@basepath + "/Dicefile")
-  end
-
-  def haveKIWIConfigFile?
-    File.file?(@basepath + "/config.xml")
-  end
 
   def createDigest
     result = ""
