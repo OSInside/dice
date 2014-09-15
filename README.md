@@ -66,7 +66,10 @@ This setup guide explains how to use the virtualbox based platform
 
   * add the box via vagrant
 
-    vagrant box add kiwi-13.1-build-box VagrantBox-openSUSE-13.1.x86_64-1.13.1.virtualbox-Build13.1.box
+    ```
+    vagrant box add kiwi-13.1-build-box \
+      VagrantBox-openSUSE-13.1.x86_64-1.13.1.virtualbox-Build13.1.box
+    ```
 
 ## Installation
 
