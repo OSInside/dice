@@ -2,15 +2,46 @@
 
 !!! code under development, not yet ready for use !!!
 
-dice is a simple build system for kiwi images using vagrant
+dice is a simple build system for [KIWI](http://opensuse.github.com/kiwi)
+images using virtual instances controlled by vagrant or a directly
+contacted build machine. It can be used to fire up build jobs properly
+processed on e.g a cloud instance.
 
 ## Contents
 
+  * [Motivation](#motivation)
   * [Setup](#setup)
     - [VirtualBox](#virtualbox)
     - [Vagrant](#vagrant)
   * [Installation](#installation)
   * [Usage](#usage)
+
+## Motivation
+
+Given there is the need to build an appliance for a customer, one wants
+to keep track of the updates from the distribution and software vendors
+according to the components used in the appliance. This leads to a
+regular rebuild of that appliance which should be automatically triggered
+whenever the repository which stores all the software packages has
+changed.
+
+With Dice there is a tool which automatically builds all appliances
+stored in a directory. Advantages of Dice are:
+
+  * Setup your own buildsystem and keep control
+  * Allow to access the machine which builds your image
+  * Self control where the result gets stored
+
+Disadvantages of Dice are:
+
+  * It's not a dynamic service which runs a daemon
+  * It's not a management platform providing a web interface
+  * It does not provide build resources
+
+That having said, Dice is a light weight static build system. If there
+is the need for more please reach out to the
+[open build service](http://opensuse.org) which provides a web service
+also for image building using KIWI.
 
 ## Setup
 
