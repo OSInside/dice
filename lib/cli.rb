@@ -68,4 +68,18 @@ class Cli
       end
     end
   end
+
+  desc "Print log from current build"
+  long_desc <<-LONGDESC
+    Print build log using a tail command. The command blocks the
+    running terminal printing the log information if present
+  LONGDESC
+  arg "RECIPE-PATH"
+  command :log do |c|
+    c.action do |global_options,options,args|
+      recipe = shift_arg(args, "RECIPE-PATH")
+      task = BuildTask.new(recipe)
+      task.log
+    end
+  end
 end

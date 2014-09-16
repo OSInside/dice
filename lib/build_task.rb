@@ -3,10 +3,10 @@ class BuildTask
     Recipe.ok?(recipe)
     @build_system = nil
     if Dice.config.buildhost == Dice::VAGRANT_BUILD
-      Logger.info("Running Vagrant virtualized buildsystem")
+      Logger.info("Setting up Vagrant virtualized buildsystem")
       @build_system = VagrantBuildSystem.new(recipe)
     else
-      Logger.info("Running build on host: #{Dice.config.buildhost}")
+      Logger.info("Setting up buildsystem for host: #{Dice.config.buildhost}")
       @build_system = HostBuildSystem.new(recipe)
     end
     @repos_solver = Solve.new(@build_system)
@@ -32,6 +32,10 @@ class BuildTask
     get_result
     @build_system.writeRecipeChecksum
     @build_system.halt
+  end
+
+  def log
+    @build_system.get_log
   end
 
   private

@@ -53,4 +53,12 @@ describe BuildSystem do
       )
     end
   end
+
+  describe "#get_log" do
+    it "raises MethodNotImplemented" do
+      expect { @system.get_log }.to raise_error(
+        Dice::Errors::MethodNotImplemented
+      )
+    end
+  end
 end

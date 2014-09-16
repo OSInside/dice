@@ -39,4 +39,10 @@ class BuildSystem < Recipe
       "get_ip method not implemented"
     )
   end
+
+  def get_log
+    raise Dice::Errors::MethodNotImplemented.new(
+      "get_log method not implemented"
+    )
+  end
 end

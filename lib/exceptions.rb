@@ -20,5 +20,6 @@ module Dice
     class SolveCleanUpFailed < DiceError; end
     class HostProvisionFailed < DiceError; end
     class MethodNotImplemented < DiceError; end
+    class NoLogFile < DiceError; end
   end
 end
