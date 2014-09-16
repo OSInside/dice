@@ -11,7 +11,7 @@ describe Solve do
   describe "#writeScan" do
     it "raises if kiwi info scan failed" do
       expect(Command).to receive(:run).with(
-        "sudo", "/usr/sbin/kiwi", "--info", @recipe_path,
+        "/usr/sbin/kiwi", "--info", @recipe_path,
         "--select", "packages", "--logfile", "terminal", :stdout => :capture
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)

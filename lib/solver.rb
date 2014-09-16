@@ -11,7 +11,7 @@ class Solve
     solver_info = ""
     begin
       solver_info = Command.run(
-        "sudo", "/usr/sbin/kiwi", "--info", @recipe_path,
+        "/usr/sbin/kiwi", "--info", @recipe_path,
         "--select", "packages", "--logfile", "terminal", :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
