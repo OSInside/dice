@@ -1,0 +1,22 @@
+digraph G {
+  Logger;
+  Command;
+  DiceConfig;
+
+  Cli;
+  Cli -> BuildTask;
+
+  HostBuildSystem -> BuildSystem [label="inherits from"];
+  VagrantBuildSystem -> BuildSystem [label="inherits from"];
+  BuildSystem -> Recipe [label="inherits from"];
+
+  Job [shape="Mdiamond"]
+  BuildSystemFactory -> Job [label="assigned to"];
+  Solve [shape="Mdiamond"]
+  BuildSystemFactory -> Solve [label="assigned to"];
+
+  BuildSystemFactory -> HostBuildSystem
+  BuildSystemFactory -> VagrantBuildSystem
+
+  BuildTask -> BuildSystemFactory;
+}

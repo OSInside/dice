@@ -5,7 +5,9 @@ describe BuildTask do
     @build_system = double(BuildSystem)
     @repos_solver = double(Solve)
     expect(Recipe).to receive(:ok?)
-    expect(BuildSystem).to receive(:new).and_return(@build_system)
+    expect(BuildSystemFactory).to receive(:from_recipe).and_return(
+      @build_system
+    )
     expect(Solve).to receive(:new).and_return(@repos_solver)
     @task = BuildTask.new("foo")
   end
