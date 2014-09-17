@@ -69,6 +69,7 @@ class Recipe
       item.gsub!(/^\.\//,'')
       next if File.directory?(item)
       next if item =~ /^\.|^Vagrantfile$/
+      next if item =~ /^\.|^Dicefile$/
       sha256 = Digest::SHA256.file item
       result += item + ":" + sha256.hexdigest + "\n"
     end
