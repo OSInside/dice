@@ -15,7 +15,8 @@ class HostBuildSystem < BuildSystem
     Logger.info "Provision build system..."
     begin
       provision_output = Command.run(
-        "rsync", "-e", "ssh -i #{@ssh_private_key}", "-z", "-a", "-v",
+        "rsync", "-e", "ssh -i #{@ssh_private_key}",
+        "--rsync-path", "sudo rsync", "-z", "-a", "-v",
         "--exclude", ".*", ".", "#{@user}@#{@host}:/vagrant",
         :stdout => :capture
       )
@@ -57,9 +58,9 @@ class HostBuildSystem < BuildSystem
 
   def get_log
     begin
-      Command.run(
+      kiwi_pid = Command.run(
         "ssh", "-i", @ssh_private_key, "#{@user}@#{@host}",
-        "sudo", "fuser", "/buildlog"
+        "sudo", "fuser", "/buildlog", :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
       details = e.stderr
@@ -71,6 +72,6 @@ class HostBuildSystem < BuildSystem
       )
     end
     ssh = "ssh -i #{@ssh_private_key} #{@user}@#{@host}"
-    exec("#{ssh} tail -f /buildlog --pid #{$$}")
+    exec("#{ssh} tail -f /buildlog --pid #{kiwi_pid}")
   end
 end

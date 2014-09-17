@@ -1,4 +1,6 @@
 Dice.configure do |config|
-  config.buildhost = "localhost"
-  config.ssh_user = "root"
+  #config.buildhost = "localhost"
+  #config.ssh_user = "root"
+  config.buildhost = "ec2-54-234-87-230.compute-1.amazonaws.com"
+  config.ssh_user = "kiwi"
 end

@@ -77,8 +77,8 @@ class VagrantBuildSystem < BuildSystem
 
   def get_log
     begin
-      Command.run(
-        "vagrant", "ssh", "-c", "sudo fuser /buildlog"
+      kiwi_pid = Command.run(
+        "vagrant", "ssh", "-c", "sudo fuser /buildlog", :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
       details = e.stderr
@@ -89,6 +89,6 @@ class VagrantBuildSystem < BuildSystem
         "Logfile not available: #{details}"
       )
     end
-    exec("vagrant ssh -c 'tail -f /buildlog --pid #{$$}'")
+    exec("vagrant ssh -c 'tail -f /buildlog --pid #{kiwi_pid}'")
   end
 end

@@ -17,8 +17,8 @@ describe HostBuildSystem do
   describe "#provision" do
     it "calls rsync to transfer the recipe to the buildhost" do
       expect(Command).to receive(:run).with(
-        "rsync", "-e", /ssh -i .*key\/vagrant/,
-        "-z", "-a", "-v", "--exclude", ".*", ".",
+        "rsync", "-e", /ssh -i .*key\/vagrant/, "--rsync-path",
+        "sudo rsync", "-z", "-a", "-v", "--exclude", ".*", ".",
         "vagrant@__VAGRANT__:/vagrant", {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
@@ -65,7 +65,7 @@ describe HostBuildSystem do
     it "raises if no log exists or is currently in progress" do
       expect(Command).to receive(:run).with(
         "ssh", "-i", /key\/vagrant/, "vagrant@__VAGRANT__",
-        "sudo", "fuser", "/buildlog"
+        "sudo", "fuser", "/buildlog", {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )

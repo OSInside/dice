@@ -99,7 +99,7 @@ describe VagrantBuildSystem do
   describe "#get_log" do
     it "raises if no log exists or is currently in progress" do
       expect(Command).to receive(:run).with(
-        "vagrant", "ssh", "-c", "sudo fuser /buildlog"
+        "vagrant", "ssh", "-c", "sudo fuser /buildlog", {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )

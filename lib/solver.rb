@@ -16,7 +16,7 @@ class Solve
       )
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::SolvePackagesFailed.new(
-        "kiwi packager solver failed with:\n#{e.stdout}"
+        "kiwi packager solver failed with:\n#{e.stderr}"
       )
     end
     store_to_recipe(solver_info)
