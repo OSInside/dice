@@ -24,3 +24,15 @@ class DiceConfig
     @ssh_user = user
   end
 end
+
+module Dice
+  @config = DiceConfig.new
+
+  def self.config
+    @config
+  end
+
+  def self.configure
+    yield @config
+  end
+end

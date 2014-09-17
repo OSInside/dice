@@ -16,20 +16,7 @@ require_relative "vagrant_build_system"
 require_relative "host_build_system"
 require_relative "job"
 require_relative "solver"
-require_relative "build_status"
-require_relative "states"
+require_relative "state"
 require_relative "logger"
 require_relative "build_task"
-require_relative "diceconfig"
-
-module Dice
-  @config = DiceConfig.new
-
-  def self.config
-    @config
-  end
-
-  def self.configure
-    yield @config
-  end
-end
+require_relative "config"
