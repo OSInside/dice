@@ -32,7 +32,12 @@ describe Job do
   describe "#get_result" do
     it "raises if result retrieval failed" do
       expect(File).to receive(:open)
-      expect(Command).to receive(:run).and_raise(
+      expect(Command).to receive(:run).
+      with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
+        "-i", "/home/ms/Project/dice/key/vagrant",
+        "vagrant@127.0.0.1", "sudo tar --exclude image-root -C /tmp/image -c .",
+        {:stdout=>nil}).
+      and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
       expect_any_instance_of(BuildSystem).to receive(:halt)
@@ -45,7 +50,8 @@ describe Job do
   describe "#prepare_build" do
     it "cleans up the buildsystem environment" do
       expect(Command).to receive(:run).
-        with("ssh", "-p", "2200", "-i", Dice.config.ssh_private_key,
+        with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
+          "-i", Dice.config.ssh_private_key,
           "vagrant@127.0.0.1", "sudo rm -rf /tmp/image; sudo touch /buildlog"
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect_any_instance_of(BuildSystem).to receive(:halt)
@@ -58,7 +64,8 @@ describe Job do
     it "retrieves the buildlog form the buildsystem" do
       expect(File).to receive(:open).with(@basepath + "/buildlog", "w")
       expect(Command).to receive(:run).
-        with("ssh", "-p", "2200", "-i", Dice.config.ssh_private_key,
+        with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
+          "-i", Dice.config.ssh_private_key,
           "vagrant@127.0.0.1", "sudo cat /buildlog", :stdout=>nil
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect(FileUtils).to receive(:rm)

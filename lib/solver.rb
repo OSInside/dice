@@ -8,6 +8,9 @@ class Solve
   end
 
   def writeScan
+    Logger.info(
+      "Solving software pattern/packages to check rebuild request"
+    )
     solver_info = ""
     begin
       solver_info = Command.run(

@@ -19,7 +19,8 @@ class Job
     build_opts = "--build /vagrant -d /tmp/image --logfile /buildlog"
     begin
       Command.run(
-        "ssh", "-p", @port, "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
+        "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
+        "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
         "sudo /usr/sbin/kiwi #{build_opts} "
       )
     rescue Cheetah::ExecutionFailed => e
@@ -37,7 +38,8 @@ class Job
     result = File.open(@archive, "w")
     begin
       Command.run(
-        "ssh", "-p", @port, "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
+        "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
+        "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
         "sudo tar --exclude image-root -C /tmp/image -c .",
         :stdout => result
       )
@@ -58,7 +60,8 @@ class Job
     FileUtils.rm(@archive) if File.file?(@archive)
     begin
       Command.run(
-        "ssh", "-p", @port, "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
+        "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
+        "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
         "sudo rm -rf /tmp/image; sudo touch /buildlog"
       )
     rescue Cheetah::ExecutionFailed => e
@@ -75,7 +78,8 @@ class Job
     logfile = File.open(@buildlog, "w")
     begin
       Command.run(
-        "ssh", "-p", @port, "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
+        "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
+        "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
         "sudo cat /buildlog", :stdout => logfile
       )
     rescue Cheetah::ExecutionFailed => e
