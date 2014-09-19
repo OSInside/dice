@@ -8,10 +8,7 @@ end
 
 RSpec.configure do |config|
   config.before(:each) do
-
-    allow_any_instance_of(Kernel).to receive(:print)
-    allow(STDOUT).to receive(:puts)
-    allow(STDERR).to receive(:puts)
+    allow(Logger).to receive(:info)
   end
 end
 
