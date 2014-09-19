@@ -61,4 +61,10 @@ describe BuildSystem do
       )
     end
   end
+
+  describe "#self.strip_fuser_pid" do
+    it "extract first pid from fuser data" do
+      expect(BuildSystem.strip_fuser_pid(" 17504 17619 17713")).to eq("17504")
+    end
+  end
 end

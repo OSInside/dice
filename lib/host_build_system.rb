@@ -58,7 +58,7 @@ class HostBuildSystem < BuildSystem
 
   def get_log
     begin
-      kiwi_pid = Command.run(
+      fuser_data = Command.run(
         "ssh", "-i", @ssh_private_key, "#{@user}@#{@host}",
         "sudo", "fuser", "/buildlog", :stdout => :capture
       )
@@ -71,7 +71,8 @@ class HostBuildSystem < BuildSystem
         "Logfile not available: #{details}"
       )
     end
+    pid = BuildSystem.strip_fuser_pid(fuser_data)
     ssh = "ssh -i #{@ssh_private_key} #{@user}@#{@host}"
-    exec("#{ssh} tail -f /buildlog --pid #{kiwi_pid}")
+    exec("#{ssh} tail -f /buildlog --pid #{pid}")
   end
 end
