@@ -43,11 +43,18 @@ describe BuildTask do
   end
 
   describe "#get_result" do
-    it "" do
+    it "get result from a job" do
       job = double(Job)
       @task.instance_variable_set(:@job, job)
       expect(job).to receive(:get_result)
       @task.instance_eval{ get_result }
+    end
+  end
+
+  describe "#cleanup" do
+    it "calls halt from the build system" do
+      expect(@build_system).to receive(:halt)
+      @task.cleanup
     end
   end
 end

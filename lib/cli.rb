@@ -5,6 +5,7 @@ class Cli
   preserve_argv(true)
   @version = Dice::VERSION
   switch :version, :negatable => false, :desc => "Show version"
+  switch :debug, :negatable => false, :desc => "Enable debug mode"
   switch [:help, :h], :negatable => false, :desc => "Show help"
 
   def self.handle_error(e)
@@ -22,6 +23,9 @@ class Cli
       raise
     when SignalException
       STDERR.puts "dice was aborted with signal #{e.signo}"
+      if @task
+        @task.cleanup
+      end
       exit 1
     else
       STDERR.puts "dice unexpected error"
@@ -59,10 +63,10 @@ class Cli
   command :build do |c|
     c.action do |global_options,options,args|
       recipe = shift_arg(args, "RECIPE-PATH")
-      task = BuildTask.new(recipe)
-      status = task.build_status
+      @task = BuildTask.new(recipe)
+      status = @task.build_status
       if status.is_a?(Dice::Status::BuildRequired)
-        task.run
+        @task.run
       else
         puts status.message
       end

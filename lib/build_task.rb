@@ -31,6 +31,10 @@ class BuildTask
     @build_system.get_log
   end
 
+  def cleanup
+    @build_system.halt
+  end
+
   private
 
   def run_job
