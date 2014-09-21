@@ -82,8 +82,8 @@ class Cli
   command :log do |c|
     c.action do |global_options,options,args|
       recipe = shift_arg(args, "RECIPE-PATH")
-      task = BuildTask.new(recipe)
-      task.log
+      connection = ConnectionTask.new(recipe)
+      connection.log
     end
   end
 end

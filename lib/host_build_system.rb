@@ -63,24 +63,4 @@ class HostBuildSystem < BuildSystem
   def get_ip
     @host
   end
-
-  def get_log
-    begin
-      fuser_data = Command.run(
-        "ssh", "-i", @ssh_private_key, "#{@user}@#{@host}",
-        "sudo", "fuser", "/buildlog", :stdout => :capture
-      )
-    rescue Cheetah::ExecutionFailed => e
-      details = e.stderr
-      if details == ""
-        details = "No build process writing to logfile"
-      end
-      raise Dice::Errors::NoLogFile.new(
-        "Logfile not available: #{details}"
-      )
-    end
-    pid = BuildSystem.strip_fuser_pid(fuser_data)
-    ssh = "ssh -i #{@ssh_private_key} #{@user}@#{@host}"
-    exec("#{ssh} tail -f /buildlog --pid #{pid}")
-  end
 end
