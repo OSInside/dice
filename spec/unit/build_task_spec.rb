@@ -13,9 +13,7 @@ describe BuildTask do
   describe "#build_status" do
     it "writes new config.scan and returns with a BuildRequired status" do
       build_system = double(BuildSystem)
-      repos_solver = double(Solve)
-      expect(@factory).to receive(:solver).and_return(repos_solver)
-      expect(repos_solver).to receive(:writeScan)
+      expect(Solver).to receive(:writeScan)
       expect(@factory).to receive(:buildsystem).and_return(build_system)
       expect(build_system).to receive(:is_busy?).and_return(false)
       expect(@factory).to receive(:buildsystem).and_return(build_system)

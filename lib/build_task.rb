@@ -6,7 +6,7 @@ class BuildTask
 
   def build_status
     status = Dice::Status::Unknown.new
-    @factory.solver.writeScan
+    Solver.writeScan
     if @factory.buildsystem.is_busy?
       status = Dice::Status::BuildRunning.new
     elsif !@factory.buildsystem.job_required?

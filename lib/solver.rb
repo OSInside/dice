@@ -1,20 +1,12 @@
-class Solve
-  def initialize(system)
-    if !system.is_a?(BuildSystem)
-      raise
-    end
-    @recipe_path = system.get_basepath
-    @recipe_solv = @recipe_path + "/config.scan"
-  end
-
-  def writeScan
+class Solver
+  def self.writeScan
     Logger.info(
       "Solving software pattern/packages to check rebuild request"
     )
     solver_info = ""
     begin
       solver_info = Command.run(
-        "/usr/sbin/kiwi", "--info", @recipe_path,
+        "/usr/sbin/kiwi", "--info", ".",
         "--select", "packages", "--logfile", "terminal", :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
@@ -22,13 +14,7 @@ class Solve
         "kiwi packager solver failed with:\n#{e.stderr}"
       )
     end
-    store_to_recipe(solver_info)
-  end
-
-  private
-
-  def store_to_recipe(solver_info)
-    recipe_scan = File.open(@recipe_solv, "w")
+    recipe_scan = File.open("config.scan", "w")
     solver_info.split("\n").each do |line|
       if line =~ /<package/
         recipe_scan.write(line+"\n")

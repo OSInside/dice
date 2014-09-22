@@ -16,8 +16,4 @@ class BuildSystemFactory
   def job
     Job.new(@build_system)
   end
-
-  def solver
-    Solve.new(@build_system)
-  end
 end
