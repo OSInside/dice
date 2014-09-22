@@ -22,7 +22,7 @@ digraph G {
   ConnectionTask -> ConnectionFactory;
 
   BuildSystemFactory -> Job;
-  BuildSystemFactory -> Solve;
+  BuildSystemFactory -> Solver;
 
   BuildSystemFactory -> HostBuildSystem
   BuildSystemFactory -> VagrantBuildSystem
