@@ -7,6 +7,7 @@ end
 
 module Dice
   module Status
+    class Unknown < BuildStatus; end
     class BuildRunning < BuildStatus; end
     class UpToDate < BuildStatus; end
     class BuildRequired < BuildStatus; end
