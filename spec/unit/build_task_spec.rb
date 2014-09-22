@@ -2,14 +2,18 @@ require_relative "spec_helper"
 
 describe BuildTask do
   before(:each) do
+    @factory = double(BuildSystemFactory)
     @build_system = double(BuildSystem)
     @repos_solver = double(Solve)
     expect(Recipe).to receive(:ok?)
-    expect(BuildSystemFactory).to receive(:from_recipe).and_return(
-      @build_system
+    expect(BuildSystemFactory).to receive(:new).and_return(
+      @factory
     )
-    expect(Solve).to receive(:new).and_return(@repos_solver)
+    expect(@factory).to receive(:buildsystem)
+    expect(@factory).to receive(:solver)
     @task = BuildTask.new("foo")
+    @task.instance_variable_set(:@build_system, @build_system)
+    @task.instance_variable_set(:@repos_solver, @repos_solver)
   end
 
   describe "#build_status" do
@@ -36,7 +40,7 @@ describe BuildTask do
   describe "#run_job" do
     it "runs a job" do
       job = double(Job)
-      expect(Job).to receive(:new).with(@build_system).and_return(job)
+      expect(@factory).to receive(:job).and_return(job)
       expect(job).to receive(:build)
       @task.instance_eval{ run_job }
     end

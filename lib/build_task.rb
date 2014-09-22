@@ -1,8 +1,9 @@
 class BuildTask
   def initialize(recipe)
     Recipe.ok?(recipe)
-    @build_system = BuildSystemFactory.from_recipe(recipe)
-    @repos_solver = Solve.new(@build_system)
+    @factory = BuildSystemFactory.new(recipe)
+    @build_system = @factory.buildsystem
+    @repos_solver = @factory.solver
   end
 
   def build_status
@@ -38,7 +39,7 @@ class BuildTask
   private
 
   def run_job
-    @job = Job.new(@build_system)
+    @job = @factory.job
     @job.build
   end
 

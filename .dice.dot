@@ -6,14 +6,23 @@ digraph G {
   Cli;
   Cli -> BuildTask;
 
+  Cli -> ConnectionTask;
+
+  ConnectionHostBuildSystem -> Connection [label="inherits from"];
+  ConnectionVagrantBuildSystem -> Connection [label="inherits from"];
+  Connection -> Recipe [label="inherits from"];
+
   HostBuildSystem -> BuildSystem [label="inherits from"];
   VagrantBuildSystem -> BuildSystem [label="inherits from"];
   BuildSystem -> Recipe [label="inherits from"];
 
-  Job [shape="Mdiamond"]
-  BuildSystemFactory -> Job [label="assigned to"];
-  Solve [shape="Mdiamond"]
-  BuildSystemFactory -> Solve [label="assigned to"];
+  ConnectionFactory -> ConnectionVagrantBuildSystem;
+  ConnectionFactory -> ConnectionHostBuildSystem;
+
+  ConnectionTask -> ConnectionFactory;
+
+  BuildSystemFactory -> Job;
+  BuildSystemFactory -> Solve;
 
   BuildSystemFactory -> HostBuildSystem
   BuildSystemFactory -> VagrantBuildSystem

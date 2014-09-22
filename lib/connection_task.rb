@@ -1,7 +1,8 @@
 class ConnectionTask
   def initialize(recipe)
     Recipe.ok?(recipe)
-    @connection = ConnectionFactory.from_recipe(recipe)
+    @factory = ConnectionFactory.new(recipe)
+    @connection = @factory.connection
   end
 
   def log
