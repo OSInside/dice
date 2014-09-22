@@ -63,22 +63,14 @@ describe VagrantBuildSystem do
     end
   end
 
-  describe "#is_locked?" do
-    it "returns false if status raises" do
-      expect(Command).to receive(:run).and_raise(
+  describe "#is_busy?" do
+    it "checks busy state via pidof" do
+      expect(Command).to receive(:run).with(
+        "vagrant", "ssh", "-c", "pidof -x kiwi"
+      ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
-      expect(@system.is_locked?).to eq(false)
-    end
-
-    it "returns true if status is running" do
-      expect(Command).to receive(:run).and_return("running")
-      expect(@system.is_locked?).to eq(true)
-    end
-
-    it "returns false if status is not running" do
-      expect(Command).to receive(:run).and_return("shutoff")
-      expect(@system.is_locked?).to eq(false)
+      expect(@system.is_busy?).to eq(false)
     end
   end
 

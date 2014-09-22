@@ -8,8 +8,8 @@ class BuildTask
   def build_status
     status = ""
     @repos_solver.writeScan
-    if @build_system.is_locked?
-      status = Dice::Status::Locked.new
+    if @build_system.is_busy?
+      status = Dice::Status::BuildRunning.new
     elsif !@build_system.job_required?
       status = Dice::Status::UpToDate.new
     else

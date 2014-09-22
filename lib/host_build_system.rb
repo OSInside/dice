@@ -42,17 +42,17 @@ class HostBuildSystem < BuildSystem
     reset_working_dir
   end
 
-  def is_locked?
-    lock_status = true
+  def is_busy?
+    busy_state = true
     begin
       Command.run(
         "ssh", "-i", @ssh_private_key, "#{@user}@#{@host}",
         "pidof -x kiwi"
       )
     rescue Cheetah::ExecutionFailed
-      lock_status = false
+      busy_state = false
     end
-    lock_status
+    busy_state
   end
 
   def get_port

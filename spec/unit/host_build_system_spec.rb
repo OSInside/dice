@@ -41,15 +41,15 @@ describe HostBuildSystem do
     end
   end
 
-  describe "#is_locked?" do
-    it "checks lock status via pidof" do
+  describe "#is_busy?" do
+    it "checks busy state via pidof" do
       expect(Command).to receive(:run).with(
         "ssh", "-i", /key\/vagrant/, "vagrant@__VAGRANT__",
         "pidof -x kiwi"
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
-      expect(@system.is_locked?).to eq(false)
+      expect(@system.is_busy?).to eq(false)
     end
   end
 

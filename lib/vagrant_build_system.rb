@@ -45,17 +45,15 @@ class VagrantBuildSystem < BuildSystem
     reset_working_dir
   end
 
-  def is_locked?
-    lock_status = false
+  def is_busy?
+    busy_state = false
     begin
-      output = Command.run("vagrant", "status", :stdout => :capture)
+      Command.run("vagrant", "ssh", "-c", "pidof -x kiwi"
+    )
     rescue Cheetah::ExecutionFailed
-      # continue, handle as not locked
+      busy_state = false
     end
-    if output =~ /running/
-      lock_status = true
-    end
-    lock_status
+    busy_state
   end
 
   def get_port

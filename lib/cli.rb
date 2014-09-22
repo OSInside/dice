@@ -86,4 +86,20 @@ class Cli
       connection.log
     end
   end
+
+  desc "Print recipe status"
+  long_desc <<-LONGDESC
+    Print status information about the given recipe. The status
+    provides information whether a rebuild of the recipe is needed
+    or a build job is currently running
+  LONGDESC
+  arg "RECIPE-PATH"
+  command :status do |c|
+    c.action do |global_options,options,args|
+      recipe = shift_arg(args, "RECIPE-PATH")
+      task = BuildTask.new(recipe)
+      status = task.build_status
+      puts status.message
+    end
+  end
 end

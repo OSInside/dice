@@ -30,9 +30,9 @@ describe BuildSystem do
     end
   end
 
-  describe "#is_locked?" do
+  describe "#is_busy?" do
     it "raises MethodNotImplemented" do
-      expect { @system.is_locked? }.to raise_error(
+      expect { @system.is_busy? }.to raise_error(
         Dice::Errors::MethodNotImplemented
       )
     end
