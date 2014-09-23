@@ -1,0 +1,1 @@
+git log | ./.changelog > package/dice.changes

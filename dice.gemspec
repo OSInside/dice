@@ -8,8 +8,16 @@ Gem::Specification.new do |s|
   s.authors     = ["SUSE"]
   s.email       = ["ms@suse.com"]
   s.homepage    = "https://github.com/schaefi/dice/"
-  s.summary     = "build system for kiwi images using vagrant"
-  s.description = "build system for kiwi images using vagrant"
+  s.summary     = "light weight image build system"
+  s.description = "
+    Given there is the need to build a kiwi appliance for a customer,
+    one wants to keep track of the updates from the distribution and
+    software vendors according to the components used in the appliance.
+    This leads to a regular rebuild of that appliance which should be
+    automatically triggered whenever the repository which stores all
+    the software packages has changed. With Dice there is a tool which
+    automatically builds all appliances stored in a directory
+  "
 
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "dice"

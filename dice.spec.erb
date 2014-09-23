@@ -1,0 +1,120 @@
+Name:           dice
+Version:        <%= @version %>
+Release:        0
+%define mod_name dice
+%define mod_full_name %{mod_name}-%{version}
+%define mod_branch -%{version}
+%define mod_weight 1
+
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+BuildRequires:  ruby-macros >= 1
+BuildRequires:  fdupes
+%if %suse_version == 1315
+%define rb_build_versions %{rb_default_ruby}
+BuildRequires:  %{rubydevel}
+BuildRequires:  %{rubygem gem2rpm}
+BuildRequires:  %{rubygem bundler}
+<% build_requires.each do |require| -%>
+BuildRequires:  %{rubygem <%= require[:name] %> <%= require[:operator] %> <%= require[:version] %>}
+<% end -%>
+%else
+BuildRequires:  rubygem(gem2rpm)
+BuildRequires:  rubygem(bundler)
+<% build_requires.each do |require| -%>
+BuildRequires:  rubygem(<%= require[:name] %>) <%= require[:operator] %> <%= require[:version] %>
+<% end -%>
+%endif
+# Disable autogenerating "Requires:" headers for bundled gems.
+%define __requires_exclude ^rubygem
+Requires:       ruby >= 2.0
+Url:            http://suse.com
+Source0:        http://rubygems.org/gems/%{mod_full_name}.gem
+Summary:        light weight image build system
+License:        GPL-3.0
+Group:          Development/Languages/Ruby
+
+%description
+Given there is the need to build a kiwi appliance for a customer,
+one wants to keep track of the updates from the distribution and
+software vendors according to the components used in the appliance.
+This leads to a regular rebuild of that appliance which should be
+automatically triggered whenever the repository which stores all
+the software packages has changed. With Dice there is a tool which
+automatically builds all appliances stored in a directory
+
+%package doc
+Summary:        RDoc and RI documentation for Machinery
+Group:          Development/Languages/Ruby
+Requires:       %{name} = %{version}
+
+%description doc
+RDoc and RI documentation for dice is a light weight image build system for kiwi
+
+%prep
+
+%build
+
+%install
+
+# Install the gem itself
+
+%gem_install -f
+
+# Bundle dependencies
+
+pushd %{buildroot}%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}
+
+cat > Gemfile <<EOT
+<% @dependencies.each do |dependency| -%>
+<% dependency.requirement.requirements.map do |operator, version| -%>
+<% if dependency.name == "json" -%>
+%if %suse_version <= 1310
+gem "<%= dependency.name %>", "<%= operator %> <%= version %>"
+%endif
+<% else -%>
+gem "<%= dependency.name %>", "<%= operator %> <%= version %>"
+<% end -%>
+<% end -%>
+<% end -%>
+EOT
+
+mkdir -p vendor/cache
+cp %{_libdir}/ruby/gems/%{rb_ver}/cache/*.gem vendor/cache
+
+bundle install --standalone --local
+
+rm -rf vendor .bundle Gemfile Gemfile.lock
+
+popd
+
+# Adapt the binary
+
+# Here we do a surgery on the binary to actually load the bundled gems. This is
+# a hack, but it can't be done anywhere else because the binary is generated
+# during gem install.
+sed -i '/gem/i \
+Gem.path.unshift("%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/bundle/ruby/%{rb_ver}")
+
+' %{buildroot}%{_bindir}/%{mod_name}
+
+# Additional files
+
+ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/COPYING
+
+# Convert duplicate files to symlinks
+
+%fdupes -s %{buildroot}
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/%{mod_name}
+%{_libdir}/ruby/gems/%{rb_ver}/cache/%{mod_full_name}.gem
+%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/
+%{_libdir}/ruby/gems/%{rb_ver}/specifications/%{mod_full_name}.gemspec
+%doc COPYING
+
+%files doc
+%defattr(-,root,root,-)
+%doc %{_libdir}/ruby/gems/%{rb_ver}/doc/%{mod_full_name}/
+
+%changelog

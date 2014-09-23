@@ -3,3 +3,4 @@ buildlog
 *.build_results.tar
 .checksum.sha256
 config.scan
+package/*
