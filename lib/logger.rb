@@ -2,12 +2,12 @@ class Logger
   @@DEBUG = false
 
   def self.info(message)
-    puts message
+    puts "[#{$$}]: #{message}"
   end
 
   def self.command(*message)
     if @@DEBUG
-      puts "EXEC: #{message}"
+      puts "[#{$$}]: EXEC: #{message}"
     end
   end
 
