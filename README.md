@@ -11,7 +11,7 @@ processed on e.g a cloud instance.
 
   * [Motivation](#motivation)
   * [Setup](#setup)
-    - [Vagrant and VirtualBox](#vagrant and virtualbox)
+    - [Vagrant+VirtualBox](#vagrant+virtualbox)
     - [BuildWorker](#buildworker)
   * [Installation](#installation)
   * [Usage](#usage)
@@ -69,10 +69,10 @@ documentation here:
   * https://docs.vagrantup.com/v2/providers/index.html
 
 If you don't plan to use virtual systems for building you can skip
-the following and head directly to the [ BuildWorker ]
+the following and head directly to the [BuildWorker](#buildworker)
 chapter
 
-### Vagrant and VirtualBox
+### Vagrant+VirtualBox
 
   * As user root Install the latest vagrant rpm package from here
 
