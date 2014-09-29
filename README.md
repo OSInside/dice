@@ -93,7 +93,14 @@ chapter
     http://download.opensuse.org/repositories/Virtualization:/Appliances/images
 
     There are regularly updates on the box which is the reason why Build[XX] is
-    a moving target
+    a moving target. This box is able to build images for the distributions:
+
+    * RHEL6
+    * RHEL7
+    * openSUSE 12.3
+    * openSUSE 13.1
+    * SLES11
+    * SLES12
 
   * As normal user add the box via vagrant
 
