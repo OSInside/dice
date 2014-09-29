@@ -28,6 +28,8 @@ changed.
 With Dice there is a tool which allows on demand and/or automatically
 building of appliances stored in a directory. Advantages of Dice are:
 
+  * Build as normal user
+  * Build for different distributions on appropriate worker
   * Setup your own buildsystem and keep control
   * Allow to access the machine which builds your image
   * Self control where the result gets stored
