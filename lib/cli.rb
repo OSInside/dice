@@ -17,12 +17,15 @@ class Cli
       run(command << "--help")
       exit 1
     when Dice::Errors::DiceError
-      STDERR.puts e.message
+      message = e.message
+      message.gsub!(/\n/,"\n[#{$$}]: ")
+      STDERR.print "[#{$$}]: #{message}"
+      STDERR.puts "Exception raised"
       exit 1
     when SystemExit
       raise
     when SignalException
-      STDERR.puts "dice was aborted with signal #{e.signo}"
+      STDERR.puts "[#{$$}]: dice was aborted with signal #{e.signo}"
       if @task
         @task.cleanup
       end
