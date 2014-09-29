@@ -2,7 +2,8 @@ class Logger
   @@DEBUG = false
 
   def self.info(message)
-    puts "[#{$$}]: #{message}"
+    message.gsub!(/\n/,"\n[#{$$}]: ")
+    STDOUT.puts "[#{$$}]: #{message}"
   end
 
   def self.command(*message)
@@ -16,7 +17,6 @@ class Logger
       line.gsub!(/\n/,"\n[#{$$}]: ")
       STDERR.print "[#{$$}]: #{line}"
     end
-    STDERR.puts "Exception raised"
   end
 
   def self.setup(arguments)
