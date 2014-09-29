@@ -7,9 +7,10 @@ describe BuildStatus do
 
   describe "#message" do
     it "prints status message containing derived class name" do
-      expect(@status.message).to eq(
-        "[#{$$}]: Build-System status is: Dice::Status::UpToDate"
+      expect(Logger).to receive(:info).with(
+        "Build-System status is: Dice::Status::UpToDate"
       )
+      @status.message
     end
   end
 end

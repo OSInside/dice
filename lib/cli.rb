@@ -17,27 +17,24 @@ class Cli
       run(command << "--help")
       exit 1
     when Dice::Errors::DiceError
-      message = e.message
-      message.gsub!(/\n/,"\n[#{$$}]: ")
-      STDERR.print "[#{$$}]: #{message}"
-      STDERR.puts "Exception raised"
+      Logger.error(e.message)
       exit 1
     when SystemExit
       raise
     when SignalException
-      STDERR.puts "[#{$$}]: dice was aborted with signal #{e.signo}"
+      Logger.error("dice was aborted with signal #{e.signo}")
       if @task
         @task.cleanup
       end
       exit 1
     else
-      STDERR.puts "dice unexpected error"
+      Logger.error("dice unexpected error")
       result = ""
       if e.backtrace && !e.backtrace.empty?
         result << "Backtrace:\n"
         result << "#{e.backtrace.join("\n")}\n\n"
       end
-      STDERR.puts result
+      Logger.error(result)
       exit 1
     end
     true
@@ -71,7 +68,7 @@ class Cli
       if status.is_a?(Dice::Status::BuildRequired)
         @task.run
       else
-        puts status.message
+        status.message
       end
     end
   end
@@ -102,7 +99,7 @@ class Cli
       recipe = shift_arg(args, "RECIPE-PATH")
       task = BuildTask.new(recipe)
       status = task.build_status
-      puts status.message
+      status.message
     end
   end
 end

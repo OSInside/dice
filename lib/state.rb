@@ -1,7 +1,6 @@
 class BuildStatus
   def message
-    message = "[#{$$}]: Build-System status is: #{self.class}"
-    message
+    Logger.info("Build-System status is: #{self.class}")
   end
 end
 
