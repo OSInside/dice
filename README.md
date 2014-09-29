@@ -112,11 +112,6 @@ chapter
     kiwi-13.1-build-box (virtualbox)
     ```
 
-  * More information about vagrant can be found here:
-
-    https://docs.vagrantup.com
-
-
 ### BuildWorker
 
 While the vagrant box files already contains all software and configurations
