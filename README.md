@@ -113,11 +113,7 @@ chapter
 
     ```
     $ vagrant box list
-    ```
 
-    should list the following information
-
-    ```
     kiwi-13.1-build-box (virtualbox)
     ```
 
