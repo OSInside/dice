@@ -11,7 +11,7 @@ processed on e.g a cloud instance.
 
   * [Motivation](#motivation)
   * [Setup](#setup)
-    - [Vagrant and VirtualBox](#vagrantandvirtualbox)
+    - [Vagrant and VirtualBox](#vagrant-and-virtualbox)
     - [BuildWorker](#buildworker)
   * [Installation](#installation)
   * [Usage](#usage)
