@@ -26,7 +26,7 @@ whenever the repository which stores all the software packages has
 changed.
 
 With Dice there is a tool which allows on demand and/or automatically
-building of appliances stored in a directory. Advantages of Dice are:
+building of appliances stored in a directory. Advantages are:
 
   * Build as normal user
   * Build for different distributions on appropriate worker
@@ -34,9 +34,9 @@ building of appliances stored in a directory. Advantages of Dice are:
   * Allow to access the machine which builds your image
   * Self control where the result gets stored
 
-Disadvantages of Dice are:
+Disadvantages are:
 
-  * It's not a dynamic service which runs a daemon
+  * It's not a dynamic service which runs as a daemon
   * It's not a management platform providing a web interface
   * It does not provide build resources
 
