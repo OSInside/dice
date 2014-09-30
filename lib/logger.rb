@@ -15,7 +15,7 @@ class Logger
   def self.error(*message)
     message.each do |line|
       line.gsub!(/\n/,"\n[#{$$}]: ")
-      STDERR.print "[#{$$}]: #{line}"
+      STDERR.puts "[#{$$}]: #{line}"
     end
   end
 
