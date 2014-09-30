@@ -105,7 +105,7 @@ chapter
   * As normal user add the box via vagrant
 
     ```
-    $ vagrant box add kiwi-13.1-build-box \
+    $ vagrant box add kiwi-build-box \
       VagrantBox-openSUSE-13.1.x86_64-1.13.1.virtualbox-Build[XX].box
     ```
 
@@ -114,7 +114,7 @@ chapter
     ```
     $ vagrant box list
 
-    kiwi-13.1-build-box (virtualbox)
+    kiwi-build-box (virtualbox)
     ```
 
 ### BuildWorker
