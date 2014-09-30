@@ -34,7 +34,7 @@ describe HostBuildSystem do
     it "resets the working dir" do
       expect(Command).to receive(:run).with(
         "ssh", "-i", /key\/vagrant/, "vagrant@__VAGRANT__",
-        "sudo", "fuser", "-k", "/buildlog"
+        "sudo", "fuser", "-k", "-HUP", "/buildlog"
       )
       expect(@system).to receive(:reset_working_dir)
       @system.halt

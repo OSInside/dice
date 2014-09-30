@@ -34,7 +34,7 @@ class HostBuildSystem < BuildSystem
     begin
       Command.run(
         "ssh", "-i", @ssh_private_key, "#{@user}@#{@host}",
-        "sudo", "fuser", "-k", "/buildlog"
+        "sudo", "fuser", "-k", "-HUP", "/buildlog"
       )
     rescue Cheetah::ExecutionFailed => e
       # continue even if there was no process to kill
