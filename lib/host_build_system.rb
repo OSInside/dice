@@ -31,6 +31,7 @@ class HostBuildSystem < BuildSystem
   end
 
   def halt
+    Logger.info "Stopping build process on #{@host}..."
     begin
       Command.run(
         "ssh", "-i", @ssh_private_key, "#{@user}@#{@host}",
