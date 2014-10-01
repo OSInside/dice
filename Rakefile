@@ -29,6 +29,7 @@ end
 # put the sources into OBS. Instead we build the gem in the tarball task
 Rake::Task[:tarball].clear
 task :tarball do
+  Cheetah.run "chmod", "644", "key/*"
   Cheetah.run "gem", "build", "dice.gemspec"
   FileUtils.mv Dir.glob("dice-*.gem"), "package/"
 end
