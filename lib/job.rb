@@ -7,7 +7,7 @@ class Job
     @job_ssh_private_key = Dice.config.ssh_private_key
     recipe_path = system.get_basepath
     @buildlog = recipe_path + "/buildlog"
-    @archive  = recipe_path + ".build_results.tar.xz"
+    @archive  = recipe_path + ".build_results.tar"
     @buildsystem = system
     @ip = system.get_ip
     @port = system.get_port
@@ -61,7 +61,7 @@ class Job
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
         "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo tar --exclude image-root -C /tmp/bundle -cJ .",
+        "sudo tar --exclude image-root -C /tmp/bundle -c .",
         :stdout => result
       )
     rescue Cheetah::ExecutionFailed => e

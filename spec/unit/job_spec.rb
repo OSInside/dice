@@ -53,7 +53,7 @@ describe Job do
       with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
         "-i", "/home/ms/Project/dice/key/vagrant",
         "vagrant@127.0.0.1",
-        "sudo tar --exclude image-root -C /tmp/bundle -cJ .",
+        "sudo tar --exclude image-root -C /tmp/bundle -c .",
         {:stdout=>nil}).
       and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
