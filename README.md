@@ -8,10 +8,10 @@ processed on e.g a cloud instance.
 ## Contents
 
   * [Motivation](#motivation)
+  * [Installation](#installation)
   * [Setup](#setup)
     - [Vagrant and VirtualBox](#vagrant-and-virtualbox)
     - [BuildWorker](#buildworker)
-  * [Installation](#installation)
   * [Usage](#usage)
 
 ## Motivation
@@ -42,6 +42,17 @@ That having said, Dice is a light weight static build system. If there
 is the need for more please reach out to the
 [open build service](http://opensuse.org) which provides a web service
 also for image building using KIWI.
+
+## Installation
+
+Dice is available as rpm package for the openSUSE 13.1 (x86\_64) distribution.
+Installation can be done via zypper as follows:
+
+```
+$ zypper ar http://download.opensuse.org/repositories/Virtualization:/Appliances/openSUSE_13.1/ dice
+
+$ zypper in dice
+``` 
 
 ## Setup
 
@@ -132,17 +143,6 @@ machine a dice worker the following software and configurations must exist:
   * a build user e.g kiwi
   * passwordless root access for build user via sudo
   * ssh login as build user with ssh key
-
-## Installation
-
-Dice is available as rpm package for the openSUSE 13.1 (x86\_64) distribution.
-Installation can be done via zypper as follows:
-
-```
-$ zypper ar http://download.opensuse.org/repositories/Virtualization:/Appliances/openSUSE_13.1/ dice
-
-$ zypper in dice
-``` 
 
 ## Dice it
 
