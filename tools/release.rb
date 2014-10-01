@@ -16,6 +16,7 @@ class Release
     remove_old_releases
     generate_specfile
     generate_changelog
+    copy_rpmlintrc
   end
 
   private
@@ -26,6 +27,12 @@ class Release
 
   def generate_changelog
     Cheetah.run "#{Dice::ROOT}/.changelog_write"
+  end
+
+  def copy_rpmlintrc
+    Dir.chdir(Dice::ROOT) do
+      FileUtils.cp "dice-rpmlintrc", "package/dice-rpmlintrc"
+    end
   end
 
   def generate_specfile
