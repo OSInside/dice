@@ -102,6 +102,7 @@ Gem.path.unshift("%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/bundle/ru
 mkdir -p %{buildroot}/etc/bash_completion.d
 ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/COPYING
 ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/recipes
+ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/key
 ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/completion/dice.sh \
    %{buildroot}/etc/bash_completion.d/dice.sh
 

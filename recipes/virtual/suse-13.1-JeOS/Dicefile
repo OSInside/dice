@@ -1,0 +1,4 @@
+Dice.configure do |config|
+  config.ssh_user = "vagrant"
+  config.ssh_private_key = File.join(ENV["HOME"], ".dice/key/vagrant")
+end

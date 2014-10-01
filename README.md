@@ -163,5 +163,11 @@ example build as normal user by calling:
 ```
 $ rsync -zavL /usr/share/doc/packages/dice/recipes/virtual/suse-13.1-JeOS /tmp
 
+$ mkdir -p ~/.dice/key
+
+$ cp -a /usr/share/doc/packages/dice/key/vagrant ~/.dice/key
+
+$ chmod 600 ~/.dice/key/vagrant
+
 $ dice build /tmp/suse-13.1-JeOS
 ```
