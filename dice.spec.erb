@@ -99,7 +99,10 @@ Gem.path.unshift("%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/bundle/ru
 
 # Additional files
 
+mkdir -p %{buildroot}/etc/bash_completion.d
 ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/COPYING
+ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/completion/dice.sh \
+   %{buildroot}/etc/bash_completion.d/dice.sh
 
 # Convert duplicate files to symlinks
 
@@ -111,6 +114,7 @@ ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/COPYING
 %{_libdir}/ruby/gems/%{rb_ver}/cache/%{mod_full_name}.gem
 %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/
 %{_libdir}/ruby/gems/%{rb_ver}/specifications/%{mod_full_name}.gemspec
+%config /etc/bash_completion.d/dice.sh
 %doc COPYING
 
 %files doc
