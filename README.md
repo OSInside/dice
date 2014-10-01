@@ -49,28 +49,35 @@ Dice is available as rpm package for the openSUSE 13.1 (x86\_64) distribution.
 Installation can be done via zypper as follows:
 
 ```
-$ zypper ar http://download.opensuse.org/repositories/Virtualization:/Appliances/openSUSE_13.1/ dice
+$ zypper ar \
+  http://download.opensuse.org/repositories/Virtualization:/Appliances/openSUSE_13.1/ \
+  dice
 
 $ zypper in dice
 ``` 
 
 ## Setup
 
-Dice can either dedicate a build to a build worker machine which could be
+Dice can either run a build job on a build worker machine which could be
 anything starting from the local system up to a cloud instance at a cloud
 service provider, or it starts a local virtual system and dedicates the
-build to this machine.
+build to this virtual system.
 
-The latter requires the [vagrant framework](https://docs.vagrantup.com)
+If you don't plan to use virtual systems for building you can skip
+the following and head directly to the [BuildWorker](#buildworker)
+chapter
+
+Building in virtual systems requires the
+[vagrant framework](https://docs.vagrantup.com)
 which is used by dice to manage instances of virtual machines. In order
 to do that vagrant requires a base machine called a box which ships with
 all the required software to run an image build. As of today there are
 build boxes available for libvirt and virtualbox. This setup guide
 explains how to use the virtualbox based platform
 
-VirtualBox is one out of other virtualization frameworks supported by
-vagrant. I found Using VirtualBox together with vagrant is the most
-simple way to get started which is why I put it in this setup guide.
+VirtualBox is one out of some other virtualization frameworks supported by
+vagrant. Using VirtualBox together with vagrant is the most
+simple way to get started which is why this setup guide recommends it.
 Basically dice supports all virtualization frameworks supported by
 vagrant. That means it's also possible to run a dice build in kvm using
 libvirt as well as VMware, containers with docker and more. For more
@@ -79,9 +86,8 @@ documentation here:
 
   * https://docs.vagrantup.com/v2/providers/index.html
 
-If you don't plan to use virtual systems for building you can skip
-the following and head directly to the [BuildWorker](#buildworker)
-chapter
+In order to install vagrant, VirtualBox and the base box
+for running a build in a virtual system do the following:
 
 ### Vagrant and VirtualBox
 
@@ -92,6 +98,10 @@ chapter
   * As user root Install virtualbox >= v4.3 via zypper
 
     ```
+    $ zypper ar \
+      http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1 \
+      virtualbox
+
     $ zypper install virtualbox
     ```
 
@@ -151,7 +161,7 @@ Given you have imported the vagrant build box as described in
 example build as normal user by calling:
 
 ```
-$ cp -a /usr/share/doc/packages/dice/recipes/virtual/suse-13.1-JeOS /tmp
+$ rsync -zavL /usr/share/doc/packages/dice/recipes/virtual/suse-13.1-JeOS /tmp
 
 $ dice build /tmp/suse-13.1-JeOS
 ```
