@@ -32,7 +32,7 @@ while (my $line = <>) {
             undef @out;
         }
         my $date = qx /date --date="$1"/; chomp $date;
-        push @out, "------------------------------------------------------------------\n";
+        push @out, "-------------------------------------------------------------------\n";
         push @out, "$date - $name\@suse.de\n";
         undef $date;
         $ignore = 0;
