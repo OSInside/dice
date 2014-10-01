@@ -1,6 +1,10 @@
-#.vagrant
-#buildlog
-#*.build_results.tar
-#.checksum.sha256
-#config.scan
+# Files possibly created by a build
+# .vagrant
+# buildlog
+# *.build_results.tar
+# .checksum.sha256
+# config.scan
+
+testing/*
+
 package/*
