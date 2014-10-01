@@ -38,6 +38,7 @@ class BuildTask
   def perform_job
     job = @factory.job
     job.build
+    job.bundle
     job.get_result
   end
 end

@@ -61,6 +61,7 @@ describe BuildTask do
       job = double(Job)
       expect(@factory).to receive(:job).and_return(job)
       expect(job).to receive(:build)
+      expect(job).to receive(:bundle)
       expect(job).to receive(:get_result)
       @task.instance_eval{ perform_job }
     end

@@ -18,7 +18,7 @@ describe HostBuildSystem do
     it "calls rsync to transfer the recipe to the buildhost" do
       expect(Command).to receive(:run).with(
         "rsync", "-e", /ssh -i .*key\/vagrant/, "--rsync-path",
-        "sudo rsync", "-z", "-a", "-v", "--exclude", ".*", ".",
+        "sudo rsync", "-z", "-a", "-v", "--delete", "--exclude", ".*", ".",
         "vagrant@__VAGRANT__:/vagrant", {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)

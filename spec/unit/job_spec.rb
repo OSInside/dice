@@ -20,12 +20,29 @@ describe Job do
   describe "#build" do
     it "raises if build failed" do
       expect(@job).to receive(:prepare_build)
-      expect(Command).to receive(:run).and_raise(
+      expect(Command).to receive(:run).with(
+        "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
+        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile /buildlog"
+      ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
       expect(@job).to receive(:get_buildlog)
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.build }.to raise_error(Dice::Errors::BuildFailed)
+    end
+  end
+
+  describe "#bundle" do
+    it "raises if bundle failed" do
+      expect(Command).to receive(:run).with(
+        "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
+        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile /buildlog"
+      ).and_raise(
+        Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
+      )
+      expect(@job).to receive(:get_buildlog)
+      expect_any_instance_of(BuildSystem).to receive(:halt)
+      expect { @job.bundle }.to raise_error(Dice::Errors::BuildFailed)
     end
   end
 
@@ -35,7 +52,8 @@ describe Job do
       expect(Command).to receive(:run).
       with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
         "-i", "/home/ms/Project/dice/key/vagrant",
-        "vagrant@127.0.0.1", "sudo tar --exclude image-root -C /tmp/image -c .",
+        "vagrant@127.0.0.1",
+        "sudo tar --exclude image-root -C /tmp/bundle -cJ .",
         {:stdout=>nil}).
       and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
@@ -52,7 +70,8 @@ describe Job do
       expect(Command).to receive(:run).
         with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
           "-i", Dice.config.ssh_private_key,
-          "vagrant@127.0.0.1", "sudo rm -rf /tmp/image; sudo touch /buildlog"
+          "vagrant@127.0.0.1",
+          "sudo rm -rf /tmp/image /tmp/bundle; sudo touch /buildlog"
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.instance_eval{ prepare_build }}.

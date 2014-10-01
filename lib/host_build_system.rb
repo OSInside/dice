@@ -16,7 +16,7 @@ class HostBuildSystem < BuildSystem
     begin
       provision_output = Command.run(
         "rsync", "-e", "ssh -i #{@ssh_private_key}",
-        "--rsync-path", "sudo rsync", "-z", "-a", "-v",
+        "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
         "--exclude", ".*", ".", "#{@user}@#{@host}:/vagrant",
         :stdout => :capture
       )

@@ -61,10 +61,15 @@ class Cli
   LONGDESC
   arg "RECIPE-PATH"
   command :build do |c|
+    c.switch ["force", :f], :required => false, :negatable => false,
+      :desc => "Force building even if status is up to data"
     c.action do |global_options,options,args|
       recipe = shift_arg(args, "RECIPE-PATH")
       @task = BuildTask.new(recipe)
-      status = @task.build_status
+      status = Dice::Status::BuildRequired.new
+      if !options["force"]
+        status = @task.build_status
+      end
       if status.is_a?(Dice::Status::BuildRequired)
         @task.run
       else
