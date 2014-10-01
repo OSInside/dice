@@ -24,8 +24,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "cheetah", ">=0.4.0"
   s.add_dependency "gli", "~> 2.11.0"
-  s.add_dependency "pathname"
-  s.add_dependency "fileutils"
 
   s.files        = Dir["lib/**/*.rb", "bin/*", "COPYING"]
   s.executables  = "dice"
