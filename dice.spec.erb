@@ -101,6 +101,7 @@ Gem.path.unshift("%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/bundle/ru
 
 mkdir -p %{buildroot}/etc/bash_completion.d
 ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/COPYING
+ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/recipes
 ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/completion/dice.sh \
    %{buildroot}/etc/bash_completion.d/dice.sh
 
@@ -116,6 +117,7 @@ ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/completion/dice.sh \
 %{_libdir}/ruby/gems/%{rb_ver}/specifications/%{mod_full_name}.gemspec
 %config /etc/bash_completion.d/dice.sh
 %doc COPYING
+%doc recipes
 
 %files doc
 %defattr(-,root,root,-)

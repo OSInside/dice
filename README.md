@@ -1,8 +1,6 @@
 # Dice
 
-!!! code under development, not yet ready for use !!!
-
-dice is a simple build system for [KIWI](http://opensuse.github.com/kiwi)
+Dice is a simple build system for [KIWI](http://opensuse.github.com/kiwi)
 images using virtual instances controlled by vagrant or a directly
 contacted build machine. It can be used to fire up build jobs properly
 processed on e.g a cloud instance.
@@ -137,8 +135,23 @@ machine a dice worker the following software and configurations must exist:
 
 ## Installation
 
-TODO
+Dice is available as rpm package for the openSUSE 13.1 (x86\_64) distribution.
+Installation can be done via zypper as follows:
 
-## Usage
+```
+$ zypper ar http://download.opensuse.org/repositories/Virtualization:/Appliances/openSUSE_13.1/ dice
 
-    $ dice build path
+$ zypper in dice
+``` 
+
+## Dice it
+
+Given you have imported the vagrant build box as described in
+[Vagrant and VirtualBox](#vagrant-and-virtualbox) you can start an
+example build as normal user by calling:
+
+```
+$ cp -a /usr/share/doc/packages/dice/recipes/virtual/suse-13.1-JeOS /tmp
+
+$ dice build /tmp/suse-13.1-JeOS
+```
