@@ -1,7 +1,6 @@
-.vagrant
-buildlog
-*.build_results.tar
-*.build_results.tar.xz
-.checksum.sha256
-config.scan
+#.vagrant
+#buildlog
+#*.build_results.tar
+#.checksum.sha256
+#config.scan
 package/*
