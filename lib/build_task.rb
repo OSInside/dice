@@ -2,14 +2,18 @@ class BuildTask
   def initialize(recipe)
     Recipe.ok?(recipe)
     @factory = BuildSystemFactory.new(recipe)
+    @buildsystem = @factory.buildsystem
+    @job = @factory.job
   end
 
   def build_status
     status = Dice::Status::Unknown.new
+    if @buildsystem.is_busy?
+      return Dice::Status::BuildRunning.new
+    end
+    set_lock
     Solver.writeScan
-    if @factory.buildsystem.is_busy?
-      status = Dice::Status::BuildRunning.new
-    elsif !@factory.buildsystem.job_required?
+    if !@buildsystem.job_required?
       status = Dice::Status::UpToDate.new
     else
       status = Dice::Status::BuildRequired.new
@@ -18,27 +22,37 @@ class BuildTask
   end
 
   def run
-    @factory.buildsystem.up
-    @factory.buildsystem.provision
+    set_lock
+    @buildsystem.up
+    @buildsystem.provision
     perform_job
-    @factory.buildsystem.writeRecipeChecksum
-    @factory.buildsystem.halt
+    @buildsystem.writeRecipeChecksum
+    release_lock
+    @buildsystem.halt
   end
 
   def log
-    @factory.buildsystem.get_log
+    @buildsystem.get_log
+  end
+
+  def set_lock
+    @buildsystem.set_lock
+  end
+
+  def release_lock
+    @buildsystem.release_lock
   end
 
   def cleanup
-    @factory.buildsystem.halt
+    release_lock
+    @buildsystem.halt
   end
 
   private
 
   def perform_job
-    job = @factory.job
-    job.build
-    job.bundle
-    job.get_result
+    @job.build
+    @job.bundle
+    @job.get_result
   end
 end

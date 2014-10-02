@@ -2,6 +2,7 @@ class BuildSystem < Recipe
   def initialize(description)
     super(description)
     change_working_dir
+    @lock = ".lock"
   end
 
   def up
@@ -22,12 +23,6 @@ class BuildSystem < Recipe
     )
   end
 
-  def is_busy?
-    raise Dice::Errors::MethodNotImplemented.new(
-      "is_busy? method not implemented"
-    )
-  end
-
   def get_port
     raise Dice::Errors::MethodNotImplemented.new(
       "get_port method not implemented"
@@ -38,5 +33,18 @@ class BuildSystem < Recipe
     raise Dice::Errors::MethodNotImplemented.new(
       "get_ip method not implemented"
     )
+  end
+
+  def is_busy?
+    File.file?(@lock)
+  end
+
+  def set_lock
+    lockfile = File.open(@lock, "w")
+    lockfile.close
+  end
+
+  def release_lock
+    FileUtils.rm(@lock) if File.file?(@lock)
   end
 end

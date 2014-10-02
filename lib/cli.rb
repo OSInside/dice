@@ -105,6 +105,7 @@ class Cli
       task = BuildTask.new(recipe)
       status = task.build_status
       status.message
+      task.release_lock
     end
   end
 end

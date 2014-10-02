@@ -66,11 +66,13 @@ class Job
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info "Archiving failed"
+      result.close
       @buildsystem.halt
       raise Dice::Errors::ResultRetrievalFailed.new(
         "Archiving results failed with: #{e.stderr}"
       )
     end
+    result.close
   end
 
   private
@@ -111,5 +113,6 @@ class Job
         "Reading log file failed with: #{e.stderr}"
       )
     end
+    logfile.close
   end
 end

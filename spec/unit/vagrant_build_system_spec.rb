@@ -63,17 +63,6 @@ describe VagrantBuildSystem do
     end
   end
 
-  describe "#is_busy?" do
-    it "checks busy state via pidof" do
-      expect(Command).to receive(:run).with(
-        "vagrant", "ssh", "-c", "pidof -x kiwi"
-      ).and_raise(
-        Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
-      )
-      expect(@system.is_busy?).to eq(false)
-    end
-  end
-
   describe "#get_port" do
     it "extracts forwarded port from vagrant up output" do
       expect(@system.get_port).to eq("2200")

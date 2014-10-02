@@ -45,17 +45,6 @@ class VagrantBuildSystem < BuildSystem
     reset_working_dir
   end
 
-  def is_busy?
-    busy_state = false
-    begin
-      Command.run("vagrant", "ssh", "-c", "pidof -x kiwi"
-    )
-    rescue Cheetah::ExecutionFailed
-      busy_state = false
-    end
-    busy_state
-  end
-
   def get_port
     port = nil
     if @up_output =~ /--.*=> (\d+).*/

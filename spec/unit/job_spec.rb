@@ -48,16 +48,18 @@ describe Job do
 
   describe "#get_result" do
     it "raises if result retrieval failed" do
-      expect(File).to receive(:open)
+      result = double(File)
+      expect(File).to receive(:open).and_return(result)
       expect(Command).to receive(:run).
       with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
         "-i", "/home/ms/Project/dice/key/vagrant",
         "vagrant@127.0.0.1",
         "sudo tar --exclude image-root -C /tmp/bundle -c .",
-        {:stdout=>nil}).
+        {:stdout=>result}).
       and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
+      expect(result).to receive(:close)
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.get_result }.to raise_error(
         Dice::Errors::ResultRetrievalFailed
