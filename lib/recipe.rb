@@ -5,7 +5,7 @@ class Recipe
     recipe = Pathname.new(description)
     if !File.exists?(recipe) || !File.directory?(recipe.realpath)
       raise Dice::Errors::NoDirectory.new(
-        "Need a description directory"
+        "Need a description directory but got #{recipe}"
       )
     end
     @basepath = recipe.realpath.to_s
@@ -18,12 +18,12 @@ class Recipe
     kiwiFile = File.file?(description + "/config.xml")
     if !kiwiFile
       raise Dice::Errors::NoKIWIConfig.new(
-        "Need a kiwi config.xml"
+        "Need a kiwi config.xml in #{description}"
       )
     end
     if !vagrantFile && !diceFile
       raise Dice::Errors::NoConfigFile.new(
-        "Need a Vagrantfile or Dicefile"
+        "Need a Vagrantfile or Dicefile in #{description}"
       )
     end
     if diceFile

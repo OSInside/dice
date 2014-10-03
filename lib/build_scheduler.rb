@@ -17,7 +17,7 @@ class BuildScheduler
       task = BuildTask.new(recipe)
       task.run
     rescue Dice::Errors::DiceError => e
-       Logger.info e.message
+       Logger.error e.message
        run_ok = false
     end
     run_ok

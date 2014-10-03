@@ -10,7 +10,7 @@ class VagrantBuildSystem < BuildSystem
       @up_output = Command.run("vagrant", "up", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::VagrantUpFailed.new(
-        "Starting up system failed with: #{e.stderr}"
+        "Starting up system for #{basepath} failed with: #{e.stderr}"
       )
     end
     Logger.info @up_output
@@ -38,7 +38,7 @@ class VagrantBuildSystem < BuildSystem
       halt_output = Command.run("vagrant", "halt", "-f", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::VagrantHaltFailed.new(
-        "Stopping system failed with: #{e.stderr}"
+        "System stop for #{get_basepath} failed with: #{e.stderr}"
       )
     end
     Logger.info halt_output
@@ -50,8 +50,12 @@ class VagrantBuildSystem < BuildSystem
     if @up_output =~ /--.*=> (\d+).*/
       port = $1
     else
+      if !@up_output
+        @up_output = "<empty-output>"
+      end
       raise Dice::Errors::GetPortFailed.new(
-        "Port retrieval failed, no match in machine up output: #{@up_output}"
+        "Port retrieval failed for #{get_basepath}, " +
+        "no match in machine up output: #{@up_output}"
       )
     end
     port

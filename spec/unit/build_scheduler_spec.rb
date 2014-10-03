@@ -1,6 +1,11 @@
 require_relative "spec_helper"
 
 describe BuildScheduler do
+   before(:each) do
+     allow(Logger).to receive(:info)
+     allow(Logger).to receive(:error)
+   end
+
    describe "#self.run_tasks" do
      it "calls run on sorted list of entries in a given directory" do
        dir_list = ["a", "c", "b"]

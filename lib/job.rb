@@ -5,9 +5,9 @@ class Job
     end
     @job_user = Dice.config.ssh_user
     @job_ssh_private_key = Dice.config.ssh_private_key
-    recipe_path = system.get_basepath
-    @buildlog = recipe_path + "/buildlog"
-    @archive  = recipe_path + ".build_results.tar"
+    @recipe_path = system.get_basepath
+    @buildlog = @recipe_path + "/buildlog"
+    @archive  = @recipe_path + ".build_results.tar"
     @buildsystem = system
     @ip = system.get_ip
     @port = system.get_port
@@ -29,7 +29,7 @@ class Job
       get_buildlog
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
-        "Build failed in kiwi --build for details check: #{@buildlog}"
+        "Build for #{@recipe_path} failed for details check: #{@buildlog}"
       )
     end
   end
@@ -49,7 +49,7 @@ class Job
       get_buildlog
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
-        "Build failed in kiwi --bundle-build for details check: #{@buildlog}"
+        "Bundling for #{@recipe_path} failed for details check: #{@buildlog}"
       )
     end
   end
@@ -69,7 +69,7 @@ class Job
       result.close
       @buildsystem.halt
       raise Dice::Errors::ResultRetrievalFailed.new(
-        "Archiving results failed with: #{e.stderr}"
+        "Archiving results for #{@recipe_path} failed with: #{e.stderr}"
       )
     end
     result.close
@@ -91,7 +91,7 @@ class Job
       Logger.info "Preparation failed"
       @buildsystem.halt
       raise Dice::Errors::PrepareBuildFailed.new(
-        "Prepare build env failed with: #{e.stderr}"
+        "Prepare build environment for #{@recipe_path} failed with: #{e.stderr}"
       )
     end
   end
@@ -110,7 +110,7 @@ class Job
       FileUtils.rm logfile
       @buildsystem.halt
       raise Dice::Errors::LogFileRetrievalFailed.new(
-        "Reading log file failed with: #{e.stderr}"
+        "Reading log file for build #{@recipe_path} failed with: #{e.stderr}"
       )
     end
     logfile.close

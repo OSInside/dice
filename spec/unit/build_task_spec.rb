@@ -4,7 +4,6 @@ describe BuildTask do
   before(:each) do
     @factory = double(BuildSystemFactory)
     @buildsystem = double(BuildSystem)
-    @job = double(Job)
     expect(Recipe).to receive(:ok?)
     expect(BuildSystemFactory).to receive(:new).and_return(
       @factory
@@ -12,12 +11,8 @@ describe BuildTask do
     expect(@factory).to receive(:buildsystem).and_return(
       @buildsystem
     )
-    expect(@factory).to receive(:job).and_return(
-      @job
-    )
     @task = BuildTask.new("foo")
     @task.instance_variable_set(:@buildsystem, @buildsystem)
-    @task.instance_variable_set(:@job, @job)
   end
 
   describe "#build_status" do
@@ -83,9 +78,11 @@ describe BuildTask do
 
   describe "#perform_job" do
     it "runs a job and get the result" do
-      expect(@job).to receive(:build)
-      expect(@job).to receive(:bundle)
-      expect(@job).to receive(:get_result)
+      job = double(Job)
+      expect(@factory).to receive(:job).and_return(job)
+      expect(job).to receive(:build)
+      expect(job).to receive(:bundle)
+      expect(job).to receive(:get_result)
       @task.instance_eval{ perform_job }
     end
   end

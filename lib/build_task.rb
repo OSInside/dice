@@ -3,7 +3,6 @@ class BuildTask
     Recipe.ok?(recipe)
     @factory = BuildSystemFactory.new(recipe)
     @buildsystem = @factory.buildsystem
-    @job = @factory.job
     @options = options
   end
 
@@ -13,7 +12,12 @@ class BuildTask
       return Dice::Status::BuildRunning.new
     end
     set_lock
-    Solver.writeScan
+    begin
+      Solver.writeScan
+    rescue Dice::Errors::DiceError => e
+      release_lock
+      raise e
+    end
     if !@buildsystem.job_required?
       status = Dice::Status::UpToDate.new
     else
@@ -61,8 +65,9 @@ class BuildTask
   private
 
   def perform_job
-    @job.build
-    @job.bundle
-    @job.get_result
+    job = @factory.job
+    job.build
+    job.bundle
+    job.get_result
   end
 end

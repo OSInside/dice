@@ -24,7 +24,7 @@ class HostBuildSystem < BuildSystem
       Logger.info "Provisioning failed"
       halt
       raise Dice::Errors::HostProvisionFailed.new(
-        "Provisioning system failed with: #{e.stderr}"
+        "Provisioning system for #{@basepath} failed with: #{e.stderr}"
       )
     end
     Logger.info provision_output

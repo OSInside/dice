@@ -14,7 +14,7 @@ class ConnectionVagrantBuildSystem < Connection
         details = "No build process writing to logfile"
       end
       raise Dice::Errors::NoLogFile.new(
-        "Logfile not available: #{details}"
+        "Logfile not available for #{get_basepath}: #{details}"
       )
     end
     pid = Connection.strip_fuser_pid(fuser_data)
