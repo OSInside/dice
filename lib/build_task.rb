@@ -1,12 +1,13 @@
 class BuildTask
-  def initialize(recipe)
+  def initialize(recipe, options = Hash.new)
     Recipe.ok?(recipe)
     @factory = BuildSystemFactory.new(recipe)
     @buildsystem = @factory.buildsystem
     @job = @factory.job
+    @options = options
   end
 
-  def build_status(keep_locked = false)
+  def build_status
     status = Dice::Status::Unknown.new
     if @buildsystem.is_busy?
       return Dice::Status::BuildRunning.new
@@ -18,18 +19,26 @@ class BuildTask
     else
       status = Dice::Status::BuildRequired.new
     end
-    release_lock if !keep_locked
+    release_lock
     status
   end
 
   def run
-    set_lock
-    @buildsystem.up
-    @buildsystem.provision
-    perform_job
-    @buildsystem.writeRecipeChecksum
-    release_lock
-    @buildsystem.halt
+    status = Dice::Status::BuildRequired.new
+    if !@options["force"]
+      status = build_status
+    end
+    if status.is_a?(Dice::Status::BuildRequired)
+      set_lock
+      @buildsystem.up
+      @buildsystem.provision
+      perform_job
+      @buildsystem.writeRecipeChecksum
+      release_lock
+      @buildsystem.halt
+    else
+      status.message
+    end
   end
 
   def log

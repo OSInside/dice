@@ -53,6 +53,22 @@ class Cli
     res
   end
 
+  desc "Schedule build tasks from recipe directory"
+  long_desc <<-LONGDESC
+    Start a build task for each recipe found in the given directory.
+    Each task runs in an independent thread. In case of an error or
+    a blocked build system the build task is not repeated automatically.
+    It's possible to reschedule the build tasks by placing the call
+    into a cronjob
+  LONGDESC
+  arg "RECIPE-DIR"
+  command :schedule do |c|
+    c.action do |global_options,options,args|
+      dir = shift_arg(args, "RECIPE-DIR")
+      BuildScheduler.run_tasks(dir)
+    end
+  end
+
   desc "Build from recipe"
   long_desc <<-LONGDESC
     Build image from a given recipe and store the result in a tarball
@@ -65,29 +81,8 @@ class Cli
       :desc => "Force building even if status is up to data"
     c.action do |global_options,options,args|
       recipe = shift_arg(args, "RECIPE-PATH")
-      @task = BuildTask.new(recipe)
-      status = Dice::Status::BuildRequired.new
-      # asking for the build_status will lock the buildsystem if
-      # it is not already locked. At the end of the build_status
-      # call the lock is released by default. If the build status
-      # determines that a new build is required we call the run
-      # method which also locks the buildsystem. If we don't
-      # tell the build_status method to keep the log open we
-      # produce a potential lock raise in the time between the
-      # end of build_status and the start of run where the
-      # buildsystem should be in nonstop in locked state. In order
-      # to stay locked we pass keep_locked set to true when
-      # build_status is called. The lock is released properly at
-      # the end of run or on error
-      keep_locked = true
-      if !options["force"]
-        status = @task.build_status(keep_locked)
-      end
-      if status.is_a?(Dice::Status::BuildRequired)
-        @task.run
-      else
-        status.message
-      end
+      @task = BuildTask.new(recipe, options)
+      @task.run
     end
   end
 

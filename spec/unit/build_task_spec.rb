@@ -34,18 +34,13 @@ describe BuildTask do
       expect(@buildsystem).to receive(:is_busy?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRunning)
     end
-
-    it "keeps the lock open if specified" do
-      expect(@buildsystem).to receive(:is_busy?).and_return(false)
-      expect(@task).to receive(:set_lock)
-      expect(Solver).to receive(:writeScan)
-      expect(@buildsystem).to receive(:job_required?).and_return(true)
-      expect(@task.build_status(true)).to be_a(Dice::Status::BuildRequired)
-    end
   end
 
   describe "#run" do
     it "starts a box and runs a job" do
+      expect(@task).to receive(:build_status).and_return(
+        Dice::Status::BuildRequired.new
+      )
       expect(@task).to receive(:set_lock)
       expect(@buildsystem).to receive(:up)
       expect(@buildsystem).to receive(:provision)
