@@ -67,8 +67,21 @@ class Cli
       recipe = shift_arg(args, "RECIPE-PATH")
       @task = BuildTask.new(recipe)
       status = Dice::Status::BuildRequired.new
+      # asking for the build_status will lock the buildsystem if
+      # it is not already locked. At the end of the build_status
+      # call the lock is released by default. If the build status
+      # determines that a new build is required we call the run
+      # method which also locks the buildsystem. If we don't
+      # tell the build_status method to keep the log open we
+      # produce a potential lock raise in the time between the
+      # end of build_status and the start of run where the
+      # buildsystem should be in nonstop in locked state. In order
+      # to stay locked we pass keep_locked set to true when
+      # build_status is called. The lock is released properly at
+      # the end of run or on error
+      keep_locked = true
       if !options["force"]
-        status = @task.build_status
+        status = @task.build_status(keep_locked)
       end
       if status.is_a?(Dice::Status::BuildRequired)
         @task.run
@@ -105,7 +118,6 @@ class Cli
       task = BuildTask.new(recipe)
       status = task.build_status
       status.message
-      task.release_lock
     end
   end
 end

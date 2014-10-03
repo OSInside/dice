@@ -6,7 +6,7 @@ class BuildTask
     @job = @factory.job
   end
 
-  def build_status
+  def build_status(keep_locked = false)
     status = Dice::Status::Unknown.new
     if @buildsystem.is_busy?
       return Dice::Status::BuildRunning.new
@@ -18,6 +18,7 @@ class BuildTask
     else
       status = Dice::Status::BuildRequired.new
     end
+    release_lock if !keep_locked
     status
   end
 
