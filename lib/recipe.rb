@@ -3,27 +3,29 @@ class Recipe
 
   def initialize(description)
     recipe = Pathname.new(description)
-    if !File.exists?(recipe) || !File.directory?(recipe.realpath)
-      raise Dice::Errors::NoDirectory.new(
-        "Need a description directory but got #{recipe}"
-      )
-    end
     @basepath = recipe.realpath.to_s
     @cwd = Pathname.new(Dir.pwd).realpath.to_s
   end
 
   def self.ok?(description)
+    recipe = Pathname.new(description)
+    Logger.set_recipe_dir(recipe.basename)
+    if !File.exists?(recipe) || !File.directory?(recipe.realpath)
+      raise Dice::Errors::NoDirectory.new(
+        "Given recipe does not exist or is not a directory"
+      )
+    end
     vagrantFile = File.file?(description + "/Vagrantfile")
     diceFile = File.file?(description + "/Dicefile")
     kiwiFile = File.file?(description + "/config.xml")
     if !kiwiFile
       raise Dice::Errors::NoKIWIConfig.new(
-        "Need a kiwi config.xml in #{description}"
+        "No kiwi config.xml found"
       )
     end
     if !vagrantFile && !diceFile
       raise Dice::Errors::NoConfigFile.new(
-        "Need a Vagrantfile or Dicefile in #{description}"
+        "No Vagrantfile or Dicefile found"
       )
     end
     if diceFile

@@ -11,18 +11,6 @@ class DiceConfig
     # default ssh user is vagrant
     @ssh_user = "vagrant"
   end
-
-  def buildhost=(name) 
-    @buildhost = name
-  end
-
-  def ssh_private_key=(key)
-    @ssh_private_key = key
-  end
-
-  def ssh_user=(user)
-    @ssh_user = user
-  end
 end
 
 module Dice

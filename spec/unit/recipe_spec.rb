@@ -7,7 +7,7 @@ describe Recipe do
 
   describe "#initialize" do
     it "raises if description does not exist or is no directory" do
-      expect { Recipe.new("foo") }.to raise_error(Dice::Errors::NoDirectory)
+      expect { Recipe.new("foo") }.to raise_error(Errno::ENOENT)
     end
 
     it "returns a Recipe for good recipe" do
