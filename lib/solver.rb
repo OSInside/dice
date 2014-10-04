@@ -11,7 +11,7 @@ class Solver
       )
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::SolvePackagesFailed.new(
-        "kiwi packager solver failed with:\n#{e.stderr}"
+        "kiwi packager solver for #{Dir.pwd} failed with:\n#{e.stderr}"
       )
     end
     recipe_scan = File.open("config.scan", "w")
