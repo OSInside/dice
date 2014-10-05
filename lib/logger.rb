@@ -28,11 +28,16 @@ class Logger
     end
   end
 
-  def self.error(*message)
-    message.each do |line|
-      line.gsub!(/\n/,"\n#{prefix}: ")
-      STDERR.puts "#{prefix}: #{line}".red
+  def self.error(message, logfile = nil)
+    if logfile
+      FileUtils.mkdir_p File.dirname(logfile)
+      error_log = File.new(logfile, "w")
+      error_log.puts "$ dice #{ARGV.join(" ")}\n"
+      error_log.puts message
+      error_log.close
     end
+    message.gsub!(/\n/,"\n#{prefix}: ")
+    STDERR.puts "#{prefix}: #{message}".red
   end
 
   def self.setup(arguments)

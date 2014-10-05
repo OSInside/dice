@@ -6,6 +6,10 @@ class BuildTask
     @options = options
   end
 
+  def recipe_dir
+    @buildsystem.get_basepath
+  end
+
   def build_status
     status = Dice::Status::Unknown.new
     if @buildsystem.is_busy?

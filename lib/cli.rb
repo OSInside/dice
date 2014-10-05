@@ -8,6 +8,14 @@ class Cli
   switch :debug, :negatable => false, :desc => "Enable debug mode"
   switch [:help, :h], :negatable => false, :desc => "Show help"
 
+  def self.error_log_from_task
+    error_log = nil
+    if @task
+      error_log = @task.recipe_dir + "/.dice/build_error.log"
+    end
+    error_log
+  end
+
   def self.handle_error(e)
     case e
     when GLI::UnknownCommandArgument, GLI::UnknownGlobalArgument,
@@ -17,22 +25,23 @@ class Cli
       run(command << "--help")
       exit 1
     when Dice::Errors::DiceError
-      Logger.error(e.message)
+      Logger.error(e.message, error_log_from_task)
       exit 1
     when SystemExit
       raise
     when SignalException
-      Logger.error("dice was aborted with signal #{e.signo}")
+      Logger.error(
+        "dice was aborted with signal #{e.signo}", error_log_from_task
+      )
       if @task
         @task.cleanup
       end
       exit 1
     else
-      Logger.error("dice unexpected error")
-      result = ""
+      result = "dice unexpected error"
       if e.backtrace && !e.backtrace.empty?
-        result << "Backtrace:\n"
-        result << "#{e.backtrace.join("\n")}\n\n"
+        result += "\nBacktrace:\n"
+        result += "#{e.backtrace.join("\n")}\n\n"
       end
       Logger.error(result)
       exit 1

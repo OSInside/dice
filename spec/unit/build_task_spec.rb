@@ -55,6 +55,13 @@ describe BuildTask do
     end
   end
 
+  describe "#recipe_dir" do
+    it "ask buildsystem for base path" do
+      expect(@buildsystem).to receive(:get_basepath)
+      @task.recipe_dir
+    end
+  end
+
   describe "#cleanup" do
     it "calls halt from the build system" do
       expect(@task).to receive(:release_lock)
