@@ -1,0 +1,4 @@
+Dice.configure do |config|
+  config.buildhost = "localhost"
+  config.ssh_user = "root"
+end

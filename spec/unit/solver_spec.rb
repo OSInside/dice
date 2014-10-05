@@ -19,7 +19,7 @@ describe Solver do
         "bob <imagescan\n<package=foo"
       )
       recipe_scan = double(File)
-      expect(File).to receive(:open).with("foo.scan", "w").
+      expect(File).to receive(:open).with("foo/.dice/scan", "w").
         and_return(recipe_scan)
       expect(recipe_scan).to receive(:write).with("<package=foo\n")
       expect(recipe_scan).to receive(:close)

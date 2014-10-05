@@ -1,5 +1,5 @@
 class Recipe
-  @@digest = ".checksum.sha256"
+  @@digest = ".dice/checksum.sha256"
 
   def initialize(description)
     recipe = Pathname.new(description)
@@ -31,6 +31,10 @@ class Recipe
     if diceFile
       load description + "/Dicefile"
     end
+    metadir = recipe.realpath.to_s + "/.dice"
+    if !File.directory?(metadir)
+      FileUtils.mkdir(metadir)
+    end
     true
   end
 
@@ -45,7 +49,7 @@ class Recipe
 
   def writeRecipeChecksum
     digest = createDigest
-    digest_file = File.new(@basepath+@@digest, "w")
+    digest_file = File.new(@basepath+"/"+@@digest, "w")
     digest_file.puts digest
     digest_file.close
   end

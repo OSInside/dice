@@ -25,6 +25,12 @@ describe Recipe do
       expect { Recipe.ok?("spec/helper/recipe_missing_config.xml") }.
         to raise_error(Dice::Errors::NoKIWIConfig)
     end
+
+    it "loads Dicefile and creates .dice dir" do
+      expect(Recipe).to receive(:load)
+      expect(FileUtils).to receive(:mkdir).with(/recipe_good\/.dice/)
+      Recipe.ok?("spec/helper/recipe_good")
+    end
   end
 
   describe "#get_basepath" do
@@ -63,7 +69,7 @@ describe Recipe do
       digest_file = double(File)
       expect(@recipe).to receive(:createDigest).and_return("foo")
       expect(File).to receive(:new).with(
-        "#{@recipe.get_basepath}.checksum.sha256", "w"
+        "#{@recipe.get_basepath}/.dice/checksum.sha256", "w"
       ).and_return(digest_file)
       expect(digest_file).to receive(:puts)
       expect(digest_file).to receive(:close)
@@ -73,7 +79,7 @@ describe Recipe do
 
   describe "#readDigest" do
     it "reads and returns current digest" do
-      expect(File).to receive(:read).with(".checksum.sha256").
+      expect(File).to receive(:read).with(".dice/checksum.sha256").
         and_return("foo")
       expect(@recipe.instance_eval{ readDigest }).to eq("foo")
     end

@@ -1,9 +1,9 @@
 # Files possibly created by a build
 # .vagrant
-# .buildlog
-# .build_results.tar
-# .checksum.sha256
-# .scan
+# .dice/buildlog
+# .dice/build_results.tar
+# .dice/checksum.sha256
+# .dice/scan
 
 testing/*
 
