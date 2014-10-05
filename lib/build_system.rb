@@ -2,7 +2,7 @@ class BuildSystem < Recipe
   def initialize(description)
     super(description)
     change_working_dir
-    @lock = ".lock"
+    @lock = get_basepath + "/.dice/lock"
   end
 
   def up
@@ -40,7 +40,7 @@ class BuildSystem < Recipe
   end
 
   def set_lock
-    lockfile = File.open(@lock, "w")
+    lockfile = File.new(@lock, "w")
     lockfile.close
   end
 

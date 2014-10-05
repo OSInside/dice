@@ -5,6 +5,7 @@
 # .dice/build_results.tar
 # .dice/checksum.sha256
 # .dice/scan
+# .dice/lock
 
 testing/*
 

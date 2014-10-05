@@ -26,6 +26,7 @@ class Cli
       exit 1
     when Dice::Errors::DiceError
       Logger.error(e.message, error_log_from_task)
+      @task.release_lock if @task
       exit 1
     when SystemExit
       raise
@@ -33,9 +34,7 @@ class Cli
       Logger.error(
         "dice was aborted with signal #{e.signo}", error_log_from_task
       )
-      if @task
-        @task.cleanup
-      end
+      @task.cleanup if @task
       exit 1
     else
       result = "dice unexpected error"
