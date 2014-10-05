@@ -32,7 +32,7 @@ describe BuildSystem do
 
   describe "#is_busy?" do
     it "check if a lock file exists" do
-      expect(File).to receive(:file?).with(".lock")
+      expect(File).to receive(:file?).with(/\.dice\/lock/)
       @system.is_busy?
     end
   end
@@ -40,7 +40,9 @@ describe BuildSystem do
   describe "#set_lock" do
     it "creates a lock file" do
       lockfile = double(File)
-      expect(File).to receive(:open).with(".lock", "w").and_return(lockfile)
+      expect(File).to receive(:new).with(/\.dice\/lock/, "w").and_return(
+        lockfile
+      )
       expect(lockfile).to receive(:close)
       @system.set_lock
     end
@@ -48,8 +50,8 @@ describe BuildSystem do
 
   describe "#release_lock" do
     it "removes a possibly existing lock file" do
-      expect(File).to receive(:file?).with(".lock").and_return(true)
-      expect(FileUtils).to receive(:rm).with(".lock")
+      expect(File).to receive(:file?).with(/\.dice\/lock/).and_return(true)
+      expect(FileUtils).to receive(:rm).with(/\.dice\/lock/)
       @system.release_lock
     end
   end
