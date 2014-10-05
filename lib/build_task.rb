@@ -43,9 +43,17 @@ class BuildTask
       perform_job
       @buildsystem.writeRecipeChecksum
       release_lock
+      cleanup_build_error_log
       @buildsystem.halt
     else
       status.message
+    end
+  end
+
+  def cleanup_build_error_log
+    error_log = Cli.error_log_from_task
+    if error_log && File.file?(error_log)
+      FileUtils.rm(error_log)
     end
   end
 

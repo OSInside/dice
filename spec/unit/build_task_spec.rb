@@ -55,6 +55,15 @@ describe BuildTask do
     end
   end
 
+  describe "#cleanup_build_error_log" do
+    it "removes the build_error.log file" do
+      expect(Cli).to receive(:error_log_from_task).and_return("foo")
+      expect(File).to receive(:file?).and_return(true)
+      expect(FileUtils).to receive(:rm).with("foo")
+      @task.cleanup_build_error_log
+    end
+  end
+
   describe "#recipe_dir" do
     it "ask buildsystem for base path" do
       expect(@buildsystem).to receive(:get_basepath)
