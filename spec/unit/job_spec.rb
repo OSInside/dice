@@ -83,7 +83,7 @@ describe Job do
 
   describe "#get_buildlog" do
     it "retrieves the buildlog form the buildsystem" do
-      expect(File).to receive(:open).with(@basepath + "/buildlog", "w")
+      expect(File).to receive(:open).with(@basepath + ".buildlog", "w")
       expect(Command).to receive(:run).
         with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
           "-i", Dice.config.ssh_private_key,

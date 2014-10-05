@@ -62,8 +62,9 @@ describe Recipe do
     it "wants to create .checksum.sha256" do
       digest_file = double(File)
       expect(@recipe).to receive(:createDigest).and_return("foo")
-      expect(File).to receive(:new).with(".checksum.sha256", "w").
-        and_return(digest_file)
+      expect(File).to receive(:new).with(
+        "#{@recipe.get_basepath}.checksum.sha256", "w"
+      ).and_return(digest_file)
       expect(digest_file).to receive(:puts)
       expect(digest_file).to receive(:close)
       @recipe.writeRecipeChecksum

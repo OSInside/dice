@@ -45,7 +45,7 @@ class Recipe
 
   def writeRecipeChecksum
     digest = createDigest
-    digest_file = File.new(@@digest, "w")
+    digest_file = File.new(@basepath+@@digest, "w")
     digest_file.puts digest
     digest_file.close
   end

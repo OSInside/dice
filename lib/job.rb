@@ -6,7 +6,7 @@ class Job
     @job_user = Dice.config.ssh_user
     @job_ssh_private_key = Dice.config.ssh_private_key
     recipe_path = system.get_basepath
-    @buildlog = recipe_path + "/buildlog"
+    @buildlog = recipe_path + ".buildlog"
     @archive  = recipe_path + ".build_results.tar"
     @buildsystem = system
     @ip = system.get_ip

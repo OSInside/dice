@@ -4,12 +4,12 @@ describe Solver do
   describe "#self.writeScan" do
     it "raises if kiwi info scan failed" do
       expect(Command).to receive(:run).with(
-        "/usr/sbin/kiwi", "--info", ".",
+        "/usr/sbin/kiwi", "--info", "foo",
         "--select", "packages", "--logfile", "terminal", :stdout => :capture
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
-      expect { Solver.writeScan }.to raise_error(
+      expect { Solver.writeScan("foo") }.to raise_error(
         Dice::Errors::SolvePackagesFailed
       )
     end
@@ -19,11 +19,11 @@ describe Solver do
         "bob <imagescan\n<package=foo"
       )
       recipe_scan = double(File)
-      expect(File).to receive(:open).with("config.scan", "w").
+      expect(File).to receive(:open).with("foo.scan", "w").
         and_return(recipe_scan)
       expect(recipe_scan).to receive(:write).with("<package=foo\n")
       expect(recipe_scan).to receive(:close)
-      Solver.writeScan
+      Solver.writeScan("foo")
     end
   end
 end

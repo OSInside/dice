@@ -19,6 +19,7 @@ describe BuildTask do
     it "writes new config.scan and returns with a BuildRequired status" do
       expect(@buildsystem).to receive(:is_busy?).and_return(false)
       expect(@task).to receive(:set_lock)
+      expect(@buildsystem).to receive(:get_basepath)
       expect(Solver).to receive(:writeScan)
       expect(@buildsystem).to receive(:job_required?).and_return(true)
       expect(@task).to receive(:release_lock)

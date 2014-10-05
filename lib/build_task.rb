@@ -13,7 +13,7 @@ class BuildTask
     end
     set_lock
     begin
-      Solver.writeScan
+      Solver.writeScan(@buildsystem.get_basepath)
     rescue Dice::Errors::DiceError => e
       release_lock
       raise e
