@@ -6,10 +6,6 @@ class BuildTask
     @options = options
   end
 
-  def recipe_dir
-    @buildsystem.get_basepath
-  end
-
   def build_status
     status = Dice::Status::Unknown.new
     if @buildsystem.is_busy?
@@ -22,10 +18,13 @@ class BuildTask
       release_lock
       raise e
     end
-    if !@buildsystem.job_required?
-      status = Dice::Status::UpToDate.new
-    else
+    log = error_log
+    if @buildsystem.job_required?
       status = Dice::Status::BuildRequired.new
+    elsif log && File.file?(log)
+      status = Dice::Status::BuildErrorExists.new(log)
+    else
+      status = Dice::Status::UpToDate.new
     end
     release_lock
     status
@@ -51,10 +50,16 @@ class BuildTask
   end
 
   def cleanup_build_error_log
-    error_log = Cli.error_log_from_task
-    if error_log && File.file?(error_log)
-      FileUtils.rm(error_log)
+    log = error_log
+    if log && File.file?(log)
+      FileUtils.rm(log)
     end
+  end
+
+  def error_log
+    recipe_dir = @buildsystem.get_basepath
+    error_log = recipe_dir + "/.dice/build_error.log"
+    error_log
   end
 
   def log

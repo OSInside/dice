@@ -21,6 +21,7 @@ describe BuildTask do
       expect(@task).to receive(:set_lock)
       expect(@buildsystem).to receive(:get_basepath)
       expect(Solver).to receive(:writeScan)
+      expect(@task).to receive(:error_log)
       expect(@buildsystem).to receive(:job_required?).and_return(true)
       expect(@task).to receive(:release_lock)
       expect(@task.build_status).to be_a(Dice::Status::BuildRequired)
@@ -43,6 +44,7 @@ describe BuildTask do
       expect(@task).to receive(:perform_job)
       expect(@buildsystem).to receive(:writeRecipeChecksum)
       expect(@task).to receive(:release_lock)
+      expect(@task).to receive(:cleanup_build_error_log)
       expect(@buildsystem).to receive(:halt)
       @task.run
     end
@@ -57,17 +59,17 @@ describe BuildTask do
 
   describe "#cleanup_build_error_log" do
     it "removes the build_error.log file" do
-      expect(Cli).to receive(:error_log_from_task).and_return("foo")
+      expect(@task).to receive(:error_log).and_return("foo")
       expect(File).to receive(:file?).and_return(true)
       expect(FileUtils).to receive(:rm).with("foo")
       @task.cleanup_build_error_log
     end
   end
 
-  describe "#recipe_dir" do
-    it "ask buildsystem for base path" do
-      expect(@buildsystem).to receive(:get_basepath)
-      @task.recipe_dir
+  describe "#error_log" do
+    it "returns build_error.log file name for recipe" do
+      expect(@buildsystem).to receive(:get_basepath).and_return("foo")
+      expect(@task.error_log).to eq("foo/.dice/build_error.log")
     end
   end
 

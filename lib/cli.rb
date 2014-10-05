@@ -11,7 +11,7 @@ class Cli
   def self.error_log_from_task
     error_log = nil
     if @task
-      error_log = @task.recipe_dir + "/.dice/build_error.log"
+      error_log = @task.error_log
     end
     error_log
   end
