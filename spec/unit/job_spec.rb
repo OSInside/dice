@@ -22,7 +22,7 @@ describe Job do
       expect(@job).to receive(:prepare_build)
       expect(Command).to receive(:run).with(
         "ssh", "-T", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile /buildlog"
+        /key\/vagrant/, "vagrant@127.0.0.1", "sudo -s kiwi --build /vagrant -d /tmp/image --logfile /buildlog"
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
@@ -36,7 +36,7 @@ describe Job do
     it "raises if bundle failed" do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile /buildlog"
+        /key\/vagrant/, "vagrant@127.0.0.1", "sudo -s kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile /buildlog"
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )

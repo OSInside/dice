@@ -11,7 +11,6 @@ class Job
     @buildsystem = system
     @ip = system.get_ip
     @port = system.get_port
-    @kiwi = "/usr/sbin/kiwi"
   end
 
   def build
@@ -22,7 +21,7 @@ class Job
       Command.run(
         "ssh", "-T", "-o", "StrictHostKeyChecking=no", "-p", @port,
         "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo #{@kiwi} #{build_opts}"
+        "sudo -s kiwi #{build_opts}"
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info "Build failed"
@@ -42,7 +41,7 @@ class Job
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
         "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo #{@kiwi} #{bundle_opts}"
+        "sudo -s kiwi #{bundle_opts}"
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info "Bundler failed"
