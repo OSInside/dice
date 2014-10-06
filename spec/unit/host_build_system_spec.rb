@@ -17,9 +17,10 @@ describe HostBuildSystem do
   describe "#provision" do
     it "calls rsync to transfer the recipe to the buildhost" do
       expect(Command).to receive(:run).with(
-        "rsync", "-e", /ssh -i .*key\/vagrant/, "--rsync-path",
-        "sudo rsync", "-z", "-a", "-v", "--delete", "--exclude", ".*", ".",
-        "vagrant@__VAGRANT__:/vagrant", {:stdout=>:capture}
+        "rsync", "-e", /ssh -o StrictHostKeyChecking=no -i .*key\/vagrant/,
+        "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
+        "--exclude", ".*", ".", "vagrant@__VAGRANT__:/vagrant",
+        {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
@@ -33,8 +34,8 @@ describe HostBuildSystem do
   describe "#halt" do
     it "resets the working dir" do
       expect(Command).to receive(:run).with(
-        "ssh", "-i", /key\/vagrant/, "vagrant@__VAGRANT__",
-        "sudo", "fuser", "-k", "-HUP", "/buildlog"
+        "ssh", "-o", "StrictHostKeyChecking=no", "-i", /key\/vagrant/,
+        "vagrant@__VAGRANT__", "sudo", "fuser", "-k", "-HUP", "/buildlog"
       )
       expect(@system).to receive(:reset_working_dir)
       @system.halt

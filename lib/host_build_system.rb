@@ -15,7 +15,7 @@ class HostBuildSystem < BuildSystem
     Logger.info "Provision build system..."
     begin
       provision_output = Command.run(
-        "rsync", "-e", "ssh -i #{@ssh_private_key}",
+        "rsync", "-e", "ssh -o StrictHostKeyChecking=no -i #{@ssh_private_key}",
         "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
         "--exclude", ".*", ".", "#{@user}@#{@host}:/vagrant",
         :stdout => :capture
@@ -34,7 +34,8 @@ class HostBuildSystem < BuildSystem
     Logger.info "Stopping build process on #{@host}..."
     begin
       Command.run(
-        "ssh", "-i", @ssh_private_key, "#{@user}@#{@host}",
+        "ssh", "-o", "StrictHostKeyChecking=no",
+        "-i", @ssh_private_key, "#{@user}@#{@host}",
         "sudo", "fuser", "-k", "-HUP", "/buildlog"
       )
     rescue Cheetah::ExecutionFailed => e
