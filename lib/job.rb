@@ -6,7 +6,7 @@ class Job
     @job_user = Dice.config.ssh_user
     @job_ssh_private_key = Dice.config.ssh_private_key
     recipe_path = system.get_basepath
-    @buildlog = recipe_path + "/.dice/buildlog"
+    @error_log = recipe_path + "/.dice/build_error.log"
     @archive  = recipe_path + "/.dice/build_results.tar"
     @buildsystem = system
     @ip = system.get_ip
@@ -28,7 +28,7 @@ class Job
       get_buildlog
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
-        "Build failed for details check: #{@buildlog}"
+        "Build failed for details check: #{@error_log}"
       )
     end
   end
@@ -48,7 +48,7 @@ class Job
       get_buildlog
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
-        "Bundle result failed for details check: #{@buildlog}"
+        "Bundle result failed for details check: #{@error_log}"
       )
     end
   end
@@ -78,7 +78,6 @@ class Job
 
   def prepare_build
     Logger.info "Preparing build..."
-    FileUtils.rm(@buildlog) if File.file?(@buildlog)
     FileUtils.rm(@archive) if File.file?(@archive)
     begin
       Command.run(
@@ -97,7 +96,7 @@ class Job
 
   def get_buildlog
     Logger.info "Retrieving build log..."
-    logfile = File.open(@buildlog, "w")
+    logfile = File.open(@error_log, "w")
     begin
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
