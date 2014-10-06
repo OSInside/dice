@@ -7,6 +7,8 @@
 # .dice/scan
 # .dice/lock
 
+.dice
+
 testing/*
 
 package/*
