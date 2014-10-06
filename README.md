@@ -161,7 +161,7 @@ Given you have imported the vagrant build box as described in
 example build as normal user by calling:
 
 ```
-$ rsync -zavL /usr/share/doc/packages/dice/recipes/virtual/suse-13.1-JeOS /tmp
+$ rsync -zavL /usr/share/doc/packages/dice/recipes/suse-13.1-JeOS /tmp
 
 $ mkdir -p ~/.dice/key
 

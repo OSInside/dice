@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<image schemaversion="6.1" name="LimeJeOS-openSUSE-13.1">
+<image schemaversion="6.1" name="LimeJeOS-openSUSE-13.2">
     <description type="system">
         <author>Marcus Schäfer</author>
         <contact>ms@novell.com</contact>
         <specification>
-            openSUSE 13.1 JeOS, is a small text based image
+            openSUSE 13.2 JeOS, is a small text based image
         </specification>
     </description>
     <profiles>
@@ -14,8 +14,8 @@
         <profile name="vmxFlavour" description="VMX with default kernel" import="true"/>
     </profiles>
     <preferences>
-        <type image="iso" boot="isoboot/suse-13.1" flags="overlay" hybrid="true" firmware="efi"/>
-        <version>1.13.1</version>
+        <type image="iso" primary="true" boot="isoboot/suse-13.2" flags="overlay" hybrid="true" firmware="efi" kernelcmdline="splash"/>
+        <version>1.13.2</version>
         <packagemanager>zypper</packagemanager>
         <locale>en_US</locale>
         <keytable>us.map.gz</keytable>
@@ -26,16 +26,16 @@
         <bootloader-theme>openSUSE</bootloader-theme>
     </preferences>
     <preferences profiles="ec2Flavour">
-        <type image="vmx" filesystem="ext3" boot="vmxboot/suse-13.1" bootprofile="ec2" bootkernel="ec2k" bootloader="grub" kernelcmdline="xencons=xvc0 console=xvc0 multipath=off splash=silent showopts"/>
+        <type image="vmx" filesystem="ext3" boot="vmxboot/suse-13.2" bootprofile="ec2" bootkernel="ec2k" bootloader="grub2" kernelcmdline="xencons=xvc0 console=xvc0 multipath=off splash" firmware="ec2"/>
     </preferences>
     <preferences profiles="xenFlavour">
-        <type image="vmx" filesystem="ext3" boot="vmxboot/suse-13.1" bootprofile="xen" bootkernel="xenk" bootloader="grub2">
+        <type image="vmx" filesystem="ext3" boot="vmxboot/suse-13.2" bootprofile="xen" bootkernel="xenk" bootloader="grub2" kernelcmdline="splash">
             <machine memory="512" domain="domU">
                 <vmdisk id="0" device="/dev/xvda" controller="ide"/>
                 <vmnic interface=""/>
             </machine>
         </type>
-        <type image="oem" filesystem="ext3" boot="oemboot/suse-13.1" bootprofile="xen" bootkernel="xenk" installiso="true" bootloader="grub2">
+        <type image="oem" filesystem="ext3" boot="oemboot/suse-13.2" bootprofile="xen" bootkernel="xenk" installiso="true" bootloader="grub2" kernelcmdline="splash">
             <oemconfig>
                 <oem-systemsize>2048</oem-systemsize>
                 <oem-swap>true</oem-swap>
@@ -46,13 +46,14 @@
         </type>
     </preferences>
     <preferences profiles="vmxFlavour">
-        <type image="vmx" filesystem="ext3" boot="vmxboot/suse-13.1" format="vmdk" bootloader="grub2" primary="true">
+        <type image="vmx" filesystem="ext3" boot="vmxboot/suse-13.2" format="vmdk" bootloader="grub2" kernelcmdline="splash" bootpartition="false">
+            <systemdisk name="systemVG"/>
             <machine memory="512" guestOS="suse" HWversion="4">
                 <vmdisk id="0" controller="ide"/>
                 <vmnic driver="e1000" interface="0" mode="bridged"/>
             </machine>
         </type>
-        <type image="oem" filesystem="ext3" boot="oemboot/suse-13.1" installiso="true" bootloader="grub2">
+        <type image="oem" filesystem="ext3" boot="oemboot/suse-13.2" installiso="true" bootloader="grub2" kernelcmdline="splash">
             <oemconfig>
                 <oem-systemsize>2048</oem-systemsize>
                 <oem-swap>true</oem-swap>
@@ -67,11 +68,17 @@
         <user password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0" home="/root" name="root"/>
     </users>
     <repository type="yast2">
-        <source path="obs://13.1/repo/oss"/>
+        <source path="obs://openSUSE:Factory/snapshot"/>
     </repository>
     <packages type="image">
+<!--
+        new pattern system seems still not functional in 13.2
+
         <namedCollection name="base"/>
-        <product name="openSUSE"/>
+
+        using pattern package directly instead
+-->
+        <package name="patterns-openSUSE-base"/>
         <package name="plymouth-branding-openSUSE" bootinclude="true"/>
         <package name="grub2-branding-openSUSE" bootinclude="true"/>
         <package name="ifplugd"/>
@@ -85,7 +92,13 @@
         <package name="fonts-config"/>
         <package name="tar"/>
         <package name="parted"/>
-        <package name="autoyast2"/>
+        <package name="kiwi"/>
+        <package name="kiwi-templates"/>
+        <package name="kiwi-desc-oemboot"/>
+        <package name="kiwi-desc-isoboot"/>
+        <package name="kiwi-desc-vmxboot"/>
+        <package name="kiwi-desc-netboot"/>
+        <package name="openssh"/>
     </packages>
     <packages type="iso">
         <package name="gfxboot-branding-openSUSE" bootinclude="true" bootdelete="true"/>
@@ -117,7 +130,19 @@
         <package name="glibc-locale"/>
         <package name="cracklib-dict-full"/>
         <package name="ca-certificates"/>
-        <package name="module-init-tools"/>
+<!--
+        The installation of products in SLE12 requires the SLE12 zypper
+        Thus the following definition only works when building on SLE12
+
+        <product name="openSUSE"/>
+
+        In order to stay compatible we just install the product rpm
+        package. It's required to install the release package in the
+        bootstrap phase in order to avoid the installation of an auto
+        selected dummy-release package which later conflicts with all
+        other release packages
+-->
+        <package name="openSUSE-release"/>
     </packages>
     <packages type="delete">
         <package name="kernel-debug"/>

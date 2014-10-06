@@ -70,11 +70,16 @@ sed -i -e's/^syntax on/" syntax on/' /etc/vimrc
 suseConfig
 
 #======================================
-# Add 13.1 repo
+# Add 13.2 repo
 #--------------------------------------
-baseRepo="http://download.opensuse.org/distribution/13.1/repo/oss"
-baseName="suse-13.1"
+baseRepo="http://download.opensuse.org/distribution/13.2/repo/oss"
+baseName="suse-13.2"
 zypper ar $baseRepo $baseName
+
+#======================================
+# Remove yast if not in use
+#--------------------------------------
+suseRemoveYaST
 
 #======================================
 # Umount kernel filesystems

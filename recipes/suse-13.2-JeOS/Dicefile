@@ -1,0 +1,4 @@
+Dice.configure do |config|
+  config.buildhost = "63.73.211.130.bc.googleusercontent.com"
+  config.ssh_user = "kiwi"
+end

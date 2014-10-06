@@ -1,0 +1,4 @@
+Dice.configure do |config|
+  config.buildhost = "ec2-54-87-7-50.compute-1.amazonaws.com"
+  config.ssh_user = "vagrant"
+end
