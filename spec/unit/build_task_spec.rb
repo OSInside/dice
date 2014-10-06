@@ -60,7 +60,6 @@ describe BuildTask do
   describe "#cleanup_build_error_log" do
     it "removes the build_error.log file" do
       expect(@task).to receive(:error_log).and_return("foo")
-      expect(File).to receive(:file?).and_return(true)
       expect(FileUtils).to receive(:rm).with("foo")
       @task.cleanup_build_error_log
     end
@@ -69,6 +68,7 @@ describe BuildTask do
   describe "#error_log" do
     it "returns build_error.log file name for recipe" do
       expect(@buildsystem).to receive(:get_basepath).and_return("foo")
+      expect(File).to receive(:file?).and_return(true)
       expect(@task.error_log).to eq("foo/.dice/build_error.log")
     end
   end

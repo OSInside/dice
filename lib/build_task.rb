@@ -18,13 +18,10 @@ class BuildTask
       release_lock
       raise e
     end
-    log = error_log
     if @buildsystem.job_required?
-      status = Dice::Status::BuildRequired.new
-    elsif log && File.file?(log)
-      status = Dice::Status::BuildErrorExists.new(log)
+      status = Dice::Status::BuildRequired.new(error_log)
     else
-      status = Dice::Status::UpToDate.new
+      status = Dice::Status::UpToDate.new(error_log)
     end
     release_lock
     status
@@ -51,14 +48,15 @@ class BuildTask
 
   def cleanup_build_error_log
     log = error_log
-    if log && File.file?(log)
-      FileUtils.rm(log)
-    end
+    FileUtils.rm(log) if log
   end
 
   def error_log
     recipe_dir = @buildsystem.get_basepath
     error_log = recipe_dir + "/.dice/build_error.log"
+    if !File.file?(error_log)
+      error_log = nil
+    end
     error_log
   end
 
