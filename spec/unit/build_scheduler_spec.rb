@@ -26,13 +26,9 @@ describe BuildScheduler do
    end
 
    describe "#self.run" do
-     it "calls BuildTask run and returns false on raise" do
-       task = double(BuildTask)
-       expect(BuildTask).to receive(:new).with("foo").and_return(task)
-       expect(task).to receive(:run).and_raise(
-         Dice::Errors::HostProvisionFailed.new("foo")
-       )
-       expect(BuildScheduler.run("foo")).to eq(false)
+     it "calls dice build" do
+       expect(BuildScheduler).to receive(:system).with(/build foo/)
+       BuildScheduler.run("foo")
      end
    end
 end

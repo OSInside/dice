@@ -11,17 +11,7 @@ class BuildScheduler
   private
 
   def self.run(recipe)
-    run_ok = true
-    begin
-      Logger.set_recipe_dir(Pathname.new(recipe).basename)
-      Logger.info "Starting build task"
-      task = BuildTask.new(recipe)
-      task.run
-    rescue Dice::Errors::DiceError => e
-       Logger.error(e.message, Cli.error_log_from_task)
-       run_ok = false
-    end
-    run_ok
+    system("#{$0} build #{recipe}")
   end
 end
 
