@@ -21,7 +21,7 @@ describe Job do
     it "raises if build failed" do
       expect(@job).to receive(:prepare_build)
       expect(Command).to receive(:run).with(
-        "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
+        "ssh", "-T", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
         /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile /buildlog"
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)

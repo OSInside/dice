@@ -20,7 +20,7 @@ class Job
     build_opts = "--build /vagrant -d /tmp/image --logfile /buildlog"
     begin
       Command.run(
-        "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
+        "ssh", "-T", "-o", "StrictHostKeyChecking=no", "-p", @port,
         "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
         "sudo #{@kiwi} #{build_opts}"
       )
