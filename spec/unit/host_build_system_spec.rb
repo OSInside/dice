@@ -17,7 +17,8 @@ describe HostBuildSystem do
   describe "#provision" do
     it "calls rsync to transfer the recipe to the buildhost" do
       expect(Command).to receive(:run).with(
-        "rsync", "-e", /ssh -o StrictHostKeyChecking=no -i .*key\/vagrant/,
+        "rsync", "-e",
+        /ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 -i .*key\/vagrant/,
         "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
         "--exclude", ".*", ".", "vagrant@__VAGRANT__:/vagrant",
         {:stdout=>:capture}

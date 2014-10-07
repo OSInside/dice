@@ -15,7 +15,8 @@ class HostBuildSystem < BuildSystem
     Logger.info "Provision build system..."
     begin
       provision_output = Command.run(
-        "rsync", "-e", "ssh -o StrictHostKeyChecking=no -i #{@ssh_private_key}",
+        "rsync", "-e",
+        "ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 -i #{@ssh_private_key}",
         "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
         "--exclude", ".*", ".", "#{@user}@#{@host}:/vagrant",
         :stdout => :capture
