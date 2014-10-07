@@ -17,17 +17,17 @@ describe BuildTask do
 
   describe "#build_status" do
     it "writes new config.scan and returns with a BuildRequired status" do
+      expect(@buildsystem).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_busy?).and_return(false)
       expect(@task).to receive(:set_lock)
-      expect(@buildsystem).to receive(:get_basepath)
       expect(Solver).to receive(:writeScan)
-      expect(@task).to receive(:error_log)
       expect(@buildsystem).to receive(:job_required?).and_return(true)
       expect(@task).to receive(:release_lock)
       expect(@task.build_status).to be_a(Dice::Status::BuildRequired)
     end
 
     it "returns with a Dice::Status::BuildRunning if busy" do
+      expect(@buildsystem).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_busy?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRunning)
     end
@@ -45,6 +45,7 @@ describe BuildTask do
       expect(@buildsystem).to receive(:writeRecipeChecksum)
       expect(@task).to receive(:release_lock)
       expect(@task).to receive(:cleanup_build_error_log)
+      expect(@task).to receive(:cleanup_screen_job)
       expect(@buildsystem).to receive(:halt)
       @task.run
     end
@@ -59,17 +60,33 @@ describe BuildTask do
 
   describe "#cleanup_build_error_log" do
     it "removes the build_error.log file" do
-      expect(@task).to receive(:error_log).and_return("foo")
+      expect(@task).to receive(:error_log_file).and_return("foo")
+      expect(File).to receive(:file?).with("foo").and_return(true)
       expect(FileUtils).to receive(:rm).with("foo")
       @task.cleanup_build_error_log
     end
   end
 
-  describe "#error_log" do
+  describe "#cleanup_screen_job" do
+    it "removes the screen job file" do
+      expect(@task).to receive(:screen_job_file).and_return("foo")
+      expect(File).to receive(:file?).with("foo").and_return(true)
+      expect(FileUtils).to receive(:rm).with("foo")
+      @task.cleanup_screen_job
+    end
+  end
+
+  describe "#error_log_file" do
     it "returns build_error.log file name for recipe" do
       expect(@buildsystem).to receive(:get_basepath).and_return("foo")
-      expect(File).to receive(:file?).and_return(true)
-      expect(@task.error_log).to eq("foo/.dice/build_error.log")
+      expect(@task.error_log_file).to eq("foo/.dice/build_error.log")
+    end
+  end
+
+  describe "#screen_job_file" do
+    it "returns screen job file name" do
+      expect(@buildsystem).to receive(:get_basepath).and_return("foo")
+      expect(@task.screen_job_file).to eq("foo/.dice/job")
     end
   end
 

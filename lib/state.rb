@@ -1,16 +1,24 @@
 class BuildStatus
-  def initialize(details = nil)
-    @details = details
+  def initialize(build_task = nil)
+    @build_task = build_task
   end
 
   def message
-    topic = "Build-System status is: #{self.class}"
-    if @details
-      message = topic
-      message+= ". Last build attempt failed, for details check: #{@details}"
-      Logger.info message
-    else
-      Logger.info topic
+    Logger.info("Build-System status is: #{self.class}")
+    if @build_task
+      log_file = @build_task.error_log_file
+      job_file = @build_task.screen_job_file
+      if File.file?(job_file)
+# TODO: check with screen -X -S job info if the job really still exists
+        Logger.info(
+          "--> Screen job exists, details: #{job_file}"
+        )
+      end
+      if File.file?(log_file)
+        Logger.info(
+          "--> Last build attempt failed, details: #{log_file}"
+        )
+      end
     end
   end
 end

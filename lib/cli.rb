@@ -8,12 +8,10 @@ class Cli
   switch :debug, :negatable => false, :desc => "Enable debug mode"
   switch [:help, :h], :negatable => false, :desc => "Show help"
 
-  def self.error_log_from_task
-    error_log = nil
-    if @task
-      error_log = @task.error_log
-    end
-    error_log
+  def self.error_log_file
+    log_file = nil
+    log_file = @task.error_log_file if @task
+    log_file
   end
 
   def self.handle_error(e)
@@ -25,14 +23,14 @@ class Cli
       run(command << "--help")
       exit 1
     when Dice::Errors::DiceError
-      Logger.error(e.message, error_log_from_task)
+      Logger.error(e.message, error_log_file)
       @task.release_lock if @task
       exit 1
     when SystemExit
       raise
     when SignalException
       Logger.error(
-        "dice was aborted with signal #{e.signo}", error_log_from_task
+        "dice was aborted with signal #{e.signo}", error_log_file
       )
       @task.cleanup if @task
       exit 1

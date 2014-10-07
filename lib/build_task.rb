@@ -1,4 +1,7 @@
 class BuildTask
+  @@error_log_file = ".dice/build_error.log"
+  @@screen_job_file = ".dice/job"
+
   def initialize(recipe, options = Hash.new)
     Recipe.ok?(recipe)
     @factory = BuildSystemFactory.new(recipe)
@@ -8,20 +11,21 @@ class BuildTask
 
   def build_status
     status = Dice::Status::Unknown.new
+    recipe_dir = @buildsystem.get_basepath
     if @buildsystem.is_busy?
       return Dice::Status::BuildRunning.new
     end
     set_lock
     begin
-      Solver.writeScan(@buildsystem.get_basepath)
+      Solver.writeScan(recipe_dir)
     rescue Dice::Errors::DiceError => e
       release_lock
       raise e
     end
     if @buildsystem.job_required?
-      status = Dice::Status::BuildRequired.new(error_log)
+      status = Dice::Status::BuildRequired.new(self)
     else
-      status = Dice::Status::UpToDate.new(error_log)
+      status = Dice::Status::UpToDate.new(self)
     end
     release_lock
     status
@@ -40,6 +44,7 @@ class BuildTask
       @buildsystem.writeRecipeChecksum
       release_lock
       cleanup_build_error_log
+      cleanup_screen_job
       @buildsystem.halt
     else
       status.message
@@ -47,17 +52,23 @@ class BuildTask
   end
 
   def cleanup_build_error_log
-    log = error_log
-    FileUtils.rm(log) if log
+    log_file = error_log_file
+    FileUtils.rm(log_file) if File.file?(log_file)
   end
 
-  def error_log
-    recipe_dir = @buildsystem.get_basepath
-    error_log = recipe_dir + "/.dice/build_error.log"
-    if !File.file?(error_log)
-      error_log = nil
-    end
-    error_log
+  def cleanup_screen_job
+    screen_job = screen_job_file
+    FileUtils.rm(screen_job) if File.file?(screen_job)
+  end
+
+  def error_log_file
+    log_file = @buildsystem.get_basepath + "/" + @@error_log_file
+    log_file
+  end
+
+  def screen_job_file
+    screen_job = @buildsystem.get_basepath + "/" + @@screen_job_file
+    screen_job
   end
 
   def log
