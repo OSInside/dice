@@ -16,7 +16,7 @@ class BuildScheduler
     Logger.set_recipe_dir(Pathname.new(recipe).basename)
     Logger.info("Starting build job: #{job_name}")
     build_cmd = [$0, "build", recipe]
-    screen_cmd = ["screen", "-S", job_name, "-L", "-d", "-m"]
+    screen_cmd = ["screen", "-S", job_name, "-d", "-m"]
     begin
       Command.run(screen_cmd + build_cmd)
     rescue Cheetah::ExecutionFailed => e
@@ -24,7 +24,7 @@ class BuildScheduler
     end
     if job_started
       FileUtils.mkdir_p(recipe + "/.dice")
-      job_info = File.new(recipe + "/.dice/job", "w")
+      job_info = File.new(recipe + "/.dice/job", "a+")
       job_info.puts(job_name)
       job_info.close
     end

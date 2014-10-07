@@ -30,13 +30,13 @@ describe BuildScheduler do
        job_info = double(File)
        expect(BuildScheduler).to receive(:set_job_name).and_return("xxx")
        expect(Command).to receive(:run).with(
-         ["screen", "-S", "xxx", "-L", "-d", "-m",
+         ["screen", "-S", "xxx", "-d", "-m",
           "/usr/lib64/ruby/gems/2.0.0/gems/rspec-core-3.1.4/exe/rspec",
           "build", "foo"]
        )
        expect(FileUtils).to receive(:mkdir_p).with("foo/.dice")
        expect(File).to receive(:new).with(
-         "foo/.dice/job", "w"
+         "foo/.dice/job", "a+"
        ).and_return(job_info)
        expect(job_info).to receive(:puts).with("xxx")
        expect(job_info).to receive(:close)
