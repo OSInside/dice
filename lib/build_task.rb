@@ -1,7 +1,4 @@
 class BuildTask
-  @@error_log_file = ".dice/build_error.log"
-  @@screen_job_file = ".dice/job"
-
   def initialize(recipe, options = Hash.new)
     Recipe.ok?(recipe)
     @factory = BuildSystemFactory.new(recipe)
@@ -62,12 +59,14 @@ class BuildTask
   end
 
   def error_log_file
-    log_file = @buildsystem.get_basepath + "/" + @@error_log_file
+    log_file = @buildsystem.get_basepath + "/" +
+      Dice::META + "/" + Dice::BUILD_ERROR_LOG
     log_file
   end
 
   def screen_job_file
-    screen_job = @buildsystem.get_basepath + "/" + @@screen_job_file
+    screen_job = @buildsystem.get_basepath + "/" +
+      Dice::META + "/" + Dice::SCREEN_JOB
     screen_job
   end
 

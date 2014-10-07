@@ -2,7 +2,7 @@ class BuildSystem < Recipe
   def initialize(description)
     super(description)
     change_working_dir
-    @lock = get_basepath + "/.dice/lock"
+    @lock = get_basepath + "/" + Dice::META + "/" + Dice::LOCK
   end
 
   def up

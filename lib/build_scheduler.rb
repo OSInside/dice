@@ -23,8 +23,10 @@ class BuildScheduler
       job_started = false
     end
     if job_started
-      FileUtils.mkdir_p(recipe + "/.dice")
-      job_info = File.new(recipe + "/.dice/job", "a+")
+      FileUtils.mkdir_p(recipe + "/" + Dice::META)
+      job_info = File.new(
+        recipe + "/" + Dice::META + "/" + Dice::SCREEN_JOB, "a+"
+      )
       job_info.puts(job_name)
       job_info.close
     end

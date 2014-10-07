@@ -1,6 +1,4 @@
 class Recipe
-  @@digest = ".dice/checksum.sha256"
-
   def initialize(description)
     recipe = Pathname.new(description)
     @basepath = recipe.realpath.to_s
@@ -15,23 +13,23 @@ class Recipe
         "Given recipe does not exist or is not a directory"
       )
     end
-    vagrantFile = File.file?(description + "/Vagrantfile")
-    diceFile = File.file?(description + "/Dicefile")
-    kiwiFile = File.file?(description + "/config.xml")
+    vagrantFile = File.file?(description + "/" + Dice::VAGRANT_FILE)
+    diceFile = File.file?(description + "/" + Dice::DICE_FILE)
+    kiwiFile = File.file?(description + "/" + Dice::KIWI_FILE)
     if !kiwiFile
       raise Dice::Errors::NoKIWIConfig.new(
-        "No kiwi config.xml found"
+        "No kiwi configuration found"
       )
     end
     if !vagrantFile && !diceFile
       raise Dice::Errors::NoConfigFile.new(
-        "No Vagrantfile or Dicefile found"
+        "No vagrant and/or dice configuration found"
       )
     end
     if diceFile
-      load description + "/Dicefile"
+      load description + "/" + Dice::DICE_FILE
     end
-    metadir = recipe.realpath.to_s + "/.dice"
+    metadir = recipe.realpath.to_s + "/" + Dice::META
     if !File.directory?(metadir)
       FileUtils.mkdir(metadir)
     end
@@ -49,7 +47,9 @@ class Recipe
 
   def writeRecipeChecksum
     digest = createDigest
-    digest_file = File.new(@basepath+"/"+@@digest, "w")
+    digest_file = File.new(
+      @basepath + "/" + Dice::META + "/" + Dice::DIGEST_FILE, "w"
+    )
     digest_file.puts digest
     digest_file.close
   end
@@ -74,8 +74,8 @@ class Recipe
     recipe_items.each do |item|
       item.gsub!(/^\.\//,'')
       next if File.directory?(item)
-      next if item =~ /^\.|^Vagrantfile$/
-      next if item =~ /^\.|^Dicefile$/
+      next if item =~ /^\.|^#{Dice::VAGRANT_FILE}$/
+      next if item =~ /^\.|^#{Dice::DICE_FILE}$/
       sha256 = Digest::SHA256.file item
       result += item + ":" + sha256.hexdigest + "\n"
     end
@@ -85,7 +85,7 @@ class Recipe
   def readDigest
     cur_digest = ""
     begin
-      cur_digest = File.read(@@digest)
+      cur_digest = File.read(Dice::META + "/" + Dice::DIGEST_FILE)
     rescue
       # continue, working with empty digest is ok
     end

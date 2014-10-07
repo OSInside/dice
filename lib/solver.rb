@@ -14,7 +14,9 @@ class Solver
         "kiwi packager solver failed with:\n#{e.stderr}"
       )
     end
-    recipe_scan = File.open("#{description}/.dice/scan", "w")
+    recipe_scan = File.open(
+      "#{description}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
+    )
     solver_info.split("\n").each do |line|
       if line =~ /<package/
         recipe_scan.write(line+"\n")
