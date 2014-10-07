@@ -35,7 +35,7 @@ class HostBuildSystem < BuildSystem
     Logger.info "Stopping build process on #{@host}..."
     begin
       Command.run(
-        "ssh", "-o", "StrictHostKeyChecking=no",
+        "ssh", "-o", "StrictHostKeyChecking=no", "-o", "NumberOfPasswordPrompts=0",
         "-i", @ssh_private_key, "#{@user}@#{@host}",
         "sudo", "fuser", "-k", "-HUP", "/buildlog"
       )
