@@ -10,7 +10,7 @@ class BuildTask
     status = Dice::Status::Unknown.new
     recipe_dir = @buildsystem.get_basepath
     if @buildsystem.is_busy?
-      return Dice::Status::BuildRunning.new
+      return Dice::Status::BuildRunning.new(self)
     end
     set_lock
     begin

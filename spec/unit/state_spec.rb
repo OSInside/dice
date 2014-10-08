@@ -25,7 +25,7 @@ describe BuildStatus do
 
   describe "#active_job?" do
     it "checks if a job is active using screen -X" do
-      expect(Command).to receive(:run).with("screen", "-X", "-S", "foo")
+      expect(Command).to receive(:run).with("screen", "-X", "-S", "foo", "info")
       @status.instance_eval{ active_job?("foo") }
     end
   end

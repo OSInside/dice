@@ -9,9 +9,9 @@ class BuildStatus
       log_file = @build_task.error_log_file
       job_file = @build_task.screen_job_file
       jobs = active_jobs(job_file)
-      if jobs
+      if !jobs.empty?
         Logger.info(
-          "--> Screen job(s) exists: #{jobs}"
+          "--> Screen job: $ screen -r #{jobs.last}"
         )
       end
       if File.file?(log_file)
@@ -25,9 +25,10 @@ class BuildStatus
   private
 
   def active_jobs(job_file)
-    active = nil
+    active = Array.new
     begin
       File.open(job_file).each do |job_name|
+        job_name = job_name.chomp
         active << job_name if active_job?(job_name)
       end
     rescue
@@ -38,7 +39,7 @@ class BuildStatus
 
   def active_job?(job_name)
     begin
-      Command.run("screen", "-X", "-S", job_name)
+      Command.run("screen", "-X", "-S", job_name, "info")
     rescue Cheetah::ExecutionFailed => e
       return false
     end
