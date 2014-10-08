@@ -8,10 +8,10 @@ class BuildStatus
     if @build_task
       log_file = @build_task.error_log_file
       job_file = @build_task.screen_job_file
-      if File.file?(job_file)
-# TODO: check with screen -X -S job info if the job really still exists
+      jobs = active_jobs(job_file)
+      if jobs
         Logger.info(
-          "--> Screen job exists, details: #{job_file}"
+          "--> Screen job(s) exists: #{jobs}"
         )
       end
       if File.file?(log_file)
@@ -20,6 +20,29 @@ class BuildStatus
         )
       end
     end
+  end
+
+  private
+
+  def active_jobs(job_file)
+    active = nil
+    begin
+      File.open(job_file).each do |job_name|
+        active << job_name if active_job?(job_name)
+      end
+    rescue
+      # ignore if job file does not exist or can't be opened
+    end
+    active
+  end
+
+  def active_job?(job_name)
+    begin
+      Command.run("screen", "-X", "-S", job_name)
+    rescue Cheetah::ExecutionFailed => e
+      return false
+    end
+    return true
   end
 end
 
