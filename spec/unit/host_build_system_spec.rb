@@ -56,9 +56,15 @@ describe HostBuildSystem do
     end
   end
 
-  describe "#is_busy?" do
-    it "check if a lock file exists and the host does not run kiwi" do
+  describe "#is_locked?" do
+    it "checks if a lock file exists" do
       expect(File).to receive(:file?).with(/lock/).and_return(false)
+      expect(@system.is_locked?).to eq(false)
+    end
+  end
+
+  describe "#is_busy?" do
+    it "checks if another kiwi process runs on the worker" do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-o",
         "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,

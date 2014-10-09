@@ -9,8 +9,11 @@ class BuildTask
   def build_status
     status = Dice::Status::Unknown.new
     recipe_dir = @buildsystem.get_basepath
-    if @buildsystem.is_busy?
+    if @buildsystem.is_locked?
       return Dice::Status::BuildRunning.new(self)
+    end
+    if @buildsystem.is_busy?
+      return Dice::Status::BuildWorkerBusy.new(self)
     end
     set_lock
     begin

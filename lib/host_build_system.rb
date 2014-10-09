@@ -57,26 +57,22 @@ class HostBuildSystem < BuildSystem
     @host
   end
 
+  def is_locked?
+    File.file?(@lock)
+  end
+
   def is_busy?
-    busy = false
-    if File.file?(@lock)
-      # there is a lock file we are busy
-      busy = true
-    else
-      # there is no lock file we are busy unless
-      # there is no kiwi process running
-      busy = true
-      begin
-        Command.run(
-          "ssh",
-          "-o", "StrictHostKeyChecking=no",
-          "-o", "NumberOfPasswordPrompts=0",
-          "-i", @ssh_private_key, "#{@user}@#{@host}",
-          "sudo", "pidof", "-x", "kiwi"
-        )
-      rescue Cheetah::ExecutionFailed => e
-        busy = false
-      end
+    busy = true
+    begin
+      Command.run(
+        "ssh",
+        "-o", "StrictHostKeyChecking=no",
+        "-o", "NumberOfPasswordPrompts=0",
+        "-i", @ssh_private_key, "#{@user}@#{@host}",
+        "sudo", "pidof", "-x", "kiwi"
+      )
+    rescue Cheetah::ExecutionFailed => e
+      busy = false
     end
     busy
   end

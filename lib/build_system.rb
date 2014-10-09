@@ -35,6 +35,12 @@ class BuildSystem < Recipe
     )
   end
 
+  def is_locked?
+    raise Dice::Errors::MethodNotImplemented.new(
+      "is_locked? method not implemented"
+    )
+  end
+
   def is_busy?
     raise Dice::Errors::MethodNotImplemented.new(
       "is_busy? method not implemented"

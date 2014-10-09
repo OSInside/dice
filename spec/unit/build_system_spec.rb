@@ -38,6 +38,14 @@ describe BuildSystem do
     end
   end
 
+  describe "#is_locked?" do
+    it "raises MethodNotImplemented" do
+      expect { @system.is_locked? }.to raise_error(
+        Dice::Errors::MethodNotImplemented
+      )
+    end
+  end
+
   describe "#set_lock" do
     it "creates a lock file" do
       lockfile = double(File)
