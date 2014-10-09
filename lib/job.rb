@@ -16,16 +16,18 @@ class Job
   def build
     prepare_build
     Logger.info "Building..."
-    build_opts = "--build /vagrant -d /tmp/image --logfile /buildlog"
+    build_opts = "--build /vagrant -d /tmp/image --logfile terminal"
+    logfile = File.open(@error_log, "w")
     begin
       Command.run(
-        "ssh", "-T", "-o", "StrictHostKeyChecking=no", "-p", @port,
+        "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
         "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo -s kiwi #{build_opts}"
+        "sudo /usr/sbin/kiwi #{build_opts}",
+        :stdout => logfile,
+        :stderr => logfile
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info "Build failed"
-      get_buildlog
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
         "Build failed for details check: #{@error_log}"
@@ -35,17 +37,19 @@ class Job
 
   def bundle
     Logger.info "Bundle results..."
+    logfile = File.open(@error_log, "a+")
     bundle_opts = "--bundle-build /tmp/image --bundle-id DiceBuild " +
-      "--destdir /tmp/bundle --logfile /buildlog"
+      "--destdir /tmp/bundle --logfile terminal"
     begin
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
         "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo -s kiwi #{bundle_opts}"
+        "sudo /usr/sbin/kiwi #{bundle_opts}",
+        :stdout => logfile,
+        :stderr => logfile
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info "Bundler failed"
-      get_buildlog
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
         "Bundle result failed for details check: #{@error_log}"
@@ -92,25 +96,5 @@ class Job
         "Preparing build environment failed with: #{e.stderr}"
       )
     end
-  end
-
-  def get_buildlog
-    Logger.info "Retrieving build log..."
-    logfile = File.open(@error_log, "w")
-    begin
-      Command.run(
-        "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
-        "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo cat /buildlog", :stdout => logfile
-      )
-    rescue Cheetah::ExecutionFailed => e
-      Logger.info "Retrieving build log failed"
-      FileUtils.rm logfile
-      @buildsystem.halt
-      raise Dice::Errors::LogFileRetrievalFailed.new(
-        "Reading log file failed with: #{e.stderr}"
-      )
-    end
-    logfile.close
   end
 end

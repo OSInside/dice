@@ -19,14 +19,17 @@ describe Job do
 
   describe "#build" do
     it "raises if build failed" do
+      logfile = double(File)
       expect(@job).to receive(:prepare_build)
+      expect(File).to receive(:open).with(
+        /build_error.log/, "w"
+      ).and_return(logfile)
       expect(Command).to receive(:run).with(
-        "ssh", "-T", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "vagrant@127.0.0.1", "sudo -s kiwi --build /vagrant -d /tmp/image --logfile /buildlog"
+        "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
+        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile terminal", {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
-      expect(@job).to receive(:get_buildlog)
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.build }.to raise_error(Dice::Errors::BuildFailed)
     end
@@ -34,13 +37,17 @@ describe Job do
 
   describe "#bundle" do
     it "raises if bundle failed" do
+      logfile = double(File)
+      expect(File).to receive(:open).with(
+        /build_error.log/, "a+"
+      ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "vagrant@127.0.0.1", "sudo -s kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile /buildlog"
+        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile terminal",
+        {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
-      expect(@job).to receive(:get_buildlog)
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.bundle }.to raise_error(Dice::Errors::BuildFailed)
     end
@@ -78,23 +85,6 @@ describe Job do
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.instance_eval{ prepare_build }}.
         to raise_error(Dice::Errors::PrepareBuildFailed)
-    end
-  end
-
-  describe "#get_buildlog" do
-    it "retrieves the buildlog form the buildsystem" do
-      expect(File).to receive(:open).with(
-        @basepath + "/.dice/build_error.log", "w"
-      )
-      expect(Command).to receive(:run).
-        with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
-          "-i", Dice.config.ssh_private_key,
-          "vagrant@127.0.0.1", "sudo cat /buildlog", :stdout=>nil
-        ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
-      expect(FileUtils).to receive(:rm)
-      expect_any_instance_of(BuildSystem).to receive(:halt)
-      expect { @job.instance_eval{ get_buildlog }}.
-        to raise_error(Dice::Errors::LogFileRetrievalFailed)
     end
   end
 end
