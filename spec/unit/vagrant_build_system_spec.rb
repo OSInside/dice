@@ -76,4 +76,11 @@ describe VagrantBuildSystem do
       expect(@system.get_ip).to eq("127.0.0.1")
     end
   end
+
+  describe "#is_busy?" do
+    it "check if a lock file exists" do
+      expect(File).to receive(:file?).with(/\.dice\/lock/)
+      @system.is_busy?
+    end
+  end
 end

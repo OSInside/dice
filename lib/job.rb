@@ -87,7 +87,7 @@ class Job
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", @port,
         "-i", @job_ssh_private_key, "#{@job_user}@#{@ip}",
-        "sudo rm -rf /tmp/image /tmp/bundle; sudo touch /buildlog"
+        "sudo rm -rf /tmp/image /tmp/bundle"
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info "Preparation failed"

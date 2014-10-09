@@ -64,4 +64,8 @@ class VagrantBuildSystem < BuildSystem
     ip = "127.0.0.1"
     ip
   end
+
+  def is_busy?
+    File.file?(@lock)
+  end
 end

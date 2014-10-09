@@ -36,7 +36,9 @@ class BuildSystem < Recipe
   end
 
   def is_busy?
-    File.file?(@lock)
+    raise Dice::Errors::MethodNotImplemented.new(
+      "is_busy? method not implemented"
+    )
   end
 
   def set_lock

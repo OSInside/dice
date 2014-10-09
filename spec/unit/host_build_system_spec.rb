@@ -37,7 +37,7 @@ describe HostBuildSystem do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-o",
         "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,
-        "vagrant@__VAGRANT__", "sudo", "fuser", "-k", "-HUP", "/buildlog"
+        "vagrant@__VAGRANT__", "sudo", "killall", "kiwi"
       )
       expect(@system).to receive(:reset_working_dir)
       @system.halt
@@ -53,6 +53,20 @@ describe HostBuildSystem do
   describe "#get_ip" do
     it "returns ip or host name" do
       expect(@system.get_ip).to eq(@host)
+    end
+  end
+
+  describe "#is_busy?" do
+    it "check if a lock file exists and the host does not run kiwi" do
+      expect(File).to receive(:file?).with(/lock/).and_return(false)
+      expect(Command).to receive(:run).with(
+        "ssh", "-o", "StrictHostKeyChecking=no", "-o",
+        "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,
+        "vagrant@__VAGRANT__", "sudo", "pidof", "-x", "kiwi"
+      ).and_raise(
+        Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
+      )
+      expect(@system.is_busy?).to eq(false)
     end
   end
 end

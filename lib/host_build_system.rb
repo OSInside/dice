@@ -14,9 +14,10 @@ class HostBuildSystem < BuildSystem
   def provision
     Logger.info "Provision build system..."
     begin
+      ssh_options = "-o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0"
       provision_output = Command.run(
         "rsync", "-e",
-        "ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 -i #{@ssh_private_key}",
+        "ssh #{ssh_options} -i #{@ssh_private_key}",
         "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
         "--exclude", ".*", ".", "#{@user}@#{@host}:/vagrant",
         :stdout => :capture
@@ -35,9 +36,11 @@ class HostBuildSystem < BuildSystem
     Logger.info "Stopping build process on #{@host}..."
     begin
       Command.run(
-        "ssh", "-o", "StrictHostKeyChecking=no", "-o", "NumberOfPasswordPrompts=0",
+        "ssh",
+        "-o", "StrictHostKeyChecking=no",
+        "-o", "NumberOfPasswordPrompts=0",
         "-i", @ssh_private_key, "#{@user}@#{@host}",
-        "sudo", "fuser", "-k", "-HUP", "/buildlog"
+        "sudo", "killall", "kiwi"
       )
     rescue Cheetah::ExecutionFailed => e
       # continue even if there was no process to kill
@@ -52,5 +55,29 @@ class HostBuildSystem < BuildSystem
 
   def get_ip
     @host
+  end
+
+  def is_busy?
+    busy = false
+    if File.file?(@lock)
+      # there is a lock file we are busy
+      busy = true
+    else
+      # there is no lock file we are busy unless
+      # there is no kiwi process running
+      busy = true
+      begin
+        Command.run(
+          "ssh",
+          "-o", "StrictHostKeyChecking=no",
+          "-o", "NumberOfPasswordPrompts=0",
+          "-i", @ssh_private_key, "#{@user}@#{@host}",
+          "sudo", "pidof", "-x", "kiwi"
+        )
+      rescue Cheetah::ExecutionFailed => e
+        busy = false
+      end
+    end
+    busy
   end
 end

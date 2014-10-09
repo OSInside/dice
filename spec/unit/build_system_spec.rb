@@ -31,9 +31,10 @@ describe BuildSystem do
   end
 
   describe "#is_busy?" do
-    it "check if a lock file exists" do
-      expect(File).to receive(:file?).with(/\.dice\/lock/)
-      @system.is_busy?
+    it "raises MethodNotImplemented" do
+      expect { @system.is_busy? }.to raise_error(
+        Dice::Errors::MethodNotImplemented
+      )
     end
   end
 

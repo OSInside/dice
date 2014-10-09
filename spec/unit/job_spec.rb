@@ -80,7 +80,7 @@ describe Job do
         with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
           "-i", Dice.config.ssh_private_key,
           "vagrant@127.0.0.1",
-          "sudo rm -rf /tmp/image /tmp/bundle; sudo touch /buildlog"
+          "sudo rm -rf /tmp/image /tmp/bundle"
         ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
       expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.instance_eval{ prepare_build }}.
