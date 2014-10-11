@@ -39,10 +39,9 @@ describe BuildSystem do
   end
 
   describe "#is_locked?" do
-    it "raises MethodNotImplemented" do
-      expect { @system.is_locked? }.to raise_error(
-        Dice::Errors::MethodNotImplemented
-      )
+    it "checks if a lock file exists" do
+      expect(File).to receive(:file?).with(/\.dice\/lock/).and_return(false)
+      expect(@system.is_locked?).to eq(false)
     end
   end
 

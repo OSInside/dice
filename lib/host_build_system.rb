@@ -9,6 +9,11 @@ class HostBuildSystem < BuildSystem
 
   def up
     Logger.info "Using buildsystem #{@host} for #{@basepath}..."
+    if is_busy?
+      raise Dice::Errors::BuildWorkerBusy.new(
+        "Buildsystem #{@host} is busy with other build process"
+      )
+    end
   end
 
   def provision
@@ -55,10 +60,6 @@ class HostBuildSystem < BuildSystem
 
   def get_ip
     @host
-  end
-
-  def is_locked?
-    File.file?(@lock)
   end
 
   def is_busy?

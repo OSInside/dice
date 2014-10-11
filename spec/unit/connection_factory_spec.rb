@@ -2,9 +2,7 @@ require_relative "spec_helper"
 
 describe ConnectionFactory do
   after(:all) do
-    Dice.configure do |config|
-      config.buildhost = "__VAGRANT__"
-    end
+    Dice.config.buildhost = "__VAGRANT__"
   end
 
   before(:each) do
@@ -21,9 +19,7 @@ describe ConnectionFactory do
     end
 
     it "returns a ConnectionHostBuildSystem" do
-      Dice.configure do |config|
-        config.buildhost = "localhost"
-      end
+      Dice.config.buildhost = "localhost"
       factory = ConnectionFactory.new(@recipe)
       expect(factory.connection).to be_a(
         ConnectionHostBuildSystem

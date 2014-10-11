@@ -65,10 +65,6 @@ class VagrantBuildSystem < BuildSystem
     ip
   end
 
-  def is_locked?
-    File.file?(@lock)
-  end
-
   def is_busy?
     # vagrant VM is never busy, because started by us
     false

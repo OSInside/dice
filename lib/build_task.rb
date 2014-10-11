@@ -12,9 +12,6 @@ class BuildTask
     if @buildsystem.is_locked?
       return Dice::Status::BuildRunning.new(self)
     end
-    if @buildsystem.is_busy?
-      return Dice::Status::BuildWorkerBusy.new(self)
-    end
     set_lock
     begin
       Solver.writeScan(recipe_dir)

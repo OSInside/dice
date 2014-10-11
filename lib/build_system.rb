@@ -2,7 +2,13 @@ class BuildSystem < Recipe
   def initialize(description)
     super(description)
     change_working_dir
-    @lock = get_basepath + "/" + Dice::META + "/" + Dice::LOCK
+    if self.is_a?(HostBuildSystem)
+      # set a global lock for the used worker host
+      @lock = get_basepath + "/.lock-" + Dice.config.buildhost
+    else
+      # set a recipe lock
+      @lock = get_basepath + "/" + Dice::META + "/" + Dice::LOCK
+    end
   end
 
   def up
@@ -35,16 +41,14 @@ class BuildSystem < Recipe
     )
   end
 
-  def is_locked?
-    raise Dice::Errors::MethodNotImplemented.new(
-      "is_locked? method not implemented"
-    )
-  end
-
   def is_busy?
     raise Dice::Errors::MethodNotImplemented.new(
       "is_busy? method not implemented"
     )
+  end
+
+  def is_locked?
+    File.file?(@lock)
   end
 
   def set_lock

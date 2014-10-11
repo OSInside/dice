@@ -2,9 +2,7 @@ require_relative "spec_helper"
 
 describe BuildSystemFactory do
   after(:all) do
-    Dice.configure do |config|
-      config.buildhost = "__VAGRANT__"
-    end
+    Dice.config.buildhost = "__VAGRANT__"
   end
 
   before(:each) do
@@ -22,9 +20,7 @@ describe BuildSystemFactory do
     end
   
     it "returns a HostBuildSystem" do
-      Dice.configure do |config|
-        config.buildhost = "localhost"
-      end
+      Dice.config.buildhost = "localhost"
       factory = BuildSystemFactory.new(@recipe)
       expect(factory.buildsystem).to be_a(
         HostBuildSystem

@@ -53,6 +53,5 @@ module Dice
     class BuildRunning < BuildStatus; end
     class UpToDate < BuildStatus; end
     class BuildRequired < BuildStatus; end
-    class BuildWorkerBusy < BuildStatus; end
   end
 end

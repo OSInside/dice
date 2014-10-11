@@ -77,13 +77,6 @@ describe VagrantBuildSystem do
     end
   end
 
-  describe "#is_locked?" do
-    it "check if a lock file exists" do
-      expect(File).to receive(:file?).with(/\.dice\/lock/)
-      @system.is_locked?
-    end
-  end
-
   describe "#is_busy?" do
     it "returns false, never busy" do
       expect(@system.is_busy?).to eq(false)
