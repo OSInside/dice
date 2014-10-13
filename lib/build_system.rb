@@ -5,7 +5,7 @@ class BuildSystem < Recipe
     @build_log = get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
     if self.is_a?(HostBuildSystem)
       # set a global lock for the used worker host
-      @lock = get_basepath + "/.lock-" + Dice.config.buildhost
+      @lock = "/tmp/.lock-" + Dice.config.buildhost
     else
       # set a recipe lock
       @lock = get_basepath + "/" + Dice::META + "/" + Dice::LOCK
