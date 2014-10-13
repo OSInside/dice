@@ -44,7 +44,6 @@ describe BuildTask do
       expect(@task).to receive(:perform_job)
       expect(@buildsystem).to receive(:writeRecipeChecksum)
       expect(@task).to receive(:release_lock)
-      expect(@task).to receive(:cleanup_build_error_log)
       expect(@task).to receive(:cleanup_screen_job)
       expect(@buildsystem).to receive(:halt)
       @task.run
@@ -55,15 +54,6 @@ describe BuildTask do
     it "calls get_log on a BuildSystem" do
       expect(@buildsystem).to receive(:get_log)
       @task.log
-    end
-  end
-
-  describe "#cleanup_build_error_log" do
-    it "removes the build_error.log file" do
-      expect(@task).to receive(:error_log_file).and_return("foo")
-      expect(File).to receive(:file?).with("foo").and_return(true)
-      expect(FileUtils).to receive(:rm).with("foo")
-      @task.cleanup_build_error_log
     end
   end
 

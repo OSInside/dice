@@ -40,17 +40,11 @@ class BuildTask
       perform_job
       @buildsystem.writeRecipeChecksum
       release_lock
-      cleanup_build_error_log
       cleanup_screen_job
       @buildsystem.halt
     else
       status.message
     end
-  end
-
-  def cleanup_build_error_log
-    log_file = error_log_file
-    FileUtils.rm(log_file) if File.file?(log_file)
   end
 
   def cleanup_screen_job
