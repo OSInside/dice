@@ -1,10 +1,15 @@
 class ConnectionTask
-  def initialize(recipe)
+  def initialize(recipe, options = Hash.new)
     Recipe.ok?(recipe)
     @factory = ConnectionFactory.new(recipe)
+    @options = options
   end
 
   def log
-    @factory.connection.get_log
+    if @options["show"]
+      @factory.connection.print_log
+    else
+      @factory.connection.get_log
+    end
   end
 end

@@ -99,9 +99,11 @@ class Cli
   LONGDESC
   arg "RECIPE-PATH"
   command :log do |c|
+    c.switch ["show", :s], :required => false, :negatable => false,
+      :desc => "Just show the log if present, skip test for build process"
     c.action do |global_options,options,args|
       recipe = shift_arg(args, "RECIPE-PATH")
-      connection = ConnectionTask.new(recipe)
+      connection = ConnectionTask.new(recipe, options)
       connection.log
     end
   end

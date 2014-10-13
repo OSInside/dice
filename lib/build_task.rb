@@ -54,7 +54,7 @@ class BuildTask
 
   def build_log_file
     log_file = @buildsystem.get_basepath + "/" +
-      Dice::META + "/" + Dice::BUILD_ERROR_LOG
+      Dice::META + "/" + Dice::BUILD_LOG
     log_file
   end
 

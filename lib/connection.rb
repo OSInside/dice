@@ -2,12 +2,12 @@ class Connection < Recipe
   def initialize(description)
     super(description)
     change_working_dir
+    @build_log = get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
   end
 
   def get_log
-    error_log = get_basepath + "/" + Dice::META + "/" + Dice::BUILD_ERROR_LOG
     begin
-      fuser_data = Command.run("fuser", error_log, :stdout => :capture)
+      fuser_data = Command.run("fuser", @build_log, :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
       details = e.stderr
       if details == ""
@@ -18,7 +18,17 @@ class Connection < Recipe
       )
     end
     pid = Connection.strip_fuser_pid(fuser_data)
-    exec("tail -f #{error_log} --pid #{pid}")
+    exec("tail -f #{@build_log} --pid #{pid}")
+  end
+
+  def print_log
+    begin
+      puts File.read(@build_log)
+    rescue => e
+      raise Dice::Errors::NoLogFile.new(
+        "Logfile not available: #{e}"
+      )
+    end
   end
 
   def self.strip_fuser_pid(fuser_data)

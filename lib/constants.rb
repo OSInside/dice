@@ -12,7 +12,7 @@ module Dice
   DIGEST_FILE = "checksum.sha256"
   SCAN_FILE = "scan"
 
-  BUILD_ERROR_LOG = "build.log"
+  BUILD_LOG = "build.log"
   BUILD_RESULT = "build_results.tar"
 
   SCREEN_JOB = "job"
