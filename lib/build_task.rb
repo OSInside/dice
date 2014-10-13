@@ -12,22 +12,15 @@ class BuildTask
     if @buildsystem.is_locked?
       return Dice::Status::BuildSystemLocked.new(self)
     end
-    set_lock
     if @buildsystem.is_building?
       return Dice::Status::BuildRunning.new(self)
     end
-    begin
-      Solver.writeScan(recipe_dir)
-    rescue Dice::Errors::DiceError => e
-      release_lock
-      raise e
-    end
+    Solver.writeScan(recipe_dir)
     if @buildsystem.job_required?
       status = Dice::Status::BuildRequired.new(self)
     else
       status = Dice::Status::UpToDate.new(self)
     end
-    release_lock
     status
   end
 
