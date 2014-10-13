@@ -15,12 +15,12 @@ describe Cli do
     end
   end
 
-  describe "#self.error_log_file" do
-    it "returns error log file for given task" do
+  describe "#self.build_log_file" do
+    it "returns build log file for given task" do
       buildtask = double(BuildTask)
       Cli.instance_variable_set(:@task, buildtask)
-      expect(buildtask).to receive(:error_log_file).and_return("foo")
-      expect(Cli.error_log_file).to eq("foo")
+      expect(buildtask).to receive(:build_log_file).and_return("foo")
+      expect(Cli.build_log_file).to eq("foo")
     end
   end
 end

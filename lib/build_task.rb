@@ -52,7 +52,7 @@ class BuildTask
     FileUtils.rm(screen_job) if File.file?(screen_job)
   end
 
-  def error_log_file
+  def build_log_file
     log_file = @buildsystem.get_basepath + "/" +
       Dice::META + "/" + Dice::BUILD_ERROR_LOG
     log_file

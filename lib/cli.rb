@@ -8,9 +8,9 @@ class Cli
   switch :debug, :negatable => false, :desc => "Enable debug mode"
   switch [:help, :h], :negatable => false, :desc => "Show help"
 
-  def self.error_log_file
+  def self.build_log_file
     log_file = nil
-    log_file = @task.error_log_file if @task
+    log_file = @task.build_log_file if @task
     log_file
   end
 
@@ -23,14 +23,14 @@ class Cli
       run(command << "--help")
       exit 1
     when Dice::Errors::DiceError
-      Logger.error(e.message, error_log_file)
+      Logger.error(e.message, build_log_file)
       @task.release_lock if @task
       exit 1
     when SystemExit
       raise
     when SignalException
       Logger.error(
-        "dice was aborted with signal #{e.signo}", error_log_file
+        "dice was aborted with signal #{e.signo}", build_log_file
       )
       @task.cleanup if @task
       exit 1

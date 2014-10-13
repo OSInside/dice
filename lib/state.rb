@@ -6,17 +6,11 @@ class BuildStatus
   def message
     Logger.info("Build-System status is: #{self.class}")
     if @build_task
-      log_file = @build_task.error_log_file
       job_file = @build_task.screen_job_file
       jobs = active_jobs(job_file)
       if !jobs.empty?
         Logger.info(
           "--> Screen job: $ screen -r #{jobs.last}"
-        )
-      end
-      if File.file?(log_file)
-        Logger.info(
-          "--> Last build attempt failed, details: #{log_file}"
         )
       end
     end

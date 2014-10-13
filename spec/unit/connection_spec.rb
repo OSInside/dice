@@ -9,7 +9,7 @@ describe Connection do
   describe "#get_log" do
     it "raises if no log exists or is currently in progress" do
       expect(Command).to receive(:run).with(
-        "fuser", /build_error.log/, {:stdout=>:capture}
+        "fuser", /build\.log/, {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
@@ -19,7 +19,7 @@ describe Connection do
     it "tails the log on normal operation" do
       expect(Command).to receive(:run)
       expect(@connection).to receive(:exec).with(
-        /tail -f \/.*build_error.log --pid/
+        /tail -f \/.*build\.log --pid/
       )
       @connection.get_log
     end

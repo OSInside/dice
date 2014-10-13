@@ -22,7 +22,7 @@ describe Job do
       logfile = double(File)
       expect(@job).to receive(:prepare_build)
       expect(File).to receive(:open).with(
-        /build_error.log/, "w"
+        /build\.log/, "w"
       ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
@@ -39,7 +39,7 @@ describe Job do
     it "raises if bundle failed" do
       logfile = double(File)
       expect(File).to receive(:open).with(
-        /build_error.log/, "a+"
+        /build\.log/, "a+"
       ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",

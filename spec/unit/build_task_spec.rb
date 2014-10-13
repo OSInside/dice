@@ -66,10 +66,10 @@ describe BuildTask do
     end
   end
 
-  describe "#error_log_file" do
-    it "returns build_error.log file name for recipe" do
+  describe "#build_log_file" do
+    it "returns build.log file name for recipe" do
       expect(@buildsystem).to receive(:get_basepath).and_return("foo")
-      expect(@task.error_log_file).to eq("foo/.dice/build_error.log")
+      expect(@task.build_log_file).to eq("foo/.dice/build.log")
     end
   end
 
