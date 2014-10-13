@@ -2,6 +2,7 @@ class BuildSystem < Recipe
   def initialize(description)
     super(description)
     change_working_dir
+    @build_log = get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
     if self.is_a?(HostBuildSystem)
       # set a global lock for the used worker host
       @lock = get_basepath + "/.lock-" + Dice.config.buildhost
@@ -45,6 +46,16 @@ class BuildSystem < Recipe
     raise Dice::Errors::MethodNotImplemented.new(
       "is_busy? method not implemented"
     )
+  end
+
+  def is_building?
+    building = true
+    begin
+      Command.run("fuser", @build_log, :stdout => :capture)
+    rescue Cheetah::ExecutionFailed => e
+      building = false
+    end
+    building
   end
 
   def is_locked?

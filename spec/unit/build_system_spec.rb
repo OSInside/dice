@@ -38,6 +38,15 @@ describe BuildSystem do
     end
   end
 
+  describe "#is_building?" do
+    it "checks if a process currently access the build log" do
+      expect(Command).to receive(:run).with(
+        "fuser", /build\.log/, {:stdout => :capture}
+      ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
+      expect(@system.is_building?).to eq(false)
+    end
+  end
+
   describe "#is_locked?" do
     it "checks if a lock file exists" do
       expect(File).to receive(:file?).with(/\.dice\/lock/).and_return(false)

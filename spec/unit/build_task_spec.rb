@@ -19,6 +19,7 @@ describe BuildTask do
     it "writes new config.scan and returns with a BuildRequired status" do
       expect(@buildsystem).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_locked?).and_return(false)
+      expect(@buildsystem).to receive(:is_building?).and_return(false)
       expect(@task).to receive(:set_lock)
       expect(Solver).to receive(:writeScan)
       expect(@buildsystem).to receive(:job_required?).and_return(true)
@@ -26,9 +27,17 @@ describe BuildTask do
       expect(@task.build_status).to be_a(Dice::Status::BuildRequired)
     end
 
-    it "returns with a Dice::Status::BuildRunning if busy" do
+    it "returns with a Dice::Status::BuildSystemLocked if locked" do
       expect(@buildsystem).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_locked?).and_return(true)
+      expect(@task.build_status).to be_a(Dice::Status::BuildSystemLocked)
+    end
+
+    it "returns with a Dice::Status::BuildRunning if build is running" do
+      expect(@buildsystem).to receive(:get_basepath)
+      expect(@buildsystem).to receive(:is_locked?).and_return(false)
+      expect(@buildsystem).to receive(:set_lock)
+      expect(@buildsystem).to receive(:is_building?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRunning)
     end
   end

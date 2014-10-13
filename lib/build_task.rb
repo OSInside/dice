@@ -10,9 +10,12 @@ class BuildTask
     status = Dice::Status::Unknown.new
     recipe_dir = @buildsystem.get_basepath
     if @buildsystem.is_locked?
-      return Dice::Status::BuildRunning.new(self)
+      return Dice::Status::BuildSystemLocked.new(self)
     end
     set_lock
+    if @buildsystem.is_building?
+      return Dice::Status::BuildRunning.new(self)
+    end
     begin
       Solver.writeScan(recipe_dir)
     rescue Dice::Errors::DiceError => e
