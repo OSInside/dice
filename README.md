@@ -1,9 +1,9 @@
 # Dice
 
-Dice is a simple build system for [KIWI](http://opensuse.github.com/kiwi)
+Dice is a simple build service for [KIWI](http://opensuse.github.com/kiwi)
 images using virtual instances controlled by vagrant or a directly
-contacted build machine. It can be used to fire up build jobs properly
-processed on e.g a cloud instance.
+contacted build machine. It can be used to fire up build jobs
+on e.g public cloud instances.
 
 ## Contents
 
