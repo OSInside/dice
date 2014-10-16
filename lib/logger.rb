@@ -24,7 +24,7 @@ class Logger
 
   def self.command(*message)
     if @@DEBUG
-      puts "#{prefix}: EXEC: #{message}"
+      puts "#{prefix}: EXEC: [#{message.join(" ")}]"
     end
   end
 
