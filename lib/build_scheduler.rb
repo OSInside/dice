@@ -14,7 +14,7 @@ class BuildScheduler
     job_name = set_job_name
     job_started = true
     Logger.set_recipe_dir(Pathname.new(recipe).basename)
-    Logger.info("Starting build job: #{job_name}")
+    Logger.info("#{self}: Starting build job: #{job_name}")
     build_cmd = [$0, "build", recipe]
     screen_cmd = ["screen", "-S", job_name, "-d", "-m"]
     begin

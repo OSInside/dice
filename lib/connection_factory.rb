@@ -1,10 +1,15 @@
 class ConnectionFactory
   def initialize(recipe)
     if Dice.config.buildhost == Dice::VAGRANT_BUILD
-      Logger.info("Connecting to Vagrant virtualized buildsystem")
+      Logger.info(
+        "#{self.class}: Connecting to Vagrant virtualized buildsystem"
+      )
       @connection = ConnectionVagrantBuildSystem.new(recipe)
     else
-      Logger.info("Connection to host buildsystem: #{Dice.config.buildhost}")
+      hostname = Dice.config.buildhost
+      Logger.info(
+        "#{self.class}: Connection to host buildsystem: #{hostname}"
+      )
       @connection = ConnectionHostBuildSystem.new(recipe)
     end
   end

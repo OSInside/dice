@@ -4,7 +4,7 @@ class BuildStatus
   end
 
   def message
-    Logger.info("Build-System status is: #{self.class}")
+    Logger.info("BuildStatus: #{self.class}")
     if @build_task
       job_file = @build_task.screen_job_file
       jobs = active_jobs(job_file)

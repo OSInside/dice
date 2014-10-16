@@ -15,7 +15,7 @@ class Job
 
   def build
     prepare_build
-    Logger.info "Building..."
+    Logger.info("#{self.class}: Building...")
     build_opts = "--build /vagrant -d /tmp/image --logfile terminal"
     logfile = File.open(@build_log, "w")
     begin
@@ -27,7 +27,7 @@ class Job
         :stderr => logfile
       )
     rescue Cheetah::ExecutionFailed => e
-      Logger.info "Build failed"
+      Logger.info("#{self.class}: Build failed")
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
         "Build failed for details check: #{@build_log}"
@@ -36,7 +36,7 @@ class Job
   end
 
   def bundle
-    Logger.info "Bundle results..."
+    Logger.info("#{self.class}: Bundle results...")
     logfile = File.open(@build_log, "a+")
     bundle_opts = "--bundle-build /tmp/image --bundle-id DiceBuild " +
       "--destdir /tmp/bundle --logfile terminal"
@@ -49,7 +49,7 @@ class Job
         :stderr => logfile
       )
     rescue Cheetah::ExecutionFailed => e
-      Logger.info "Bundler failed"
+      Logger.info("#{self.class}: Bundler failed")
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
         "Bundle result failed for details check: #{@build_log}"
@@ -58,7 +58,7 @@ class Job
   end
 
   def get_result
-    Logger.info "Retrieving results in #{@archive}..."
+    Logger.info("#{self.class}: Retrieving results in #{@archive}...")
     result = File.open(@archive, "w")
     begin
       Command.run(
@@ -68,7 +68,7 @@ class Job
         :stdout => result
       )
     rescue Cheetah::ExecutionFailed => e
-      Logger.info "Archiving failed"
+      Logger.info("#{self.class}: Archiving failed")
       result.close
       @buildsystem.halt
       raise Dice::Errors::ResultRetrievalFailed.new(
@@ -81,7 +81,7 @@ class Job
   private
 
   def prepare_build
-    Logger.info "Preparing build..."
+    Logger.info("#{self.class}: Preparing build...")
     FileUtils.rm(@archive) if File.file?(@archive)
     begin
       Command.run(
@@ -90,7 +90,7 @@ class Job
         "sudo rm -rf /tmp/image /tmp/bundle"
       )
     rescue Cheetah::ExecutionFailed => e
-      Logger.info "Preparation failed"
+      Logger.info("#{self.class}: Preparation failed")
       @buildsystem.halt
       raise Dice::Errors::PrepareBuildFailed.new(
         "Preparing build environment failed with: #{e.stderr}"

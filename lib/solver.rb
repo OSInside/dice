@@ -1,8 +1,6 @@
 class Solver
   def self.writeScan(description)
-    Logger.info(
-      "Solving software pattern/packages to check rebuild request"
-    )
+    Logger.info("#{self}: Checking for repository updates")
     solver_info = ""
     begin
       solver_info = Command.run(

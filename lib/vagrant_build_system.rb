@@ -5,7 +5,7 @@ class VagrantBuildSystem < BuildSystem
 
   def up
     basepath = get_basepath
-    Logger.info "Starting up buildsystem for #{basepath}..."
+    Logger.info("#{self.class}: Starting up buildsystem for #{basepath}...")
     begin
       @up_output = Command.run("vagrant", "up", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
@@ -13,27 +13,27 @@ class VagrantBuildSystem < BuildSystem
         "Starting up vritual system failed with: #{e.stderr}"
       )
     end
-    Logger.info @up_output
+    Logger.info("#{self.class}: #{@up_output}")
   end
 
   def provision
-    Logger.info "Provision build system..."
+    Logger.info("#{self.class}: Provision build system...")
     begin
       provision_output = Command.run(
         "vagrant", "provision", :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
-      Logger.info "Provisioning failed"
+      Logger.info("#{self.class}: Provisioning failed")
       halt
       raise Dice::Errors::VagrantProvisionFailed.new(
         "Provisioning virtual system failed with: #{e.stderr}"
       )
     end
-    Logger.info provision_output
+    Logger.info("#{self.class}: #{provision_output}")
   end
 
   def halt
-    Logger.info "Initiate shutdown..."
+    Logger.info("#{self.class}: Initiate shutdown...")
     begin
       halt_output = Command.run("vagrant", "halt", "-f", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
@@ -41,7 +41,7 @@ class VagrantBuildSystem < BuildSystem
         "System stop failed with: #{e.stderr}"
       )
     end
-    Logger.info halt_output
+    Logger.info("#{self.class}: #{halt_output}")
     reset_working_dir
   end
 

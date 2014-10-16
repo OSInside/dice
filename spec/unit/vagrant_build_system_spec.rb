@@ -20,7 +20,7 @@ describe VagrantBuildSystem do
     it "puts headline and up output on normal operation" do
       expect(Logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
-      expect(Logger).to receive(:info).with("foo")
+      expect(Logger).to receive(:info).with("VagrantBuildSystem: foo")
       @system.up
     end
   end
@@ -39,7 +39,7 @@ describe VagrantBuildSystem do
     it "puts headline and provision output on normal operation" do
       expect(Logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
-      expect(Logger).to receive(:info).with("foo")
+      expect(Logger).to receive(:info).with("VagrantBuildSystem: foo")
       @system.provision
     end
   end
@@ -57,7 +57,7 @@ describe VagrantBuildSystem do
     it "puts headline and halt output on normal operation, reset_working_dir" do
       expect(Logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
-      expect(Logger).to receive(:info).with("foo")
+      expect(Logger).to receive(:info).with("VagrantBuildSystem: foo")
       expect(@system).to receive(:reset_working_dir)
       @system.halt
     end

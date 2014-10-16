@@ -8,7 +8,7 @@ class HostBuildSystem < BuildSystem
   end
 
   def up
-    Logger.info "Using buildsystem #{@host} for #{@basepath}..."
+    Logger.info("#{self.class}: Using buildsystem #{@host} for #{@basepath}...")
     if is_busy?
       raise Dice::Errors::BuildWorkerBusy.new(
         "Buildsystem #{@host} is busy with other build process"
@@ -17,7 +17,7 @@ class HostBuildSystem < BuildSystem
   end
 
   def provision
-    Logger.info "Provision build system..."
+    Logger.info("#{self.class}: Provision build system...")
     begin
       ssh_options = "-o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0"
       provision_output = Command.run(
@@ -28,17 +28,17 @@ class HostBuildSystem < BuildSystem
         :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
-      Logger.info "Provisioning failed"
+      Logger.info("#{self.class}: Provisioning failed")
       halt
       raise Dice::Errors::HostProvisionFailed.new(
         "Provisioning system failed with: #{e.stderr}"
       )
     end
-    Logger.info provision_output
+    Logger.info("#{self.class}: #{provision_output}")
   end
 
   def halt
-    Logger.info "Stopping build process on #{@host}..."
+    Logger.info("#{self.class}: Stopping build process on #{@host}...")
     begin
       Command.run(
         "ssh",
