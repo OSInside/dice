@@ -1,7 +1,7 @@
 class BuildTask
-  def initialize(recipe, options = Hash.new)
-    Recipe.ok?(recipe)
-    @factory = BuildSystemFactory.new(recipe)
+  def initialize(description, options = Hash.new)
+    Recipe.ok?(description)
+    @factory = BuildSystemFactory.new(description)
     @buildsystem = @factory.buildsystem
     @options = options
   end

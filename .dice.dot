@@ -1,17 +1,13 @@
 // dot -Gsplines=ortho -Tpng -oMyGraph.png dice/.dice.dot
 
-digraph G {
+digraph Dice {
   {
     node [shape=box3d]
     Job
     BuildSystemFactory
-    HostBuildSystem
-    VagrantBuildSystem
     ConnectionTask
     BuildTask
     ConnectionFactory
-    ConnectionHostBuildSystem
-    ConnectionVagrantBuildSystem
 //    Command
 //    DiceConfig
   }
@@ -28,35 +24,40 @@ digraph G {
     BuildSystem
   }
 
-  Description -> BuildTask
+  {
+    node [shape=record]
+    BSFactory [label="{HostBuildSystem|VagrantBuildSystem}"]
+  }
 
-  Description -> Solver
+  {
+    node [shape=record]
+    CBSFactory [label="{ConnectionHostBuildSystem|ConnectionVagrantBuildSystem}"]
+  }
+
+
+  Description -> BuildTask
 
   Description -> ConnectionTask
 
-  Description -> Recipe
+  Description -> Solver
 
-
-  BuildSystemFactory -> HostBuildSystem
-  BuildSystemFactory -> VagrantBuildSystem
+  BuildSystemFactory -> BSFactory
 
   BuildTask -> BuildSystemFactory
 
-  HostBuildSystem -> BuildSystem
-  VagrantBuildSystem -> BuildSystem
+  BSFactory -> BuildSystem
 
   BuildSystem -> Job
-  Recipe -> BuildSystem
 
-  ConnectionFactory -> ConnectionHostBuildSystem
-  ConnectionFactory -> ConnectionVagrantBuildSystem
+  ConnectionFactory -> CBSFactory
 
   ConnectionTask -> ConnectionFactory
 
-  ConnectionHostBuildSystem -> Connection
-  ConnectionVagrantBuildSystem -> Connection
+  CBSFactory -> Connection
 
-  Recipe -> Connection
+  {rank=same; Recipe -> Connection}
+  {rank=same; Recipe -> BuildSystem}
+
 
 //  DiceConfig -> Recipe
 
