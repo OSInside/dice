@@ -1,53 +1,63 @@
-// dot -Tpng -oMyGraph.png dice/.dice.dot
+// dot -Gsplines=ortho -Tpng -oMyGraph.png dice/.dice.dot
 
 digraph G {
   {
     node [shape=box3d]
-    Cli
-    BuildTask [fillcolor=green style=filled]
-    ConnectionTask [fillcolor=green style=filled]
-    ConnectionHostBuildSystem
-    ConnectionVagrantBuildSystem
-    Connection
+    Job
+    BuildSystemFactory
     HostBuildSystem
     VagrantBuildSystem
-    BuildSystem
+    ConnectionTask
+    BuildTask
     ConnectionFactory
-    BuildSystemFactory
-    Job
-    Solver
-    Recipe
-    DiceConfig
-    Command
-    Logger
+    ConnectionHostBuildSystem
+    ConnectionVagrantBuildSystem
+//    Command
+//    DiceConfig
+  }
+  
+  {
+    node [shape=folder]
+    Description [label="Dice featured standard KIWI Description"]
   }
 
-  Logger;
-  Command;
-  DiceConfig;
+  {
+//    Logger
+    Solver
+    Recipe
+    BuildSystem
+  }
 
-  Cli -> BuildTask;
-    
-  Cli -> ConnectionTask;
+  Description -> BuildTask
 
-  ConnectionHostBuildSystem -> Connection [label="is a"];
-  ConnectionVagrantBuildSystem -> Connection [label="is a"];
-  Connection -> Recipe [label="is a"];
+  Description -> Solver
 
-  HostBuildSystem -> BuildSystem [label="is a"];
-  VagrantBuildSystem -> BuildSystem [label="is a"];
-  BuildSystem -> Recipe [label="is a"];
+  Description -> ConnectionTask
 
-  ConnectionFactory -> ConnectionVagrantBuildSystem;
-  ConnectionFactory -> ConnectionHostBuildSystem;
+  Description -> Recipe
 
-  ConnectionTask -> ConnectionFactory;
-
-  BuildSystemFactory -> Job;
-  BuildSystemFactory -> Solver;
 
   BuildSystemFactory -> HostBuildSystem
   BuildSystemFactory -> VagrantBuildSystem
 
-  BuildTask -> BuildSystemFactory;
+  BuildTask -> BuildSystemFactory
+
+  HostBuildSystem -> BuildSystem
+  VagrantBuildSystem -> BuildSystem
+
+  BuildSystem -> Job
+  Recipe -> BuildSystem
+
+  ConnectionFactory -> ConnectionHostBuildSystem
+  ConnectionFactory -> ConnectionVagrantBuildSystem
+
+  ConnectionTask -> ConnectionFactory
+
+  ConnectionHostBuildSystem -> Connection
+  ConnectionVagrantBuildSystem -> Connection
+
+  Recipe -> Connection
+
+//  DiceConfig -> Recipe
+
 }
