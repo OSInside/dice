@@ -18,10 +18,12 @@ digraph Dice {
   }
 
   {
+    node [shape=box style=rounded]
 //    Logger
     Solver
     Recipe
     BuildSystem
+    Connection
   }
 
   {
