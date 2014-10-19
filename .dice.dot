@@ -1,20 +1,42 @@
+// dot -Tpng -oMyGraph.png dice/.dice.dot
+
 digraph G {
+  {
+    node [shape=box3d]
+    Cli
+    BuildTask [fillcolor=green style=filled]
+    ConnectionTask [fillcolor=green style=filled]
+    ConnectionHostBuildSystem
+    ConnectionVagrantBuildSystem
+    Connection
+    HostBuildSystem
+    VagrantBuildSystem
+    BuildSystem
+    ConnectionFactory
+    BuildSystemFactory
+    Job
+    Solver
+    Recipe
+    DiceConfig
+    Command
+    Logger
+  }
+
   Logger;
   Command;
   DiceConfig;
 
-  Cli;
   Cli -> BuildTask;
-
+    
   Cli -> ConnectionTask;
 
-  ConnectionHostBuildSystem -> Connection [label="inherits from"];
-  ConnectionVagrantBuildSystem -> Connection [label="inherits from"];
-  Connection -> Recipe [label="inherits from"];
+  ConnectionHostBuildSystem -> Connection [label="is a"];
+  ConnectionVagrantBuildSystem -> Connection [label="is a"];
+  Connection -> Recipe [label="is a"];
 
-  HostBuildSystem -> BuildSystem [label="inherits from"];
-  VagrantBuildSystem -> BuildSystem [label="inherits from"];
-  BuildSystem -> Recipe [label="inherits from"];
+  HostBuildSystem -> BuildSystem [label="is a"];
+  VagrantBuildSystem -> BuildSystem [label="is a"];
+  BuildSystem -> Recipe [label="is a"];
 
   ConnectionFactory -> ConnectionVagrantBuildSystem;
   ConnectionFactory -> ConnectionHostBuildSystem;
