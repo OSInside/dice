@@ -1,19 +1,16 @@
 require_relative "spec_helper"
 
 describe ConnectionFactory do
-  after(:all) do
-    Dice.config.buildhost = "__VAGRANT__"
-  end
-
   before(:each) do
-    @recipe="spec/helper/recipe_good"
-    allow_any_instance_of(Connection).to receive(:change_working_dir)
-    @factory = ConnectionFactory.new(@recipe)
+    @recipe = Recipe.new("spec/helper/recipe_good")
+    allow_any_instance_of(Recipe).to receive(:change_working_dir)
   end
 
   describe "#connection" do
     it "returns a ConnectionVagrantBuildSystem" do
-      expect(@factory.connection).to be_a(
+      Dice.config.buildhost = Dice::VAGRANT_BUILD
+      factory = ConnectionFactory.new(@recipe)
+      expect(factory.connection).to be_a(
         ConnectionVagrantBuildSystem
       )
     end

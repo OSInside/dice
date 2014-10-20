@@ -3,7 +3,6 @@ require_relative "spec_helper"
 describe ConnectionTask do
   before(:each) do
     @factory = double(ConnectionFactory)
-    expect(Recipe).to receive(:ok?)
     expect(ConnectionFactory).to receive(:new).and_return(@factory)
     @task = ConnectionTask.new("foo")
   end

@@ -2,8 +2,9 @@ require_relative "spec_helper"
 
 describe Connection do
   before(:each) do
-    expect_any_instance_of(Connection).to receive(:change_working_dir)
-    @connection = Connection.new("spec/helper/recipe_good")
+    @recipe = Recipe.new("spec/helper/recipe_good")
+    expect(@recipe).to receive(:change_working_dir)
+    @connection = Connection.new(@recipe)
   end
 
   describe "#get_log" do

@@ -2,34 +2,34 @@ require_relative "spec_helper"
 
 describe Recipe do
   before(:each) do
+    allow(FileUtils).to receive(:mkdir).with(/recipe_good\/.dice/)
     @recipe = Recipe.new("spec/helper/recipe_good")
   end
 
   describe "#initialize" do
     it "raises if description does not exist or is no directory" do
-      expect { Recipe.new("foo") }.to raise_error(Errno::ENOENT)
+      expect { Recipe.new("foo") }.to raise_error(Dice::Errors::NoDirectory)
     end
 
     it "returns a Recipe for good recipe" do
       expect(@recipe).to be_a(Recipe)
     end
-  end
 
-  describe "#ok?" do
     it "raises if Vagrantfile is missing" do
-      expect { Recipe.ok?("spec/helper/recipe_missing_vagrantfile") }.
+      expect { Recipe.new("spec/helper/recipe_missing_vagrantfile") }.
         to raise_error(Dice::Errors::NoConfigFile)
     end
 
     it "raises if config.xml is missing" do
-      expect { Recipe.ok?("spec/helper/recipe_missing_config.xml") }.
+      expect { Recipe.new("spec/helper/recipe_missing_config.xml") }.
         to raise_error(Dice::Errors::NoKIWIConfig)
     end
+  end
 
+  describe "#ok?" do
     it "loads Dicefile and creates .dice dir" do
-      expect(Recipe).to receive(:load)
-      expect(FileUtils).to receive(:mkdir).with(/recipe_good\/.dice/)
-      Recipe.ok?("spec/helper/recipe_good")
+      expect(@recipe).to receive(:load)
+      @recipe.instance_eval{ ok? }
     end
   end
 

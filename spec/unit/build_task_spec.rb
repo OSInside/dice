@@ -4,35 +4,35 @@ describe BuildTask do
   before(:each) do
     @factory = double(BuildSystemFactory)
     @buildsystem = double(BuildSystem)
-    expect(Recipe).to receive(:ok?)
     expect(BuildSystemFactory).to receive(:new).and_return(
       @factory
     )
     expect(@factory).to receive(:buildsystem).and_return(
       @buildsystem
     )
-    @task = BuildTask.new("foo")
+    @recipe = double(Recipe)
+    @task = BuildTask.new(@recipe)
     @task.instance_variable_set(:@buildsystem, @buildsystem)
   end
 
   describe "#build_status" do
     it "writes new config.scan and returns with a BuildRequired status" do
-      expect(@buildsystem).to receive(:get_basepath)
+      expect(@recipe).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_locked?).and_return(false)
       expect(Solver).to receive(:writeScan)
-      expect(@buildsystem).to receive(:job_required?).and_return(true)
+      expect(@recipe).to receive(:job_required?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRequired)
     end
 
     it "returns with a Dice::Status::BuildSystemLocked if locked" do
-      expect(@buildsystem).to receive(:get_basepath)
+      expect(@recipe).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_locked?).and_return(true)
       expect(@buildsystem).to receive(:is_building?).and_return(false)
       expect(@task.build_status).to be_a(Dice::Status::BuildSystemLocked)
     end
 
     it "returns with a Dice::Status::BuildRunning if build is running" do
-      expect(@buildsystem).to receive(:get_basepath)
+      expect(@recipe).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_locked?).and_return(true)
       expect(@buildsystem).to receive(:is_building?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRunning)
@@ -48,7 +48,7 @@ describe BuildTask do
       expect(@buildsystem).to receive(:up)
       expect(@buildsystem).to receive(:provision)
       expect(@task).to receive(:perform_job)
-      expect(@buildsystem).to receive(:writeRecipeChecksum)
+      expect(@recipe).to receive(:writeRecipeChecksum)
       expect(@task).to receive(:release_lock)
       expect(@task).to receive(:cleanup_screen_job)
       expect(@buildsystem).to receive(:halt)
@@ -74,14 +74,14 @@ describe BuildTask do
 
   describe "#build_log_file" do
     it "returns build.log file name for recipe" do
-      expect(@buildsystem).to receive(:get_basepath).and_return("foo")
+      expect(@recipe).to receive(:get_basepath).and_return("foo")
       expect(@task.build_log_file).to eq("foo/.dice/build.log")
     end
   end
 
   describe "#screen_job_file" do
     it "returns screen job file name" do
-      expect(@buildsystem).to receive(:get_basepath).and_return("foo")
+      expect(@recipe).to receive(:get_basepath).and_return("foo")
       expect(@task.screen_job_file).to eq("foo/.dice/job")
     end
   end

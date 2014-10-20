@@ -2,8 +2,9 @@ require_relative "spec_helper"
 
 describe VagrantBuildSystem do
   before(:each) do
-    expect_any_instance_of(BuildSystem).to receive(:change_working_dir)
-    @system = VagrantBuildSystem.new("spec/helper/recipe_good")
+    @recipe = Recipe.new("spec/helper/recipe_good")
+    expect(@recipe).to receive(:change_working_dir)
+    @system = VagrantBuildSystem.new(@recipe)
     @system.instance_variable_set(
       :@up_output, "[jeos_sle12_build] -- 22 => 2200 (adapter 1)"
     )
@@ -58,7 +59,7 @@ describe VagrantBuildSystem do
       expect(Logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
       expect(Logger).to receive(:info).with("VagrantBuildSystem: foo")
-      expect(@system).to receive(:reset_working_dir)
+      expect(@recipe).to receive(:reset_working_dir)
       @system.halt
     end
   end

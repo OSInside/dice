@@ -2,8 +2,9 @@ require_relative "spec_helper"
 
 describe BuildSystem do
   before(:each) do
-    expect_any_instance_of(BuildSystem).to receive(:change_working_dir)
-    @system = BuildSystem.new("spec/helper/recipe_good")
+    @recipe = Recipe.new("spec/helper/recipe_good")
+    expect(@recipe).to receive(:change_working_dir)
+    @system = BuildSystem.new(@recipe)
   end
 
   describe "#up" do

@@ -1,14 +1,11 @@
 require_relative "spec_helper"
 
 describe HostBuildSystem do
-  after(:all) do
-    Dice.config.buildhost = "__VAGRANT__"
-  end
-
   before(:each) do
     Dice.config.buildhost = "example.com"
-    expect_any_instance_of(BuildSystem).to receive(:change_working_dir)
-    @system = HostBuildSystem.new("spec/helper/recipe_good")
+    @recipe = Recipe.new("spec/helper/recipe_good")
+    expect(@recipe).to receive(:change_working_dir)
+    @system = HostBuildSystem.new(@recipe)
     @host = @system.instance_variable_get(:@host)
   end
 
@@ -28,7 +25,7 @@ describe HostBuildSystem do
         "rsync", "-e",
         /ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 -i .*key\/vagrant/,
         "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
-        "--exclude", ".*", ".", "vagrant@#{@host}:/vagrant",
+        "--exclude", ".*", ".", "root@#{@host}:/vagrant",
         {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
@@ -45,9 +42,9 @@ describe HostBuildSystem do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-o",
         "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,
-        "vagrant@#{@host}", "sudo", "killall", "kiwi"
+        "root@#{@host}", "sudo", "killall", "kiwi"
       )
-      expect(@system).to receive(:reset_working_dir)
+      expect(@recipe).to receive(:reset_working_dir)
       @system.halt
     end
   end
@@ -69,7 +66,7 @@ describe HostBuildSystem do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-o",
         "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,
-        "vagrant@#{@host}", "sudo", "pidof", "-x", "kiwi"
+        "root@#{@host}", "sudo", "pidof", "-x", "kiwi"
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
