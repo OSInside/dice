@@ -8,6 +8,7 @@ digraph Dice {
     ConnectionTask
     BuildTask
     ConnectionFactory
+    Recipe
 //    Command
 //    DiceConfig
   }
@@ -36,10 +37,11 @@ digraph Dice {
     CBSFactory [label="{ConnectionHostBuildSystem|ConnectionVagrantBuildSystem}"]
   }
 
+  Description -> Recipe
 
-  Description -> BuildTask
+  Recipe -> BuildTask
 
-  Description -> ConnectionTask
+  Recipe -> ConnectionTask
 
   Description -> Solver
 
@@ -56,9 +58,6 @@ digraph Dice {
   ConnectionTask -> ConnectionFactory
 
   CBSFactory -> Connection
-
-  {rank=same; Recipe -> Connection}
-  {rank=same; Recipe -> BuildSystem}
 
 
 //  DiceConfig -> Recipe

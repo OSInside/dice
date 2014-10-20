@@ -1,5 +1,5 @@
 class ConnectionHostBuildSystem < Connection
-  def initialize(description)
-    super(description)
+  def initialize(recipe)
+    super(recipe)
   end
 end

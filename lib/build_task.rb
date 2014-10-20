@@ -1,14 +1,14 @@
 class BuildTask
-  def initialize(description, options = Hash.new)
-    Recipe.ok?(description)
-    @factory = BuildSystemFactory.new(description)
+  def initialize(recipe, options = Hash.new)
+    @factory = BuildSystemFactory.new(recipe)
     @buildsystem = @factory.buildsystem
     @options = options
+    @recipe = recipe
   end
 
   def build_status
     status = Dice::Status::Unknown.new
-    recipe_dir = @buildsystem.get_basepath
+    recipe_dir = @recipe.get_basepath
     if @buildsystem.is_locked?
       if @buildsystem.is_building?
         return Dice::Status::BuildRunning.new(self)
@@ -17,7 +17,7 @@ class BuildTask
       end
     end
     Solver.writeScan(recipe_dir)
-    if @buildsystem.job_required?
+    if @recipe.job_required?
       status = Dice::Status::BuildRequired.new(self)
     else
       status = Dice::Status::UpToDate.new(self)
@@ -35,7 +35,7 @@ class BuildTask
       @buildsystem.up
       @buildsystem.provision
       perform_job
-      @buildsystem.writeRecipeChecksum
+      @recipe.writeRecipeChecksum
       release_lock
       cleanup_screen_job
       @buildsystem.halt
@@ -50,13 +50,13 @@ class BuildTask
   end
 
   def build_log_file
-    log_file = @buildsystem.get_basepath + "/" +
+    log_file = @recipe.get_basepath + "/" +
       Dice::META + "/" + Dice::BUILD_LOG
     log_file
   end
 
   def screen_job_file
-    screen_job = @buildsystem.get_basepath + "/" +
+    screen_job = @recipe.get_basepath + "/" +
       Dice::META + "/" + Dice::SCREEN_JOB
     screen_job
   end

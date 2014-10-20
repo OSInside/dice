@@ -1,39 +1,9 @@
 class Recipe
   def initialize(description)
-    recipe = Pathname.new(description)
+    @description = description
+    recipe = ok?
     @basepath = recipe.realpath.to_s
     @cwd = Pathname.new(Dir.pwd).realpath.to_s
-  end
-
-  def self.ok?(description)
-    recipe = Pathname.new(description)
-    Logger.set_recipe_dir(recipe.basename)
-    if !File.exists?(recipe) || !File.directory?(recipe.realpath)
-      raise Dice::Errors::NoDirectory.new(
-        "Given recipe does not exist or is not a directory"
-      )
-    end
-    vagrantFile = File.file?(description + "/" + Dice::VAGRANT_FILE)
-    diceFile = File.file?(description + "/" + Dice::DICE_FILE)
-    kiwiFile = File.file?(description + "/" + Dice::KIWI_FILE)
-    if !kiwiFile
-      raise Dice::Errors::NoKIWIConfig.new(
-        "No kiwi configuration found"
-      )
-    end
-    if !vagrantFile && !diceFile
-      raise Dice::Errors::NoConfigFile.new(
-        "No vagrant and/or dice configuration found"
-      )
-    end
-    if diceFile
-      load description + "/" + Dice::DICE_FILE
-    end
-    metadir = recipe.realpath.to_s + "/" + Dice::META
-    if !File.directory?(metadir)
-      FileUtils.mkdir(metadir)
-    end
-    true
   end
 
   def job_required?
@@ -67,6 +37,37 @@ class Recipe
   end
 
   private
+
+  def ok?
+    recipe = Pathname.new(@description)
+    Logger.set_recipe_dir(recipe.basename)
+    if !File.exists?(recipe) || !File.directory?(recipe.realpath)
+      raise Dice::Errors::NoDirectory.new(
+        "Given recipe does not exist or is not a directory"
+      )
+    end
+    vagrantFile = File.file?(@description + "/" + Dice::VAGRANT_FILE)
+    diceFile = File.file?(@description + "/" + Dice::DICE_FILE)
+    kiwiFile = File.file?(@description + "/" + Dice::KIWI_FILE)
+    if !kiwiFile
+      raise Dice::Errors::NoKIWIConfig.new(
+        "No kiwi configuration found"
+      )
+    end
+    if !vagrantFile && !diceFile
+      raise Dice::Errors::NoConfigFile.new(
+        "No vagrant and/or dice configuration found"
+      )
+    end
+    if diceFile
+      load @description + "/" + Dice::DICE_FILE
+    end
+    metadir = recipe.realpath.to_s + "/" + Dice::META
+    if !File.directory?(metadir)
+      FileUtils.mkdir(metadir)
+    end
+    recipe
+  end
 
   def createDigest
     result = ""

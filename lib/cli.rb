@@ -86,7 +86,8 @@ class Cli
     c.switch ["force", :f], :required => false, :negatable => false,
       :desc => "Force building even if status is up to data"
     c.action do |global_options,options,args|
-      recipe = shift_arg(args, "RECIPE-PATH")
+      description = shift_arg(args, "RECIPE-PATH")
+      recipe = Recipe.new(description)
       @task = BuildTask.new(recipe, options)
       @task.run
     end
@@ -102,7 +103,8 @@ class Cli
     c.switch ["show", :s], :required => false, :negatable => false,
       :desc => "Just show the log if present, skip test for build process"
     c.action do |global_options,options,args|
-      recipe = shift_arg(args, "RECIPE-PATH")
+      description = shift_arg(args, "RECIPE-PATH")
+      recipe = Recipe.new(description)
       connection = ConnectionTask.new(recipe, options)
       connection.log
     end
@@ -117,7 +119,8 @@ class Cli
   arg "RECIPE-PATH"
   command :status do |c|
     c.action do |global_options,options,args|
-      recipe = shift_arg(args, "RECIPE-PATH")
+      description = shift_arg(args, "RECIPE-PATH")
+      recipe = Recipe.new(description)
       task = BuildTask.new(recipe)
       status = task.build_status
       status.message

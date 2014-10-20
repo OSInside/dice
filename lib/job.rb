@@ -5,7 +5,7 @@ class Job
     end
     @job_user = Dice.config.ssh_user
     @job_ssh_private_key = Dice.config.ssh_private_key
-    recipe_path = system.get_basepath
+    recipe_path = system.recipe.get_basepath
     @build_log = recipe_path + "/" + Dice::META + "/" + Dice::BUILD_LOG
     @archive  = recipe_path + "/" + Dice::META + "/" + Dice::BUILD_RESULT
     @buildsystem = system
@@ -28,16 +28,18 @@ class Job
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info("#{self.class}: Build failed")
+      logfile.close
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
         "Build failed for details check: #{@build_log}"
       )
     end
+    logfile.close
   end
 
   def bundle
     Logger.info("#{self.class}: Bundle results...")
-    logfile = File.open(@build_log, "a+")
+    logfile = File.open(@build_log, "a")
     bundle_opts = "--bundle-build /tmp/image --bundle-id DiceBuild " +
       "--destdir /tmp/bundle --logfile terminal"
     begin
@@ -50,11 +52,13 @@ class Job
       )
     rescue Cheetah::ExecutionFailed => e
       Logger.info("#{self.class}: Bundler failed")
+      logfile.close
       @buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
         "Bundle result failed for details check: #{@build_log}"
       )
     end
+    logfile.close
   end
 
   def get_result

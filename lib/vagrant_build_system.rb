@@ -1,11 +1,11 @@
 class VagrantBuildSystem < BuildSystem
-  def initialize(description)
-    super(description)
+  def initialize(recipe)
+    super(recipe)
+    @recipe = recipe
   end
 
   def up
-    basepath = get_basepath
-    Logger.info("#{self.class}: Starting up buildsystem for #{basepath}...")
+    Logger.info("#{self.class}: Starting up buildsystem for #{@recipe.get_basepath}...")
     begin
       @up_output = Command.run("vagrant", "up", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
@@ -42,7 +42,7 @@ class VagrantBuildSystem < BuildSystem
       )
     end
     Logger.info("#{self.class}: #{halt_output}")
-    reset_working_dir
+    @recipe.reset_working_dir
   end
 
   def get_port

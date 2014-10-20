@@ -1,15 +1,19 @@
-class BuildSystem < Recipe
-  def initialize(description)
-    super(description)
-    change_working_dir
-    @build_log = get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
+class BuildSystem
+  def initialize(recipe)
+    @recipe = recipe
+    @recipe.change_working_dir
+    @build_log = @recipe.get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
     if self.is_a?(HostBuildSystem)
       # set a global lock for the used worker host
       @lock = "/tmp/.lock-" + Dice.config.buildhost
     else
       # set a recipe lock
-      @lock = get_basepath + "/" + Dice::META + "/" + Dice::LOCK
+      @lock = @recipe.get_basepath + "/" + Dice::META + "/" + Dice::LOCK
     end
+  end
+
+  def recipe
+    @recipe
   end
 
   def up

@@ -1,12 +1,12 @@
 class BuildSystemFactory
-  def initialize(description)
+  def initialize(recipe)
     if Dice.config.buildhost == Dice::VAGRANT_BUILD
       Logger.info("#{self.class}: Setting up Vagrant virtualized buildsystem")
-      @build_system = VagrantBuildSystem.new(description)
+      @build_system = VagrantBuildSystem.new(recipe)
     else
       hostname = Dice.config.buildhost
       Logger.info("#{self.class}: Setting up buildsystem for host: #{hostname}")
-      @build_system = HostBuildSystem.new(description)
+      @build_system = HostBuildSystem.new(recipe)
     end
   end
 

@@ -1,7 +1,6 @@
 class ConnectionTask
-  def initialize(description, options = Hash.new)
-    Recipe.ok?(description)
-    @factory = ConnectionFactory.new(description)
+  def initialize(recipe, options = Hash.new)
+    @factory = ConnectionFactory.new(recipe)
     @options = options
   end
 

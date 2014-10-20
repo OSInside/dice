@@ -1,10 +1,11 @@
 class HostBuildSystem < BuildSystem
-  def initialize(description)
-    super(description)
+  def initialize(recipe)
+    super(recipe)
+    @recipe = recipe
     @host = Dice.config.buildhost
     @user = Dice.config.ssh_user
     @ssh_private_key = Dice.config.ssh_private_key
-    @basepath = get_basepath
+    @basepath = @recipe.get_basepath
   end
 
   def up
@@ -50,7 +51,7 @@ class HostBuildSystem < BuildSystem
     rescue Cheetah::ExecutionFailed => e
       # continue even if there was no process to kill
     end
-    reset_working_dir
+    @recipe.reset_working_dir
   end
 
   def get_port

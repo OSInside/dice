@@ -1,8 +1,7 @@
-class Connection < Recipe
-  def initialize(description)
-    super(description)
-    change_working_dir
-    @build_log = get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
+class Connection
+  def initialize(recipe)
+    recipe.change_working_dir
+    @build_log = recipe.get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
   end
 
   def get_log
