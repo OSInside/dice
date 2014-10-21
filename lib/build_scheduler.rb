@@ -1,21 +1,26 @@
 class BuildScheduler
-  def self.run_tasks(recipe_dir)
-    dir_list = Dir.glob("#{recipe_dir}/*")
-    dir_list.sort.each do |recipe|
+  def self.run_tasks(dir)
+    dir_list = Dir.glob("#{dir}/*")
+    if dir_list.empty?
+      raise Dice::Errors::NoDirectory.new(
+        "No description directories found below: #{dir}"
+      )
+    end
+    dir_list.sort.each do |description|
+      recipe = Recipe.new(description)
       fork do
-        run recipe
+        run recipe.get_basepath
       end
     end
   end
 
   private
 
-  def self.run(recipe)
+  def self.run(description)
     job_name = set_job_name
     job_started = true
-    Logger.set_recipe_dir(Pathname.new(recipe).basename)
     Logger.info("#{self}: Starting build job: #{job_name}")
-    build_cmd = [$0, "build", recipe]
+    build_cmd = [$0, "build", description]
     screen_cmd = ["screen", "-S", job_name, "-d", "-m"]
     begin
       Command.run(screen_cmd + build_cmd)
@@ -23,9 +28,9 @@ class BuildScheduler
       job_started = false
     end
     if job_started
-      FileUtils.mkdir_p(recipe + "/" + Dice::META)
+      FileUtils.mkdir_p(description + "/" + Dice::META)
       job_info = File.new(
-        recipe + "/" + Dice::META + "/" + Dice::SCREEN_JOB, "a+"
+        description + "/" + Dice::META + "/" + Dice::SCREEN_JOB, "a+"
       )
       job_info.puts(job_name)
       job_info.close

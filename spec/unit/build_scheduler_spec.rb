@@ -8,18 +8,20 @@ describe BuildScheduler do
 
    describe "#self.run_tasks" do
      it "calls run on sorted list of entries in a given directory" do
-       dir_list = ["a", "c", "b"]
+       dir_list = ["c", "a"]
        expect(Dir).to receive(:glob).with("foo/*").and_return(
          dir_list
        )
+       recipe = double(Recipe)
+       expect(recipe).to receive(:get_basepath).and_return("a")
+       allow(Recipe).to receive(:new).and_return(recipe)
        expect(BuildScheduler).to receive(:fork).and_yield do |block|
          expect(block).to receive(:run).with("a")
        end
+       expect(recipe).to receive(:get_basepath).and_return("b")
+       allow(Recipe).to receive(:new).and_return(recipe)
        expect(BuildScheduler).to receive(:fork).and_yield do |block|
          expect(block).to receive(:run).with("b")
-       end
-       expect(BuildScheduler).to receive(:fork).and_yield do |block|
-         expect(block).to receive(:run).with("c")
        end
        BuildScheduler.run_tasks("foo")
      end
