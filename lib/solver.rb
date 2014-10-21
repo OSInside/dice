@@ -1,6 +1,7 @@
 class Solver
-  def self.writeScan(description)
-    Logger.info("#{self}: Checking for repository updates")
+  def writeScan(recipe)
+    description = recipe.get_basepath
+    Logger.info("Solver: Checking for repository updates")
     solver_info = ""
     begin
       solver_info = Command.run(

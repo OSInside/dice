@@ -17,22 +17,19 @@ describe BuildTask do
 
   describe "#build_status" do
     it "writes new config.scan and returns with a BuildRequired status" do
-      expect(@recipe).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_locked?).and_return(false)
-      expect(Solver).to receive(:writeScan)
+      expect(@task).to receive(:writeScan)
       expect(@recipe).to receive(:job_required?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRequired)
     end
 
     it "returns with a Dice::Status::BuildSystemLocked if locked" do
-      expect(@recipe).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_locked?).and_return(true)
       expect(@buildsystem).to receive(:is_building?).and_return(false)
       expect(@task.build_status).to be_a(Dice::Status::BuildSystemLocked)
     end
 
     it "returns with a Dice::Status::BuildRunning if build is running" do
-      expect(@recipe).to receive(:get_basepath)
       expect(@buildsystem).to receive(:is_locked?).and_return(true)
       expect(@buildsystem).to receive(:is_building?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRunning)

@@ -1,4 +1,4 @@
-// dot -Gsplines=ortho -Tpng -oMyGraph.png dice/.dice.dot
+// dot -Gsplines=ortho -Tpng -o .dice.png .dice.dot
 
 digraph Dice {
   {
@@ -8,14 +8,14 @@ digraph Dice {
     ConnectionTask
     BuildTask
     ConnectionFactory
-    Recipe
+    Recipe [label="DICE featured Recipe Class"]
 //    Command
 //    DiceConfig
   }
   
   {
     node [shape=folder]
-    Description [label="Dice featured standard KIWI Description"]
+    Description [label="Standard KIWI Description"]
   }
 
   {
@@ -25,6 +25,7 @@ digraph Dice {
     Recipe
     BuildSystem
     Connection
+    DiceConfig
   }
 
   {
@@ -37,17 +38,21 @@ digraph Dice {
     CBSFactory [label="{ConnectionHostBuildSystem|ConnectionVagrantBuildSystem}"]
   }
 
+  DiceConfig -> Recipe
+
   Description -> Recipe
 
   Recipe -> BuildTask
 
   Recipe -> ConnectionTask
 
-  Description -> Solver
+//  Description -> Solver
 
   BuildSystemFactory -> BSFactory
 
   BuildTask -> BuildSystemFactory
+
+  BuildTask -> Solver
 
   BSFactory -> BuildSystem
 
