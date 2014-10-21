@@ -5,15 +5,27 @@ class VagrantBuildSystem < BuildSystem
   end
 
   def up
-    Logger.info("#{self.class}: Starting up buildsystem for #{@recipe.get_basepath}...")
+    Logger.info(
+      "#{self.class}: Starting up buildsystem for #{@recipe.get_basepath}..."
+    )
     begin
-      @up_output = Command.run("vagrant", "up", :stdout => :capture)
+      up_output = Command.run("vagrant", "up", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::VagrantUpFailed.new(
         "Starting up vritual system failed with: #{e.stderr}"
       )
     end
-    Logger.info("#{self.class}: #{@up_output}")
+    Logger.info("#{self.class}: Receiving Host IP/Port information...")
+    begin
+      @ssh_output = Command.run(
+        "vagrant", "ssh", "--debug", "-c", "/bin/true", :stderr => :capture
+      )
+    rescue Cheetah::ExecutionFailed => e
+      raise Dice::Errors::VagrantUpFailed.new(
+        "Retrieving IP/Port information failed: #{e.stderr}"
+      )
+    end
+    Logger.info("#{self.class}: #{up_output}")
   end
 
   def provision
@@ -47,21 +59,31 @@ class VagrantBuildSystem < BuildSystem
 
   def get_port
     port = nil
-    if @up_output =~ /--.*=> (\d+).*/
+    if @ssh_output =~ /Executing SSH.*\-p.*\"(\d+)\".*/
       port = $1
     else
-      if !@up_output
-        @up_output = "<empty-output>"
+      if !@ssh_output
+        @ssh_output = "<empty-output>"
       end
       raise Dice::Errors::GetPortFailed.new(
-        "Port retrieval failed no match in startup output: #{@up_output}"
+        "Port retrieval failed no match in ssh output: #{@ssh_output}"
       )
     end
     port
   end
 
   def get_ip
-    ip = "127.0.0.1"
+    ip = nil
+    if @ssh_output =~ /Executing SSH.*@(.*?)\".*/
+      ip = $1
+    else
+      if !@ssh_output
+        @ssh_output = "<empty-output>"
+      end
+      raise Dice::Errors::GetPortFailed.new(
+        "IP retrieval failed no match in ssh output: #{@ssh_output}"
+      )
+    end
     ip
   end
 

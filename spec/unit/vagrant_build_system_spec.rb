@@ -6,7 +6,7 @@ describe VagrantBuildSystem do
     expect(@recipe).to receive(:change_working_dir)
     @system = VagrantBuildSystem.new(@recipe)
     @system.instance_variable_set(
-      :@up_output, "[jeos_sle12_build] -- 22 => 2200 (adapter 1)"
+      :@ssh_output, 'INFO ssh: Executing SSH in subprocess: ["vagrant@192.168.121.65", "-p", "22", "-o", "Compression=yes", "-o", "DSAAuthentication=yes", "-o", "LogLevel=FATAL", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "IdentitiesOnly=yes", "-i", "/home/ms/.vagrant.d/insecure_private_key", "-t", "bash -l -c \'/bin/true\'"]'
     )
   end
 
@@ -20,7 +20,12 @@ describe VagrantBuildSystem do
 
     it "puts headline and up output on normal operation" do
       expect(Logger).to receive(:info)
-      expect(Command).to receive(:run).and_return("foo")
+      expect(Command).to receive(:run).with(
+        "vagrant", "up", {:stdout=>:capture}
+      ).and_return("foo")
+      expect(Command).to receive(:run).with(
+        "vagrant", "ssh", "--debug", "-c", "/bin/true", {:stderr=>:capture}
+      )
       expect(Logger).to receive(:info).with("VagrantBuildSystem: foo")
       @system.up
     end
@@ -66,15 +71,15 @@ describe VagrantBuildSystem do
 
   describe "#get_port" do
     it "extracts forwarded port from vagrant up output" do
-      expect(@system.get_port).to eq("2200")
-      @system.instance_variable_set(:@up_output, "foo")
+      expect(@system.get_port).to eq("22")
+      @system.instance_variable_set(:@ssh_output, "foo")
       expect { @system.get_port }.to raise_error(Dice::Errors::GetPortFailed)
     end
   end
 
   describe "#get_ip" do
     it "returns loopback address" do
-      expect(@system.get_ip).to eq("127.0.0.1")
+      expect(@system.get_ip).to eq("192.168.121.65")
     end
   end
 
