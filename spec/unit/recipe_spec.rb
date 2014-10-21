@@ -26,13 +26,6 @@ describe Recipe do
     end
   end
 
-  describe "#ok?" do
-    it "loads Dicefile and creates .dice dir" do
-      expect(@recipe).to receive(:load)
-      @recipe.instance_eval{ ok? }
-    end
-  end
-
   describe "#get_basepath" do
     it "returns absolut path name containing helper/recipe_good" do
       expect(@recipe.get_basepath).to match(/^\/.*\/helper\/recipe_good/)
