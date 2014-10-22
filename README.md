@@ -40,7 +40,7 @@ Disadvantages are:
 
 That having said, Dice is a light weight static build system. If there
 is the need for more please reach out to the
-[open build service](http://opensuse.org) which provides a web service
+[open build service](https://build.opensuse.org) which provides a web service
 also for image building using KIWI.
 
 ## Installation
