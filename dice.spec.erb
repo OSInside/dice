@@ -27,6 +27,7 @@ BuildRequires:  rubygem(<%= require[:name] %>) <%= require[:operator] %> <%= req
 # Disable autogenerating "Requires:" headers for bundled gems.
 %define __requires_exclude ^rubygem
 Requires:       ruby >= 2.0
+Requires:       kiwi >= 7.01.16
 Url:            http://suse.com
 Source0:        http://rubygems.org/gems/%{mod_full_name}.gem
 Summary:        light weight image build system

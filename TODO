@@ -1,0 +1,9 @@
+Wishlist
+===========
+
++ A dice ssh command would be cool
+
++ For solving dice calls kiwi --info it would be cool to rewrite
+  the dice solver.rb to be plain ruby by using the ruby libsolv
+  binding. If that's done the Requires: kiwi can be removed from
+  the spec file
