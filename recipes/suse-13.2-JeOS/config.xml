@@ -14,7 +14,7 @@
         <profile name="vmxFlavour" description="VMX with default kernel" import="true"/>
     </profiles>
     <preferences>
-        <type image="iso" primary="true" boot="isoboot/suse-13.2" flags="overlay" hybrid="true" firmware="efi" kernelcmdline="splash"/>
+        <type image="iso" boot="isoboot/suse-13.2" flags="overlay" hybrid="true" firmware="efi" kernelcmdline="splash"/>
         <version>1.13.2</version>
         <packagemanager>zypper</packagemanager>
         <locale>en_US</locale>
@@ -46,7 +46,8 @@
         </type>
     </preferences>
     <preferences profiles="vmxFlavour">
-        <type image="vmx" filesystem="ext3" boot="vmxboot/suse-13.2" format="vmdk" bootloader="grub2" kernelcmdline="splash" bootpartition="false">
+        <type image="vmx" primary="true" filesystem="btrfs" boot="vmxboot/suse-13.2" format="vmdk" bootloader="grub2" kernelcmdline="splash" bootpartition="false">
+            <size unit="G">3</size>
             <systemdisk name="systemVG"/>
             <machine memory="512" guestOS="suse" HWversion="4">
                 <vmdisk id="0" controller="ide"/>
