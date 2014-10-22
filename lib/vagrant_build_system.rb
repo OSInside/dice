@@ -12,7 +12,7 @@ class VagrantBuildSystem < BuildSystem
       up_output = Command.run("vagrant", "up", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::VagrantUpFailed.new(
-        "Starting up vritual system failed with: #{e.stderr}"
+        "Starting up virtual system failed with: #{e.stderr}"
       )
     end
     Logger.info("#{self.class}: Receiving Host IP/Port information...")
