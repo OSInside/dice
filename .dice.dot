@@ -10,7 +10,6 @@ digraph Dice {
     ConnectionFactory
     Recipe [label="DICE featured Recipe Class"]
 //    Command
-//    DiceConfig
   }
   
   {
@@ -46,25 +45,19 @@ digraph Dice {
 
   Recipe -> ConnectionTask
 
-//  Description -> Solver
-
   BuildSystemFactory -> BSFactory
 
   BuildTask -> BuildSystemFactory
 
-  BuildTask -> Solver
+  { rank=same; BuildTask -> Solver [ dir=back ] }
 
-  BSFactory -> BuildSystem
+  { rank=same; BSFactory -> BuildSystem [ dir=back ] }
 
-  BuildSystem -> Job
+  BSFactory -> Job
 
   ConnectionFactory -> CBSFactory
 
   ConnectionTask -> ConnectionFactory
 
-  CBSFactory -> Connection
-
-
-//  DiceConfig -> Recipe
-
+  { rank=same CBSFactory -> Connection [ dir=back ] }
 }
