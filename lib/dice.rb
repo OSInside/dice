@@ -4,6 +4,7 @@ require "pathname"
 require "fileutils"
 require "digest"
 require "find"
+require "abstract_method"
 
 require_relative "constants"
 require_relative "recipe"

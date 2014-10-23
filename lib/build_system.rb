@@ -1,4 +1,11 @@
 class BuildSystem
+  abstract_method :up
+  abstract_method :provision
+  abstract_method :halt
+  abstract_method :get_port
+  abstract_method :get_ip
+  abstract_method :is_busy?
+
   def initialize(recipe)
     @recipe = recipe
     @recipe.change_working_dir
@@ -14,42 +21,6 @@ class BuildSystem
 
   def recipe
     @recipe
-  end
-
-  def up
-    raise Dice::Errors::MethodNotImplemented.new(
-      "up method not implemented"
-    )
-  end
-
-  def provision
-    raise Dice::Errors::MethodNotImplemented.new(
-      "provision method not implemented"
-    ) 
-  end
-
-  def halt
-    raise Dice::Errors::MethodNotImplemented.new(
-      "halt method not implemented"
-    )
-  end
-
-  def get_port
-    raise Dice::Errors::MethodNotImplemented.new(
-      "get_port method not implemented"
-    )
-  end
-
-  def get_ip
-    raise Dice::Errors::MethodNotImplemented.new(
-      "get_ip method not implemented"
-    )
-  end
-
-  def is_busy?
-    raise Dice::Errors::MethodNotImplemented.new(
-      "is_busy? method not implemented"
-    )
   end
 
   def is_building?
