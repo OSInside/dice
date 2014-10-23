@@ -11,4 +11,8 @@ class ConnectionTask
       @factory.connection.get_log
     end
   end
+
+  def ssh
+    @factory.connection.ssh
+  end
 end

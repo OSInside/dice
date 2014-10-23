@@ -1,4 +1,6 @@
 class Connection
+  abstract_method :ssh
+
   def initialize(recipe)
     recipe.change_working_dir
     @build_log = recipe.get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
