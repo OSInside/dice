@@ -171,3 +171,11 @@ $ chmod 600 ~/.dice/key/vagrant
 
 $ dice build /tmp/suse-13.1-JeOS
 ```
+
+you can check the progress with
+
+
+```
+$ dice log /tmp/suse-13.1-JeOS
+```
+
