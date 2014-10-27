@@ -21,5 +21,10 @@ module Dice
     class HostProvisionFailed < DiceError; end
     class NoLogFile < DiceError; end
     class BuildWorkerBusy < DiceError; end
+    class CurlFileFailed < DiceError; end
+    class SolvToolFailed < DiceError; end
+    class SolvJobFailed < DiceError; end
+    class UriLoadFileFailed < DiceError; end
+    class UriTypeUnknown < DiceError; end
   end
 end

@@ -80,6 +80,11 @@ class Recipe
       sha256 = Digest::SHA256.file item
       result += item + ":" + sha256.hexdigest + "\n"
     end
+    solver_scan = ".dice/scan"
+    if File.exists?(solver_scan)
+      sha256 = Digest::SHA256.file solver_scan
+      result += "scan:" + sha256.hexdigest + "\n"
+    end
     result
   end
 

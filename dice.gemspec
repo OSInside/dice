@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency "cheetah", ">=0.4.0"
   s.add_dependency "gli", "~> 2.11.0"
   s.add_dependency "abstract_method", ">=1.2.1"
+  s.add_dependency "json", ">=1.8.0"
 
   s.files        = Dir["lib/**/*.rb", "bin/*", "completion/*", "key/*", "recipes/**/*", "COPYING"]
   s.executables  = "dice"

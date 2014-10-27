@@ -1,4 +1,4 @@
-class BuildTask < Solver
+class BuildTask
   def initialize(recipe, options = Hash.new)
     @factory = BuildSystemFactory.new(recipe)
     @buildsystem = @factory.buildsystem
@@ -15,7 +15,8 @@ class BuildTask < Solver
         return Dice::Status::BuildSystemLocked.new(self)
       end
     end
-    writeScan(@recipe)
+    solver = Solver.new(@recipe)
+    solver.writeScan
     if @recipe.job_required?
       status = Dice::Status::BuildRequired.new(self)
     else
