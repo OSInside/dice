@@ -1,4 +1,5 @@
 Dice.configure do |config|
   config.buildhost = "63.73.211.130.bc.googleusercontent.com"
   config.ssh_user = "kiwi"
+  config.ssh_private_key = File.join(ENV["HOME"], ".dice/key/vagrant")
 end
