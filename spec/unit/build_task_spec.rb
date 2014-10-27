@@ -18,7 +18,9 @@ describe BuildTask do
   describe "#build_status" do
     it "writes new config.scan and returns with a BuildRequired status" do
       expect(@buildsystem).to receive(:is_locked?).and_return(false)
-      expect(@task).to receive(:writeScan)
+      solver = double(Solver)
+      expect(Solver).to receive(:new).and_return(solver)
+      expect(solver).to receive(:writeScan)
       expect(@recipe).to receive(:job_required?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRequired)
     end
