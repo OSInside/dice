@@ -69,7 +69,7 @@
         <user password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0" home="/root" name="root"/>
     </users>
     <repository type="yast2">
-        <source path="obs://openSUSE:Factory/snapshot"/>
+        <source path="http://download.opensuse.org/factory/repo/oss/"/>
     </repository>
     <packages type="image">
 <!--
