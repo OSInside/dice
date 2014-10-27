@@ -126,4 +126,18 @@ class Cli
       status.message
     end
   end
+
+  desc "ssh into build worker"
+  long_desc <<-LONGDESC
+    ssh into the build worker. Use this to inspect and debug.
+  LONGDESC
+  arg "RECIPE-PATH"
+  command :ssh do |c|
+    c.action do |global_options,options,args|
+      description = shift_arg(args, "RECIPE-PATH")
+      recipe = Recipe.new(description)
+      connection = ConnectionTask.new(recipe, options)
+      connection.ssh
+    end
+  end
 end
