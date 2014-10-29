@@ -10,7 +10,7 @@ describe BuildSystemFactory do
     it "returns a VagrantBuildSystem" do
       Dice.config.buildhost = Dice::VAGRANT_BUILD
       factory = BuildSystemFactory.new(@recipe)
-      expect(factory.buildsystem).to be_a(
+      expect(factory).to be_a(
         VagrantBuildSystem
       )
     end
@@ -18,16 +18,9 @@ describe BuildSystemFactory do
     it "returns a HostBuildSystem" do
       Dice.config.buildhost = "localhost"
       factory = BuildSystemFactory.new(@recipe)
-      expect(factory.buildsystem).to be_a(
+      expect(factory).to be_a(
         HostBuildSystem
       )
-    end
-  end
-
-  describe "#job" do
-    it "returns a Job" do
-      factory = BuildSystemFactory.new(@recipe)
-      expect(factory.job).to be_a(Job)
     end
   end
 end

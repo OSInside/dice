@@ -1,7 +1,6 @@
 class BuildTask
   def initialize(recipe, options = Hash.new)
-    @factory = BuildSystemFactory.new(recipe)
-    @buildsystem = @factory.buildsystem
+    @buildsystem = BuildSystemFactory.new(recipe)
     @options = options
     @recipe = recipe
   end
@@ -81,7 +80,7 @@ class BuildTask
   private
 
   def perform_job
-    job = @factory.job
+    job = Job.new(@buildsystem)
     job.build
     job.bundle
     job.get_result

@@ -5,9 +5,6 @@ describe BuildTask do
     @factory = double(BuildSystemFactory)
     @buildsystem = double(BuildSystem)
     expect(BuildSystemFactory).to receive(:new).and_return(
-      @factory
-    )
-    expect(@factory).to receive(:buildsystem).and_return(
       @buildsystem
     )
     @recipe = double(Recipe)
@@ -110,7 +107,7 @@ describe BuildTask do
   describe "#perform_job" do
     it "runs a job and get the result" do
       job = double(Job)
-      expect(@factory).to receive(:job).and_return(job)
+      expect(Job).to receive(:new).and_return(job)
       expect(job).to receive(:build)
       expect(job).to receive(:bundle)
       expect(job).to receive(:get_result)

@@ -6,13 +6,13 @@ class ConnectionTask
 
   def log
     if @options["show"]
-      @factory.connection.print_log
+      @factory.print_log
     else
-      @factory.connection.get_log
+      @factory.get_log
     end
   end
 
   def ssh
-    @factory.connection.ssh
+    @factory.ssh
   end
 end

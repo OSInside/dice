@@ -10,7 +10,7 @@ describe ConnectionFactory do
     it "returns a ConnectionVagrantBuildSystem" do
       Dice.config.buildhost = Dice::VAGRANT_BUILD
       factory = ConnectionFactory.new(@recipe)
-      expect(factory.connection).to be_a(
+      expect(factory).to be_a(
         ConnectionVagrantBuildSystem
       )
     end
@@ -18,7 +18,7 @@ describe ConnectionFactory do
     it "returns a ConnectionHostBuildSystem" do
       Dice.config.buildhost = "localhost"
       factory = ConnectionFactory.new(@recipe)
-      expect(factory.connection).to be_a(
+      expect(factory).to be_a(
         ConnectionHostBuildSystem
       )
     end

@@ -10,9 +10,16 @@ describe ConnectionTask do
   describe "#log" do
     it "Calls get_log from connection factory" do
       connection = double(Connection)
-      expect(@factory).to receive(:connection).and_return(connection)
-      expect(connection).to receive(:get_log)
+      expect(@factory).to receive(:get_log)
       @task.log
+    end
+  end
+
+  describe "#ssh" do
+    it "Calls ssh from connection factory" do
+      connection = double(Connection)
+      expect(@factory).to receive(:ssh)
+      @task.ssh
     end
   end
 end
