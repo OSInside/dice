@@ -1,5 +1,5 @@
 require_relative "spec_helper"
 
-describe Repository do
+describe RepositoryFactory do
   # TODO
 end

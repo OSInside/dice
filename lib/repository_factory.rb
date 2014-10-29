@@ -1,4 +1,4 @@
-class Repository
+class RepositoryFactory
   class << self
     def new(uri)
       repo = nil

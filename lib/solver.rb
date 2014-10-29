@@ -73,7 +73,7 @@ class Solver
     pool = Solv::Pool.new
     pool.setarch
     @kiwi.repos.each do |uri|
-      repo = Repository.new(uri)
+      repo = RepositoryFactory.new(uri)
       solv = pool.add_repo uri
       solv.add_solv repo.solvable
       pool.addfileprovides
