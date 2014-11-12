@@ -31,7 +31,7 @@ class Logger
   def self.error(message, logfile = nil)
     if logfile
       FileUtils.mkdir_p File.dirname(logfile)
-      error_log = File.new(logfile, "w")
+      error_log = File.new(logfile, "a")
       error_log.puts "$ dice #{ARGV.join(" ")}\n"
       error_log.puts message
       error_log.close
