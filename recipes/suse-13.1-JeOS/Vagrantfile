@@ -1,11 +1,22 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.define :jeos_13_1_build do |jeos_13_1_build|
-    jeos_13_1_build.vm.box = "kiwi-build-box"
-
-    jeos_13_1_build.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "2048"]
+  if ENV["VAGRANT_DEFAULT_PROVIDER"] == "virtualbox"
+    # VirtualBox
+    config.vm.define :jeos_13_1_build do |jeos_13_1_build|
+      jeos_13_1_build.vm.box = "kiwi-build-box"
+      jeos_13_1_build.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", "2048"]
+      end
+    end
+  else
+    # docker
+    config.vm.provider "docker" do |d|
+      # docker images must list this
+      d.image = "kiwi-build-box:new"
+      d.create_args = ["-i", "-t"]
+      d.cmd = ["/bin/bash", "-c", "sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config && sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config && /usr/sbin/sshd-gen-keys-start && /usr/sbin/sshd -D"]
+      d.has_ssh = true
     end
   end
 end
