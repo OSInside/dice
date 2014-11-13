@@ -16,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # Virtualization:Appliances:Images/docker-box-13.1
       # cat kiwi-docker-image.tar.xz | docker import - kiwi-build-box:new
       d.image = "kiwi-build-box:new"
-      d.create_args = ["-i", "-t"]
+      d.create_args = ["-privileged=true", "-i", "-t"]
       # start the sshd in foreground to keep the container in running state
       d.cmd = ["/usr/sbin/sshd", "-D"]
       d.has_ssh = true
