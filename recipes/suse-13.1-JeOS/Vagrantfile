@@ -12,10 +12,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   else
     # docker
     config.vm.provider "docker" do |d|
-      # docker images must list this
+      # select a docker image from the list, you need to have imported
+      # Virtualization:Appliances:Images/docker-box-13.1
+      # cat kiwi-docker-image.tar.xz | docker import - kiwi-build-box:new
       d.image = "kiwi-build-box:new"
       d.create_args = ["-i", "-t"]
-      d.cmd = ["/bin/bash", "-c", "sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config && sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config && /usr/sbin/sshd-gen-keys-start && /usr/sbin/sshd -D"]
+      # start the sshd in foreground to keep the container in running state
+      d.cmd = ["/usr/sbin/sshd", "-D"]
       d.has_ssh = true
     end
   end
