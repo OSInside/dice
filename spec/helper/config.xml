@@ -1,0 +1,11 @@
+<image>
+  <packages>
+    <package name="a"/>
+    <package name="c"/>
+    <package name="b"/>
+    <namedCollection name="x"/>
+  </packages>
+  <repository>
+    <source path="http://bob"/>
+  </repository>
+</image>
