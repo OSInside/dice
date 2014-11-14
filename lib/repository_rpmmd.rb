@@ -6,10 +6,10 @@ class RpmMdRepository < RepositoryBase
   end
 
   def solvable
-    solvable = @@kiwi_solv + "/" + @meta.solv
+    solv_file = @@kiwi_solv + "/" + @meta.solv
     time = timestamp
     if uptodate?(time)
-      return solvable
+      return solv_file
     end
     tmp_dir = create_tmpdir
     get_repomd_files.each do |repo_file|
@@ -19,7 +19,7 @@ class RpmMdRepository < RepositoryBase
     create_solv("rpmmd2solv", tmp_dir, solv_dir)
     merge_solv(solv_dir, time)
     cleanup
-    solvable
+    solv_file
   end
 
   private
