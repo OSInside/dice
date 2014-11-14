@@ -50,6 +50,7 @@ class RepositoryBase
 
   def merge_solv(source_dir, timestamp = "static")
     meta = solv_meta
+    FileUtils.mkdir_p(@@kiwi_solv) if !File.exists?(@@kiwi_solv)
     solvable = File.open(@@kiwi_solv + "/" + meta.solv, "wb")
     begin
       Cheetah.run(
