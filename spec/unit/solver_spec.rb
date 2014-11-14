@@ -29,10 +29,34 @@ describe Solver do
   end
 
   describe "#solve_result" do
-    # TODO
+    it "returns array of hashes with solver result information" do
+      transaction = double
+      dummy_repo = OpenStruct.new
+      dummy_repo.name = "foo"
+      solvable = double
+      expect(transaction).to receive(:newpackages).and_return([solvable])
+      expect(solvable).to receive(:repo).and_return(dummy_repo)
+      allow(solvable).to receive(:lookup_num).and_return(0)
+      allow(solvable).to receive(:lookup_str).and_return("string")
+      allow(solvable).to receive(:lookup_checksum).and_return("checksum")
+      expect(@solver.solve_result(transaction)).to eq(
+        [{
+           "string" =>
+           {
+             :url => "foo",
+             :installsize => 0,
+             :arch =>"string",
+             :evr => "string",
+             :checksum =>"checksum"
+           }
+        }]
+      )
+    end
   end
 
   describe "#solve_errors" do
-    # TODO
+    it "returns a json hash with solver problem information" do
+      # TODO
+    end
   end
 end
