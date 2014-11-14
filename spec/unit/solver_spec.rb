@@ -56,7 +56,37 @@ describe Solver do
 
   describe "#solve_errors" do
     it "returns a json hash with solver problem information" do
-      # TODO
+      problems = double
+
+      solution = OpenStruct.new
+      solution.id = 1
+
+      option = OpenStruct.new
+      option.str = "some-solution"
+      solution_options = [ option ]
+
+      problem = OpenStruct.new
+      problem.id = 1
+      problem.findproblemrule = OpenStruct.new
+      problem.findproblemrule.info = OpenStruct.new
+      problem.findproblemrule.info.problemstr = "some-problem"
+      problem.solutions = [ solution ]
+
+      problem_list = [ problem ]
+
+      expect(problems).to receive(:count).and_return(1)
+
+      expect(problems).to receive(:empty?).and_return(false)
+
+      expect(problems).to receive(:each).and_return(problem_list)
+
+      expect(solution).to receive(:elements).and_return(solution_options)
+
+      expect(JSON).to receive(:pretty_generate).and_return("problem")
+
+      expect { @solver.solve_errors(problems) }.to raise_error(
+        Dice::Errors::SolvJobFailed, "Solver problems: problem"
+      )
     end
   end
 end

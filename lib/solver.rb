@@ -39,19 +39,23 @@ class Solver
         :problems => { :count => problems.count, :problem => [] },
         :solutions =>{ :solution => [] }
       }
-      problems.each do |p|
+      problem_list = problems.each
+      problem_list.each do |p|
         problem = { :id => p.id, :message => p.findproblemrule.info.problemstr }
         info[:problems][:problem] << problem
-        p.solutions.each do |s|
+        solution_list = p.solutions.each
+        solution_list.each do |s|
           solution = { :id => s.id, :options => [] }
-          s.elements(1).each do |e|
+          solution_options = s.elements(1).each
+          solution_options.each do |e|
             solution[:options] << e.str
           end
           info[:solutions][:solution] << solution
         end
       end
+      message = JSON.pretty_generate(info)
       raise Dice::Errors::SolvJobFailed.new(
-        "Solver problems: #{JSON.pretty_generate(info)}"
+        "Solver problems: #{message}"
       )
     end
   end
