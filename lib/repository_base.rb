@@ -99,7 +99,7 @@ class RepositoryBase
   end
 
   def cleanup
-    FileUtils.rm_rf @tmp_dir
+    FileUtils.rm_rf @tmp_dir if defined?(@tmp_dir)
   end
 end
 
