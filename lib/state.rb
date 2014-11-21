@@ -1,22 +1,30 @@
 class BuildStatus
-  def initialize(build_task = nil)
-    @build_task = build_task
-  end
-
-  def message
+  def message(recipe)
     Logger.info("BuildStatus: #{self.class}")
-    if @build_task
-      job_file = @build_task.screen_job_file
-      jobs = active_jobs(job_file)
-      if !jobs.empty?
-        Logger.info(
-          "--> Screen job: $ screen -r #{jobs.last}"
-        )
-      end
+    job_info recipe
+    if self.is_a?(Dice::Status::UpToDate)
+      result_info recipe
     end
   end
 
   private
+
+  def job_info(recipe)
+    jobs = active_jobs(recipe.get_basepath + "/" +
+      Dice::META + "/" + Dice::SCREEN_JOB
+    )
+    if !jobs.empty?
+      Logger.info("--> Screen job: $ screen -r #{jobs.last}")
+    end
+  end
+
+  def result_info(recipe)
+    result_file = recipe.get_basepath + "/" +
+      Dice::META + "/" + Dice::BUILD_RESULT
+    if File.exists?(result_file)
+      Logger.info("--> Build result: tar -tf #{result_file}")
+    end
+  end
 
   def active_jobs(job_file)
     active = Array.new

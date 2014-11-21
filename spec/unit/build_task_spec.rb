@@ -59,26 +59,10 @@ describe BuildTask do
     end
   end
 
-  describe "#cleanup_screen_job" do
-    it "removes the screen job file" do
-      expect(@task).to receive(:screen_job_file).and_return("foo")
-      expect(File).to receive(:file?).with("foo").and_return(true)
-      expect(FileUtils).to receive(:rm).with("foo")
-      @task.cleanup_screen_job
-    end
-  end
-
   describe "#build_log_file" do
     it "returns build.log file name for recipe" do
       expect(@recipe).to receive(:get_basepath).and_return("foo")
       expect(@task.build_log_file).to eq("foo/.dice/build.log")
-    end
-  end
-
-  describe "#screen_job_file" do
-    it "returns screen job file name" do
-      expect(@recipe).to receive(:get_basepath).and_return("foo")
-      expect(@task.screen_job_file).to eq("foo/.dice/job")
     end
   end
 
@@ -101,17 +85,6 @@ describe BuildTask do
     it "calls release_lock from the buildsystem" do
       expect(@buildsystem).to receive(:release_lock)
       @task.release_lock
-    end
-  end
-
-  describe "#perform_job" do
-    it "runs a job and get the result" do
-      job = double(Job)
-      expect(Job).to receive(:new).and_return(job)
-      expect(job).to receive(:build)
-      expect(job).to receive(:bundle)
-      expect(job).to receive(:get_result)
-      @task.instance_eval{ perform_job }
     end
   end
 end

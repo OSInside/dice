@@ -9,17 +9,17 @@ class BuildTask
     status = Dice::Status::Unknown.new
     if @buildsystem.is_locked?
       if @buildsystem.is_building?
-        return Dice::Status::BuildRunning.new(self)
+        return Dice::Status::BuildRunning.new
       else
-        return Dice::Status::BuildSystemLocked.new(self)
+        return Dice::Status::BuildSystemLocked.new
       end
     end
     solver = Solver.new(@recipe)
     solver.writeScan
     if @recipe.job_required?
-      status = Dice::Status::BuildRequired.new(self)
+      status = Dice::Status::BuildRequired.new
     else
-      status = Dice::Status::UpToDate.new(self)
+      status = Dice::Status::UpToDate.new
     end
     status
   end
@@ -39,25 +39,14 @@ class BuildTask
       cleanup_screen_job
       @buildsystem.halt
     else
-      status.message
+      status.message @recipe
     end
-  end
-
-  def cleanup_screen_job
-    screen_job = screen_job_file
-    FileUtils.rm(screen_job) if File.file?(screen_job)
   end
 
   def build_log_file
     log_file = @recipe.get_basepath + "/" +
       Dice::META + "/" + Dice::BUILD_LOG
     log_file
-  end
-
-  def screen_job_file
-    screen_job = @recipe.get_basepath + "/" +
-      Dice::META + "/" + Dice::SCREEN_JOB
-    screen_job
   end
 
   def log
@@ -78,6 +67,11 @@ class BuildTask
   end
 
   private
+
+  def cleanup_screen_job
+    screen_job = screen_job_file
+    FileUtils.rm(screen_job) if File.file?(screen_job)
+  end
 
   def perform_job
     job = Job.new(@buildsystem)

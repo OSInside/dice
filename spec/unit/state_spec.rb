@@ -3,30 +3,18 @@ require_relative "spec_helper"
 describe BuildStatus do
   before(:each) do
     @status = Dice::Status::UpToDate.new
+    @recipe = double(Recipe)
   end
 
   describe "#message" do
     it "prints status message containing derived class name" do
+      jobs = ["last-run", "current-run"]
       expect(Logger).to receive(:info).with(
         "BuildStatus: Dice::Status::UpToDate"
       )
-      @status.message
-    end
-  end
-
-  describe "#active_jobs" do
-    it "returns list of active screen jobs" do
-      expect(File).to receive(:open).with("foo").and_return(["a","b"])
-      expect(@status).to receive(:active_job?).with("a")
-      expect(@status).to receive(:active_job?).with("b")
-      @status.instance_eval{ active_jobs("foo") }
-    end
-  end
-
-  describe "#active_job?" do
-    it "checks if a job is active using screen -X" do
-      expect(Command).to receive(:run).with("screen", "-X", "-S", "foo", "info")
-      @status.instance_eval{ active_job?("foo") }
+      expect(@status).to receive(:job_info).with(@recipe)
+      expect(@status).to receive(:result_info).with(@recipe)
+      @status.message @recipe
     end
   end
 end

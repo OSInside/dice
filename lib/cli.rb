@@ -1,7 +1,7 @@
 class Cli
   extend GLI::App
 
-  program_desc 'A builder for kiwi images using vagrant'
+  program_desc 'A containment build system for kiwi'
   preserve_argv(true)
   @version = Dice::VERSION
   switch :version, :negatable => false, :desc => "Show version"
@@ -78,8 +78,9 @@ class Cli
   desc "Build from recipe"
   long_desc <<-LONGDESC
     Build image from a given recipe and store the result in a tarball
-    with the extension <recipe-path>.build_results.tar. A recipe is a
-    kiwi image description extended by a Vagrantfile
+    with the extension <recipe-path>/.dice/build_results.tar. A recipe
+    is a kiwi image description extended by a containment configuration
+    stored in a Vagrantfile and/or Dicefile
   LONGDESC
   arg "RECIPE-PATH"
   command :build do |c|
@@ -114,7 +115,7 @@ class Cli
   long_desc <<-LONGDESC
     Print status information about the given recipe. The status
     provides information whether a rebuild of the recipe is needed
-    or a build job is currently running
+    or a build job is currently running.
   LONGDESC
   arg "RECIPE-PATH"
   command :status do |c|
@@ -123,7 +124,7 @@ class Cli
       recipe = Recipe.new(description)
       task = BuildTask.new(recipe)
       status = task.build_status
-      status.message
+      status.message recipe
     end
   end
 
