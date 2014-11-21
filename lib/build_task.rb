@@ -69,7 +69,8 @@ class BuildTask
   private
 
   def cleanup_screen_job
-    screen_job = screen_job_file
+    screen_job = @recipe.get_basepath + "/" +
+      Dice::META + "/" + Dice::SCREEN_JOB
     FileUtils.rm(screen_job) if File.file?(screen_job)
   end
 
