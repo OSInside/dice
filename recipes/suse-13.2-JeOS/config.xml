@@ -69,7 +69,10 @@
         <user password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0" home="/root" name="root"/>
     </users>
     <repository type="yast2">
-        <source path="http://download.opensuse.org/factory/repo/oss/"/>
+        <source path="http://download.opensuse.org/distribution/13.2/repo/oss"/>
+    </repository>
+    <repository type="rpm-md">
+        <source path="http://download.opensuse.org/update/13.2"/>
     </repository>
     <packages type="image">
 <!--
