@@ -10,12 +10,14 @@ describe RepositoryFactory do
  
   describe "#new" do
     it "creates a RpmMdRepository" do
-      expect(File).to receive(:open).with("/repodata/repomd.xml.key", "rb")
+      expect(RepositoryFactory).to receive(:open).with(
+        "/repodata/repomd.xml.key", "rb"
+      )
       expect(RepositoryFactory.new("")).to eq(@rpmmd_repo)
     end
 
     it "creates a SuSERepository" do
-      expect(File).to receive(:open).and_raise
+      expect(RepositoryFactory).to receive(:open).and_raise
       expect(RepositoryFactory.new("")).to eq(@suse_repo)
     end
   end
