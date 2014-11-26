@@ -27,4 +27,14 @@ module Dice
     class UriLoadFileFailed < DiceError; end
     class UriTypeUnknown < DiceError; end
   end
+
+  module Status
+    # Superclass for all known build states in Dice.
+    class Undefined < BuildStatus; end
+
+    class BuildRunning < BuildStatus; end
+    class BuildSystemLocked < BuildStatus; end
+    class UpToDate < BuildStatus; end
+    class BuildRequired < BuildStatus; end
+  end
 end

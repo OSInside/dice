@@ -48,13 +48,3 @@ class BuildStatus
     return true
   end
 end
-
-module Dice
-  module Status
-    class Unknown < BuildStatus; end
-    class BuildRunning < BuildStatus; end
-    class BuildSystemLocked < BuildStatus; end
-    class UpToDate < BuildStatus; end
-    class BuildRequired < BuildStatus; end
-  end
-end

@@ -6,7 +6,7 @@ class BuildTask
   end
 
   def build_status
-    status = Dice::Status::Unknown.new
+    status = Dice::Status::Undefined.new
     if @buildsystem.is_locked?
       if @buildsystem.is_building?
         return Dice::Status::BuildRunning.new
