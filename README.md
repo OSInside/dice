@@ -27,6 +27,8 @@ With Dice there is a tool which allows on demand and/or automatically
 building of appliances stored in a directory. Advantages are:
 
   * Build as normal user
+  * Benefit from prebuild worker boxes by us for vagrant and docker
+  * No need to have kiwi installed on your machine
   * Build for different distributions on appropriate worker
   * Setup your own buildsystem and keep control
   * Allow to access the machine which builds your image
