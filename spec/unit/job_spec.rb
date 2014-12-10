@@ -10,7 +10,7 @@ describe Job do
     expect_any_instance_of(Recipe).to receive(:change_working_dir)
     system = BuildSystem.new(recipe)
     @job = Job.new(system)
-    @basepath = recipe.get_basepath
+    @basepath = recipe.basepath
   end
 
   describe "#initialize" do

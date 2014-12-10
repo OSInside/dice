@@ -1,4 +1,6 @@
 class ConnectionVagrantBuildSystem < Connection
+  attr_reader :recipe
+
   def initialize(recipe)
     super(recipe)
     @recipe = recipe
@@ -6,7 +8,7 @@ class ConnectionVagrantBuildSystem < Connection
 
   def ssh
     Logger.info(
-      "#{self.class}: ssh into worker for #{@recipe.get_basepath}..."
+      "#{self.class}: ssh into worker for #{recipe.basepath}..."
     )
     exec("vagrant ssh")
   end

@@ -72,14 +72,20 @@ describe VagrantBuildSystem do
   describe "#get_port" do
     it "extracts forwarded port from vagrant up output" do
       expect(@system.get_port).to eq("22")
-      @system.instance_variable_set(:@ssh_output, "foo")
-      expect { @system.get_port }.to raise_error(Dice::Errors::GetPortFailed)
+      @system.instance_variable_set(:@ssh_output, "")
+      expect { @system.get_port }.to raise_error(
+        Dice::Errors::GetPortFailed, /<empty-output>/
+      )
     end
   end
 
   describe "#get_ip" do
     it "returns loopback address" do
       expect(@system.get_ip).to eq("192.168.121.65")
+      @system.instance_variable_set(:@ssh_output, "")
+      expect { @system.get_ip }.to raise_error(
+        Dice::Errors::GetIPFailed, /<empty-output>/
+      )
     end
   end
 

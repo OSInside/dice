@@ -1,4 +1,6 @@
 class Recipe
+  attr_reader :description, :basepath, :cwd
+
   def initialize(description)
     @description = description
     recipe = ok?
@@ -18,37 +20,33 @@ class Recipe
   def writeRecipeChecksum
     digest = createDigest
     digest_file = File.new(
-      @basepath + "/" + Dice::META + "/" + Dice::DIGEST_FILE, "w"
+      basepath + "/" + Dice::META + "/" + Dice::DIGEST_FILE, "w"
     )
     digest_file.puts digest
     digest_file.close
   end
 
   def change_working_dir
-    Dir.chdir(@basepath)
+    Dir.chdir(basepath)
   end
 
   def reset_working_dir
-    Dir.chdir(@cwd)
-  end
-
-  def get_basepath
-    @basepath
+    Dir.chdir(cwd)
   end
 
   private
 
   def ok?
-    recipe = Pathname.new(@description)
+    recipe = Pathname.new(description)
     Logger.set_recipe_dir(recipe.basename)
     if !File.exists?(recipe) || !File.directory?(recipe.realpath)
       raise Dice::Errors::NoDirectory.new(
         "Given recipe does not exist or is not a directory"
       )
     end
-    vagrantFile = File.file?(@description + "/" + Dice::VAGRANT_FILE)
-    diceFile = File.file?(@description + "/" + Dice::DICE_FILE)
-    kiwiFile = File.file?(@description + "/" + Dice::KIWI_FILE)
+    vagrantFile = File.file?(description + "/" + Dice::VAGRANT_FILE)
+    diceFile = File.file?(description + "/" + Dice::DICE_FILE)
+    kiwiFile = File.file?(description + "/" + Dice::KIWI_FILE)
     if !kiwiFile
       raise Dice::Errors::NoKIWIConfig.new(
         "No kiwi configuration found"
@@ -60,7 +58,7 @@ class Recipe
       )
     end
     if diceFile
-      load @description + "/" + Dice::DICE_FILE
+      load description + "/" + Dice::DICE_FILE
     end
     metadir = recipe.realpath.to_s + "/" + Dice::META
     if !File.directory?(metadir)

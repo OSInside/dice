@@ -10,7 +10,7 @@ class BuildStatus
   private
 
   def job_info(recipe)
-    jobs = active_jobs(recipe.get_basepath + "/" +
+    jobs = active_jobs(recipe.basepath + "/" +
       Dice::META + "/" + Dice::SCREEN_JOB
     )
     if !jobs.empty?
@@ -19,7 +19,7 @@ class BuildStatus
   end
 
   def result_info(recipe)
-    result_file = recipe.get_basepath + "/" +
+    result_file = recipe.basepath + "/" +
       Dice::META + "/" + Dice::BUILD_RESULT
     if File.exists?(result_file)
       Logger.info("--> Build result: tar -tf #{result_file}")

@@ -1,4 +1,6 @@
 class RpmMdRepository < RepositoryBase
+  attr_reader :meta, :rxml
+
   def initialize(uri)
     super(uri)
     @meta = solv_meta
@@ -6,7 +8,7 @@ class RpmMdRepository < RepositoryBase
   end
 
   def solvable
-    solv_file = @@kiwi_solv + "/" + @meta.solv
+    solv_file = @@kiwi_solv + "/" + meta.solv
     time = timestamp
     if uptodate?(time)
       return solv_file
@@ -30,7 +32,7 @@ class RpmMdRepository < RepositoryBase
 
   def timestamp
     time = ""
-    @rxml.elements.each("repomd/data[@type='primary']/timestamp") do |e|
+    rxml.elements.each("repomd/data[@type='primary']/timestamp") do |e|
       time = e.text
     end
     time
@@ -40,7 +42,7 @@ class RpmMdRepository < RepositoryBase
     result = Array.new
     types = ["primary", "patterns"]
     types.each do |type|
-      @rxml.elements.each("repomd/data[@type='#{type}']/location") do |e|
+      rxml.elements.each("repomd/data[@type='#{type}']/location") do |e|
         href = e.attribute("href").to_s
         result << href
       end

@@ -13,12 +13,12 @@ describe BuildScheduler do
          dir_list
        )
        recipe = double(Recipe)
-       expect(recipe).to receive(:get_basepath).and_return("a")
+       expect(recipe).to receive(:basepath).and_return("a")
        allow(Recipe).to receive(:new).and_return(recipe)
        expect(BuildScheduler).to receive(:fork).and_yield do |block|
          expect(block).to receive(:run).with("a")
        end
-       expect(recipe).to receive(:get_basepath).and_return("b")
+       expect(recipe).to receive(:basepath).and_return("b")
        allow(Recipe).to receive(:new).and_return(recipe)
        expect(BuildScheduler).to receive(:fork).and_yield do |block|
          expect(block).to receive(:run).with("b")

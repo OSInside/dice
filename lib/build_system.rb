@@ -1,4 +1,6 @@
 class BuildSystem
+  attr_reader :recipe, :build_log, :lock
+
   abstract_method :up
   abstract_method :provision
   abstract_method :halt
@@ -9,24 +11,20 @@ class BuildSystem
   def initialize(recipe)
     @recipe = recipe
     @recipe.change_working_dir
-    @build_log = @recipe.get_basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
+    @build_log = @recipe.basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
     if self.is_a?(HostBuildSystem)
       # set a global lock for the used worker host
       @lock = "/tmp/.lock-" + Dice.config.buildhost
     else
       # set a recipe lock
-      @lock = @recipe.get_basepath + "/" + Dice::META + "/" + Dice::LOCK
+      @lock = @recipe.basepath + "/" + Dice::META + "/" + Dice::LOCK
     end
-  end
-
-  def recipe
-    @recipe
   end
 
   def is_building?
     building = true
     begin
-      Command.run("fuser", @build_log, :stdout => :capture)
+      Command.run("fuser", build_log, :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
       building = false
     end
@@ -34,15 +32,15 @@ class BuildSystem
   end
 
   def is_locked?
-    File.file?(@lock)
+    File.file?(lock)
   end
 
   def set_lock
-    lockfile = File.new(@lock, "w")
+    lockfile = File.new(lock, "w")
     lockfile.close
   end
 
   def release_lock
-    FileUtils.rm(@lock) if File.file?(@lock)
+    FileUtils.rm(lock) if File.file?(lock)
   end
 end

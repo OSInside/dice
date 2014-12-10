@@ -9,7 +9,7 @@ class BuildScheduler
     dir_list.sort.each do |description|
       recipe = Recipe.new(description)
       fork do
-        run recipe.get_basepath
+        run recipe.basepath
       end
     end
   end

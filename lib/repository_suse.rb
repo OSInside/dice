@@ -1,11 +1,13 @@
 class SuSERepository < RepositoryBase
+  attr_reader :meta
+
   def initialize(uri)
     super(uri)
     @meta = solv_meta
   end
 
   def solvable
-    solvable = @@kiwi_solv + "/" + @meta.solv
+    solvable = @@kiwi_solv + "/" + meta.solv
     if uptodate?
       return solvable
     end

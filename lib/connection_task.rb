@@ -1,18 +1,20 @@
 class ConnectionTask
+  attr_reader :factory, :options
+
   def initialize(recipe, options = Hash.new)
     @factory = ConnectionFactory.new(recipe)
     @options = options
   end
 
   def log
-    if @options["show"]
-      @factory.print_log
+    if options["show"]
+      factory.print_log
     else
-      @factory.get_log
+      factory.get_log
     end
   end
 
   def ssh
-    @factory.ssh
+    factory.ssh
   end
 end

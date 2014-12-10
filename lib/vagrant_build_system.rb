@@ -1,4 +1,6 @@
 class VagrantBuildSystem < BuildSystem
+  attr_reader :recipe, :ssh_output
+
   def initialize(recipe)
     super(recipe)
     @recipe = recipe
@@ -6,7 +8,7 @@ class VagrantBuildSystem < BuildSystem
 
   def up
     Logger.info(
-      "#{self.class}: Starting up buildsystem for #{@recipe.get_basepath}..."
+      "#{self.class}: Starting up buildsystem for #{recipe.basepath}..."
     )
     begin
       up_output = Command.run("vagrant", "up", :stdout => :capture)
@@ -59,14 +61,14 @@ class VagrantBuildSystem < BuildSystem
 
   def get_port
     port = nil
-    if @ssh_output =~ /Executing SSH.*\-p.*\"(\d+)\".*/
+    if ssh_output =~ /Executing SSH.*\-p.*\"(\d+)\".*/
       port = $1
     else
-      if !@ssh_output
+      if ssh_output.to_s.empty?
         @ssh_output = "<empty-output>"
       end
       raise Dice::Errors::GetPortFailed.new(
-        "Port retrieval failed no match in ssh output: #{@ssh_output}"
+        "Port retrieval failed no match in ssh output: #{ssh_output}"
       )
     end
     port
@@ -74,14 +76,14 @@ class VagrantBuildSystem < BuildSystem
 
   def get_ip
     ip = nil
-    if @ssh_output =~ /Executing SSH.*@(.*?)\".*/
+    if ssh_output =~ /Executing SSH.*@(.*?)\".*/
       ip = $1
     else
-      if !@ssh_output
+      if ssh_output.to_s.empty?
         @ssh_output = "<empty-output>"
       end
-      raise Dice::Errors::GetPortFailed.new(
-        "IP retrieval failed no match in ssh output: #{@ssh_output}"
+      raise Dice::Errors::GetIPFailed.new(
+        "IP retrieval failed no match in ssh output: #{ssh_output}"
       )
     end
     ip

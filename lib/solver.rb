@@ -1,7 +1,9 @@
 class Solver
+  attr_reader :description, :kiwi
+
   def initialize(recipe)
-    @description = recipe.get_basepath
-    @kiwi = KiwiConfig.new(@description)
+    @description = recipe.basepath
+    @kiwi = KiwiConfig.new(description)
   end
 
   def writeScan
@@ -10,7 +12,7 @@ class Solver
     solve_errors(solver_result.problems)
     solve_json = solve_result(solver_result.transaction)
     recipe_scan = File.open(
-      "#{@description}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
+      "#{description}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
     )
     recipe_scan.write(JSON.pretty_generate(solve_json))
     recipe_scan.close
@@ -76,7 +78,7 @@ class Solver
   def setup_pool
     pool = Solv::Pool.new
     pool.setarch
-    @kiwi.repos.each do |uri|
+    kiwi.repos.each do |uri|
       repo = RepositoryFactory.new(uri)
       solv = pool.add_repo uri
       solv.add_solv repo.solvable
@@ -88,7 +90,7 @@ class Solver
 
   def setup_jobs(pool)
     jobs = Array.new
-    @kiwi.packages.each do |package|
+    kiwi.packages.each do |package|
       item = pool.select(package, Solv::Selection::SELECTION_NAME)
       if item.isempty?
         raise Dice::Errors::SolvJobFailed.new(

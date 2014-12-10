@@ -1,5 +1,5 @@
 class RepositoryBase
-  attr_accessor :uri
+  attr_reader :uri, :tmp_dir
 
   @@kiwi_solv = "/var/tmp/kiwi/satsolver"
 
@@ -9,10 +9,10 @@ class RepositoryBase
 
   def load_file(source)
     begin
-      open(@uri + "/" + source, "rb").read
+      open(uri + "/" + source, "rb").read
     rescue => e
       raise Dice::Errors::UriLoadFileFailed.new(
-        "Downloading file: #{@uri}/#{source} failed: #{e}"
+        "Downloading file: #{uri}/#{source} failed: #{e}"
       )
     end
   end
@@ -21,10 +21,10 @@ class RepositoryBase
     FileUtils.mkdir_p(File.dirname(dest))
     outfile = File.open(dest, "wb")
     begin
-      Cheetah.run("curl", "-L", @uri + "/" + source, :stdout => outfile)
+      Cheetah.run("curl", "-L", uri + "/" + source, :stdout => outfile)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::CurlFileFailed.new(
-        "Downloading file: #{@uri}/#{source} failed: #{e.stderr}"
+        "Downloading file: #{uri}/#{source} failed: #{e.stderr}"
       )
     end
     outfile.close
@@ -67,7 +67,7 @@ class RepositoryBase
     time.write(timestamp)
     time.close
     info = File.open(@@kiwi_solv + "/" + meta.info, "wb")
-    info.write(@uri)
+    info.write(uri)
     info.close
     meta.solv
   end
@@ -86,20 +86,20 @@ class RepositoryBase
 
   def solv_meta
     meta = OpenStruct.new
-    meta.solv = Digest::MD5.hexdigest(@uri)
+    meta.solv = Digest::MD5.hexdigest(uri)
     meta.time = meta.solv + ".timestamp"
     meta.info = meta.solv + ".info"
-    meta.uri  = @uri
+    meta.uri  = uri
     meta
   end
 
   def create_tmpdir
     @tmp_dir = Dir.mktmpdir("dice-solver")
-    @tmp_dir
+    tmp_dir
   end
 
   def cleanup
-    FileUtils.rm_rf @tmp_dir if defined?(@tmp_dir)
+    FileUtils.rm_rf @tmp_dir if defined?(tmp_dir)
   end
 end
 

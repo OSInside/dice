@@ -3,7 +3,7 @@ require_relative "spec_helper"
 describe Solver do
   before(:each) do
     recipe = double(Recipe)
-    allow(recipe).to receive(:get_basepath).and_return("foo")
+    allow(recipe).to receive(:basepath).and_return("foo")
     @solver = double(Solver)
     @kiwi_config = double(KiwiConfig)
     allow(KiwiConfig).to receive(:new).and_return(@kiwi_config)

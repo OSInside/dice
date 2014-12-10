@@ -26,12 +26,6 @@ describe Recipe do
     end
   end
 
-  describe "#get_basepath" do
-    it "returns absolut path name containing helper/recipe_good" do
-      expect(@recipe.get_basepath).to match(/^\/.*\/helper\/recipe_good/)
-    end
-  end
-
   describe "#change_working_dir" do
     it "receives a Dir.chdir containing helper/recipe_good" do
       expect(Dir).to receive(:chdir).with(/^\/.*\/helper\/recipe_good/)
@@ -62,7 +56,7 @@ describe Recipe do
       digest_file = double(File)
       expect(@recipe).to receive(:createDigest).and_return("foo")
       expect(File).to receive(:new).with(
-        "#{@recipe.get_basepath}/.dice/checksum.sha256", "w"
+        "#{@recipe.basepath}/.dice/checksum.sha256", "w"
       ).and_return(digest_file)
       expect(digest_file).to receive(:puts)
       expect(digest_file).to receive(:close)
