@@ -48,11 +48,15 @@ class Logger
     return if !recipe
     logfile = recipe.basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
     FileUtils.mkdir_p File.dirname(logfile)
+    inilog = IniFile.new
     begin
-      self.log = IniFile.load(:filename => logfile)
+      inilog.filename = logfile
+      inilog.load
     rescue
-      self.log = IniFile.new(:filename => logfile)
+      # ignore if file could not be loaded and start
+      # logging from scratch
     end
+    self.log = inilog
     log[time] = {
       "cmdline" => "$ dice #{ARGV.join(" ")}",
       "message" => ""

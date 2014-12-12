@@ -28,10 +28,6 @@ class Cli
       exit 1
     else
       result = "dice unexpected error: #{e.message}"
-      if e.backtrace && !e.backtrace.empty?
-        result += "\nBacktrace:\n"
-        result += "#{e.backtrace.join("\n")}\n\n"
-      end
       Dice.logger.error(result)
       exit 1
     end
@@ -62,6 +58,7 @@ class Cli
   arg "RECIPE-DIR"
   command :schedule do |c|
     c.action do |global_options,options,args|
+      Dice.setup_options(options)
       dir = shift_arg(args, "RECIPE-DIR")
       BuildScheduler.run_tasks(dir)
     end
@@ -79,10 +76,11 @@ class Cli
     c.switch ["force", :f], :required => false, :negatable => false,
       :desc => "Force building even if status is up to data"
     c.action do |global_options,options,args|
+      Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
       Dice.logger.recipe = recipe
-      @task = BuildTask.new(recipe, options)
+      @task = BuildTask.new(recipe)
       @task.run
     end
   end
@@ -97,11 +95,12 @@ class Cli
     c.switch ["show", :s], :required => false, :negatable => false,
       :desc => "Just show the log if present, skip test for build process"
     c.action do |global_options,options,args|
+      Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
       Dice.logger.recipe = recipe
       Dice.logger.filelog = false
-      connection = ConnectionTask.new(recipe, options)
+      connection = ConnectionTask.new(recipe)
       connection.log
     end
   end
@@ -115,6 +114,7 @@ class Cli
   arg "RECIPE-PATH"
   command :status do |c|
     c.action do |global_options,options,args|
+      Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
       Dice.logger.recipe = recipe
@@ -131,10 +131,11 @@ class Cli
   arg "RECIPE-PATH"
   command :ssh do |c|
     c.action do |global_options,options,args|
+      Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
       Dice.logger.recipe = recipe
-      connection = ConnectionTask.new(recipe, options)
+      connection = ConnectionTask.new(recipe)
       connection.ssh
     end
   end

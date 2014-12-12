@@ -9,6 +9,7 @@ end
 RSpec.configure do |config|
   config.before(:each) do
     allow(Dice.logger).to receive(:info)
+    Dice.setup_options(Hash.new)
   end
 end
 

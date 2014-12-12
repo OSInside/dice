@@ -1,9 +1,8 @@
 class BuildTask
-  attr_reader :buildsystem, :options, :recipe
+  attr_reader :buildsystem, :recipe
 
-  def initialize(recipe, options = Hash.new)
+  def initialize(recipe)
     @buildsystem = BuildSystemFactory.new(recipe)
-    @options = options
     @recipe = recipe
   end
 
@@ -28,7 +27,7 @@ class BuildTask
 
   def run
     status = Dice::Status::BuildRequired.new
-    if !options["force"]
+    if !Dice.option.force
       status = build_status
     end
     if status.is_a?(Dice::Status::BuildRequired)

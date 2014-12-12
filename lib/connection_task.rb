@@ -1,13 +1,12 @@
 class ConnectionTask
-  attr_reader :factory, :options
+  attr_reader :factory
 
-  def initialize(recipe, options = Hash.new)
+  def initialize(recipe)
     @factory = ConnectionFactory.new(recipe)
-    @options = options
   end
 
   def log
-    if options["show"]
+    if Dice.option.show
       factory.print_log
     else
       factory.get_log
