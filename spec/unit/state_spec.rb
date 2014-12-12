@@ -9,7 +9,7 @@ describe BuildStatus do
   describe "#message" do
     it "prints status message containing derived class name" do
       jobs = ["last-run", "current-run"]
-      expect(Logger).to receive(:info).with(
+      expect(Dice::logger).to receive(:info).with(
         "BuildStatus: Dice::Status::UpToDate"
       )
       expect(@status).to receive(:job_info).with(@recipe)

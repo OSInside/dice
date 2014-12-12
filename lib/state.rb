@@ -1,6 +1,6 @@
 class BuildStatus
   def message(recipe)
-    Logger.info("BuildStatus: #{self.class}")
+    Dice.logger.info("BuildStatus: #{self.class}")
     job_info recipe
     if self.is_a?(Dice::Status::UpToDate)
       result_info recipe
@@ -14,7 +14,7 @@ class BuildStatus
       Dice::META + "/" + Dice::SCREEN_JOB
     )
     if !jobs.empty?
-      Logger.info("--> Screen job: $ screen -r #{jobs.last}")
+      Dice.logger.info("--> Screen job: $ screen -r #{jobs.last}")
     end
   end
 
@@ -22,7 +22,7 @@ class BuildStatus
     result_file = recipe.basepath + "/" +
       Dice::META + "/" + Dice::BUILD_RESULT
     if File.exists?(result_file)
-      Logger.info("--> Build result: tar -tf #{result_file}")
+      Dice.logger.info("--> Build result: tar -tf #{result_file}")
     end
   end
 

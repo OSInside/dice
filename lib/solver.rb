@@ -7,7 +7,7 @@ class Solver
   end
 
   def writeScan
-    Logger.info("Solver: Checking for repository updates")
+    Dice.logger.info("Solver: Checking for repository updates")
     solver_result = solve
     solve_errors(solver_result.problems)
     solve_json = solve_result(solver_result.transaction)

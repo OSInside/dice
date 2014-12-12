@@ -10,7 +10,7 @@ class ConnectionHostBuildSystem < Connection
   end
 
   def ssh
-    Logger.info(
+    Dice.logger.info(
       "#{self.class}: ssh into worker for #{recipe.basepath} with \n\
       url: #{ssh_user}@#{ssh_host} \n\
       key: #{ssh_private_key}"

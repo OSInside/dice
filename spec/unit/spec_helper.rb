@@ -8,7 +8,7 @@ end
 
 RSpec.configure do |config|
   config.before(:each) do
-    allow(Logger).to receive(:info)
+    allow(Dice.logger).to receive(:info)
   end
 end
 

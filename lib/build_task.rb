@@ -45,12 +45,6 @@ class BuildTask
     end
   end
 
-  def build_log_file
-    log_file = recipe.basepath + "/" +
-      Dice::META + "/" + Dice::BUILD_LOG
-    log_file
-  end
-
   def log
     buildsystem.get_log
   end

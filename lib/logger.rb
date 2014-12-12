@@ -1,59 +1,71 @@
-class String
-  # colorization of strings
-  def colorize(color_code)
-    "\e[#{color_code}m#{self}\e[0m"
-  end
-
-  def red
-    colorize(31)
-  end
-
-  def col(id)
-    colorize(id)
-  end
-end
-
 class Logger
-  @@DEBUG = false
-  @@RECIPE_DIR = "unknown-recipe"
+  attr_accessor :debug, :recipe, :log, :filelog
+  attr_reader :time
 
-  def self.info(message)
-    message.gsub!(/\n/,"\n#{prefix}: ")
+  def initialize
+    @time = Time.now.utc.iso8601
+    @debug = false
+    @recipe = nil
+    @log = nil
+    @filelog = true
+  end
+
+  def info(message)
+    prefix_multiline(message)
     STDOUT.puts "#{prefix}: #{message}"
+    append_to_logfile(message) if filelog
   end
 
-  def self.command(*message)
-    if @@DEBUG
-      puts "#{prefix}: EXEC: [#{message.join(" ")}]"
+  def command(*message)
+    if debug
+      msg = "#{prefix}: EXEC: [#{message.join(" ")}]"
+      STDOUT.puts msg
+      append_to_logfile(msg) if filelog
     end
   end
 
-  def self.error(message, logfile = nil)
-    if logfile
-      FileUtils.mkdir_p File.dirname(logfile)
-      error_log = File.new(logfile, "a")
-      error_log.puts "$ dice #{ARGV.join(" ")}\n"
-      error_log.puts message
-      error_log.close
-    end
-    message.gsub!(/\n/,"\n#{prefix}: ")
+  def error(message)
+    prefix_multiline(message)
     STDERR.puts "#{prefix}: #{message}".red
-  end
-
-  def self.setup(arguments)
-    if arguments.to_s =~ /--debug/
-      @@DEBUG = true
-    end
-  end
-
-  def self.set_recipe_dir(dir)
-    @@RECIPE_DIR = dir
+    append_to_logfile(message) if filelog
   end
 
   private
 
-  def self.prefix
-    prefix = "[#{$$}][#{@@RECIPE_DIR}]"
+  def prefix_multiline(message)
+    message.gsub!(/\n/,"\n#{prefix}: ")
+    message
+  end
+
+  def append_to_logfile(message)
+    open_logfile unless log
+    return if !log
+    log[time]["message"] += "\n" + message
+    log.write
+  end
+
+  def open_logfile
+    return if !recipe
+    logfile = recipe.basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
+    FileUtils.mkdir_p File.dirname(logfile)
+    begin
+      self.log = IniFile.load(:filename => logfile)
+    rescue
+      self.log = IniFile.new(:filename => logfile)
+    end
+    log[time] = {
+      "cmdline" => "$ dice #{ARGV.join(" ")}",
+      "message" => ""
+    }
+    log.write
+  end
+
+  def prefix
+    if recipe
+      prefix = "[#{$$}][#{File.basename(recipe.basepath)}]"
+    else
+      prefix = "[#{$$}]"
+    end
     prefix
   end
 end

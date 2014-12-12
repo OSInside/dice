@@ -7,7 +7,7 @@ class ConnectionVagrantBuildSystem < Connection
   end
 
   def ssh
-    Logger.info(
+    Dice.logger.info(
       "#{self.class}: ssh into worker for #{recipe.basepath}..."
     )
     exec("vagrant ssh")

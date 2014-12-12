@@ -38,7 +38,6 @@ class Recipe
 
   def ok?
     recipe = Pathname.new(description)
-    Logger.set_recipe_dir(recipe.basename)
     if !File.exists?(recipe) || !File.directory?(recipe.realpath)
       raise Dice::Errors::NoDirectory.new(
         "Given recipe does not exist or is not a directory"

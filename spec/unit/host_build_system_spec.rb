@@ -11,7 +11,7 @@ describe HostBuildSystem do
 
   describe "#up" do
     it "checks if build worked is busy with other task" do
-      expect(Logger).to receive(:info).with(/#{@host}/)
+      expect(Dice::logger).to receive(:info).with(/#{@host}/)
       expect(@system).to receive(:is_busy?).and_return(true)
       expect { @system.up }.to raise_error(
         Dice::Errors::BuildWorkerBusy

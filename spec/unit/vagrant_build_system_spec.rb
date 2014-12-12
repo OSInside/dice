@@ -19,14 +19,15 @@ describe VagrantBuildSystem do
     end
 
     it "puts headline and up output on normal operation" do
-      expect(Logger).to receive(:info)
+      expect(Dice::logger).to receive(:info).with(/VagrantBuildSystem:/)
       expect(Command).to receive(:run).with(
         "vagrant", "up", {:stdout=>:capture}
       ).and_return("foo")
+      expect(Dice::logger).to receive(:info).with(/Receiving Host/)
       expect(Command).to receive(:run).with(
         "vagrant", "ssh", "--debug", "-c", "/bin/true", {:stderr=>:capture}
       )
-      expect(Logger).to receive(:info).with("VagrantBuildSystem: foo")
+      expect(Dice::logger).to receive(:info).with("VagrantBuildSystem: foo")
       @system.up
     end
   end
@@ -43,9 +44,9 @@ describe VagrantBuildSystem do
     end
 
     it "puts headline and provision output on normal operation" do
-      expect(Logger).to receive(:info)
+      expect(Dice::logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
-      expect(Logger).to receive(:info).with("VagrantBuildSystem: foo")
+      expect(Dice::logger).to receive(:info).with("VagrantBuildSystem: foo")
       @system.provision
     end
   end
@@ -61,9 +62,9 @@ describe VagrantBuildSystem do
     end
 
     it "puts headline and halt output on normal operation, reset_working_dir" do
-      expect(Logger).to receive(:info)
+      expect(Dice::logger).to receive(:info)
       expect(Command).to receive(:run).and_return("foo")
-      expect(Logger).to receive(:info).with("VagrantBuildSystem: foo")
+      expect(Dice::logger).to receive(:info).with("VagrantBuildSystem: foo")
       expect(@recipe).to receive(:reset_working_dir)
       @system.halt
     end

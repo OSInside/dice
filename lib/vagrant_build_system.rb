@@ -7,7 +7,7 @@ class VagrantBuildSystem < BuildSystem
   end
 
   def up
-    Logger.info(
+    Dice.logger.info(
       "#{self.class}: Starting up buildsystem for #{recipe.basepath}..."
     )
     begin
@@ -17,7 +17,7 @@ class VagrantBuildSystem < BuildSystem
         "Starting up virtual system failed with: #{e.stderr}"
       )
     end
-    Logger.info("#{self.class}: Receiving Host IP/Port information...")
+    Dice.logger.info("#{self.class}: Receiving Host IP/Port information...")
     begin
       @ssh_output = Command.run(
         "vagrant", "ssh", "--debug", "-c", "/bin/true", :stderr => :capture
@@ -27,27 +27,27 @@ class VagrantBuildSystem < BuildSystem
         "Retrieving IP/Port information failed: #{e.stderr}"
       )
     end
-    Logger.info("#{self.class}: #{up_output}")
+    Dice.logger.info("#{self.class}: #{up_output}")
   end
 
   def provision
-    Logger.info("#{self.class}: Provision build system...")
+    Dice.logger.info("#{self.class}: Provision build system...")
     begin
       provision_output = Command.run(
         "vagrant", "provision", :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
-      Logger.info("#{self.class}: Provisioning failed")
+      Dice.logger.info("#{self.class}: Provisioning failed")
       halt
       raise Dice::Errors::VagrantProvisionFailed.new(
         "Provisioning virtual system failed with: #{e.stderr}"
       )
     end
-    Logger.info("#{self.class}: #{provision_output}")
+    Dice.logger.info("#{self.class}: #{provision_output}")
   end
 
   def halt
-    Logger.info("#{self.class}: Initiate shutdown...")
+    Dice.logger.info("#{self.class}: Initiate shutdown...")
     begin
       halt_output = Command.run("vagrant", "halt", "-f", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
@@ -55,7 +55,7 @@ class VagrantBuildSystem < BuildSystem
         "System stop failed with: #{e.stderr}"
       )
     end
-    Logger.info("#{self.class}: #{halt_output}")
+    Dice.logger.info("#{self.class}: #{halt_output}")
     @recipe.reset_working_dir
   end
 

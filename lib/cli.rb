@@ -8,12 +8,6 @@ class Cli
   switch :debug, :negatable => false, :desc => "Enable debug mode"
   switch [:help, :h], :negatable => false, :desc => "Show help"
 
-  def self.build_log_file
-    log_file = nil
-    log_file = @task.build_log_file if @task
-    log_file
-  end
-
   def self.handle_error(e)
     case e
     when GLI::UnknownCommandArgument, GLI::UnknownGlobalArgument,
@@ -23,24 +17,22 @@ class Cli
       run(command << "--help")
       exit 1
     when Dice::Errors::DiceError
-      Logger.error(e.message, build_log_file)
+      Dice.logger.error(e.message)
       @task.release_lock if @task
       exit 1
     when SystemExit
       raise
     when SignalException
-      Logger.error(
-        "dice was aborted with signal #{e.signo}", build_log_file
-      )
+      Dice.logger.error("dice was aborted with signal #{e.signo}")
       @task.cleanup if @task
       exit 1
     else
-      result = "dice unexpected error"
+      result = "dice unexpected error: #{e.message}"
       if e.backtrace && !e.backtrace.empty?
         result += "\nBacktrace:\n"
         result += "#{e.backtrace.join("\n")}\n\n"
       end
-      Logger.error(result)
+      Dice.logger.error(result)
       exit 1
     end
     true
@@ -89,6 +81,7 @@ class Cli
     c.action do |global_options,options,args|
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      Dice.logger.recipe = recipe
       @task = BuildTask.new(recipe, options)
       @task.run
     end
@@ -106,6 +99,8 @@ class Cli
     c.action do |global_options,options,args|
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      Dice.logger.recipe = recipe
+      Dice.logger.filelog = false
       connection = ConnectionTask.new(recipe, options)
       connection.log
     end
@@ -122,6 +117,7 @@ class Cli
     c.action do |global_options,options,args|
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      Dice.logger.recipe = recipe
       task = BuildTask.new(recipe)
       status = task.build_status
       status.message recipe
@@ -137,6 +133,7 @@ class Cli
     c.action do |global_options,options,args|
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      Dice.logger.recipe = recipe
       connection = ConnectionTask.new(recipe, options)
       connection.ssh
     end

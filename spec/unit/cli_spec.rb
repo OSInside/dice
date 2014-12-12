@@ -3,7 +3,7 @@ require_relative "spec_helper"
 describe Cli do
   describe "#self.handle_error" do
     it "shows stderr, stdout and the backtrace for unexpected errors" do
-      expect(Logger).to receive(:error).with(/^dice unexpected error/)
+      expect(Dice::logger).to receive(:error).with(/^dice unexpected error/)
       begin
         # raise some exception, so we have a backtrace
         raise(Cheetah::ExecutionFailed.new(
@@ -12,15 +12,6 @@ describe Cli do
       rescue => e
         expect{ Cli.handle_error(e) }.to raise_error(SystemExit)
       end
-    end
-  end
-
-  describe "#self.build_log_file" do
-    it "returns build log file for given task" do
-      buildtask = double(BuildTask)
-      Cli.instance_variable_set(:@task, buildtask)
-      expect(buildtask).to receive(:build_log_file).and_return("foo")
-      expect(Cli.build_log_file).to eq("foo")
     end
   end
 end

@@ -3,6 +3,5 @@
 require_relative "../lib/dice"
 
 begin
-  Logger.setup(ARGV)
   Cli.run(ARGV)
 end

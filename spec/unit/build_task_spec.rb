@@ -59,13 +59,6 @@ describe BuildTask do
     end
   end
 
-  describe "#build_log_file" do
-    it "returns build.log file name for recipe" do
-      expect(@recipe).to receive(:basepath).and_return("foo")
-      expect(@task.build_log_file).to eq("foo/.dice/build.log")
-    end
-  end
-
   describe "#cleanup" do
     it "calls halt from the build system" do
       expect(@task).to receive(:release_lock)

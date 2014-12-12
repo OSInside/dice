@@ -19,7 +19,7 @@ class BuildScheduler
   def self.run(description)
     job_name = set_job_name
     job_started = true
-    Logger.info("#{self}: Starting build job: #{job_name}")
+    Dice.logger.info("#{self}: Starting build job: #{job_name}")
     build_cmd = [$0, "build", description]
     screen_cmd = ["screen", "-S", job_name, "-d", "-m"]
     begin
