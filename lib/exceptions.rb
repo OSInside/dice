@@ -26,6 +26,7 @@ module Dice
     class SolvJobFailed < DiceError; end
     class UriLoadFileFailed < DiceError; end
     class UriTypeUnknown < DiceError; end
+    class NoBuildHistory < DiceError; end
   end
 
   module Status

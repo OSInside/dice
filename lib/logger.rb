@@ -30,7 +30,33 @@ class Logger
     append_to_logfile(message) if filelog
   end
 
+  def history
+    logfile = recipe.basepath + "/" + Dice::META + "/" + Dice::HISTORY
+    if !File.exists?(logfile)
+      raise Dice::Errors::NoBuildHistory.new(
+        "No history available"
+      )
+    end
+    print_history(logfile)
+  end
+
   private
+
+  def print_history(logfile)
+    inilog = IniFile.new
+    inilog.filename = logfile
+    inilog.read
+    inilog.sections.each do |section|
+      message_lines = inilog[section]["message"].split(/\n/)
+      puts "[ #{section} ]".green
+      puts "  cmdline => #{inilog[section]["cmdline"]}"
+      puts "  message => ["
+      message_lines.each do |line|
+        puts "    #{line}"
+      end
+      puts "  ]"
+    end
+  end
 
   def prefix_multiline(message)
     message.gsub!(/\n/,"\n#{prefix}: ")
@@ -40,18 +66,18 @@ class Logger
   def append_to_logfile(message)
     open_logfile unless log
     return if !log
-    log[time]["message"] += "\n" + message
+    log[time]["message"] += message + "\n"
     log.write
   end
 
   def open_logfile
     return if !recipe
-    logfile = recipe.basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
+    logfile = recipe.basepath + "/" + Dice::META + "/" + Dice::HISTORY
     FileUtils.mkdir_p File.dirname(logfile)
     inilog = IniFile.new
     begin
       inilog.filename = logfile
-      inilog.load
+      inilog.read
     rescue
       # ignore if file could not be loaded and start
       # logging from scratch

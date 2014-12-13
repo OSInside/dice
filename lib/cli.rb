@@ -85,13 +85,13 @@ class Cli
     end
   end
 
-  desc "Print log from current build"
+  desc "Print build log from current build"
   long_desc <<-LONGDESC
     Print build log using a tail command. The command blocks the
     running terminal printing the log information if present
   LONGDESC
   arg "RECIPE-PATH"
-  command :log do |c|
+  command :buildlog do |c|
     c.switch ["show", :s], :required => false, :negatable => false,
       :desc => "Just show the log if present, skip test for build process"
     c.action do |global_options,options,args|
@@ -99,9 +99,25 @@ class Cli
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
       Dice.logger.recipe = recipe
-      Dice.logger.filelog = false
       connection = ConnectionTask.new(recipe)
       connection.log
+    end
+  end
+
+  desc "Print dice caller history"
+  long_desc <<-LONGDESC
+    Print history of dice commands and its results for the
+    given recipe
+  LONGDESC
+  arg "RECIPE-PATH"
+  command :history do |c|
+    c.action do |global_options,options,args|
+      Dice.setup_options(options)
+      description = shift_arg(args, "RECIPE-PATH")
+      recipe = Recipe.new(description)
+      Dice.logger.recipe = recipe
+      Dice.logger.filelog = false
+      Dice.logger.history
     end
   end
 

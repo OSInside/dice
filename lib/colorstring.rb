@@ -7,6 +7,10 @@ class String
     colorize(31)
   end
 
+  def green
+    colorize(32)
+  end
+
   def col(id)
     colorize(id)
   end

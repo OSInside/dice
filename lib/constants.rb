@@ -16,4 +16,6 @@ module Dice
   BUILD_RESULT = "build_results.tar"
 
   SCREEN_JOB = "job"
+
+  HISTORY = "dice.history"
 end
