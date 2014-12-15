@@ -178,6 +178,6 @@ you can check the progress with
 
 
 ```
-$ dice log /tmp/suse-13.1-JeOS
+$ dice buildlog /tmp/suse-13.1-JeOS
 ```
 
