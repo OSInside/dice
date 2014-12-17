@@ -1,37 +1,25 @@
 class Recipe
-  attr_reader :description, :basepath, :cwd
+  attr_reader :basepath, :cwd
 
   def initialize(description)
-    @description = description
-    recipe = ok?
+    recipe = ok?(description)
     @basepath = recipe.realpath.to_s
     @cwd = Pathname.new(Dir.pwd).realpath.to_s
   end
 
-  def job_required?
+  def update
+    writeRecipeChecksum
+  end
+
+  def uptodate?
+    packages = Solver.new(self)
+    writeRecipeScan(packages.solve)
     cur_digest = readDigest
-    new_digest = createDigest
+    new_digest = calculateDigest
     if (cur_digest != new_digest)
-      return true
+      return false
     end
-    false
-  end
-
-  def writeRecipeScan(solver_result)
-    recipe_scan = File.open(
-      "#{basepath}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
-    )
-    recipe_scan.write(JSON.pretty_generate(solver_result))
-    recipe_scan.close
-  end
-
-  def writeRecipeChecksum
-    digest = createDigest
-    digest_file = File.new(
-      basepath + "/" + Dice::META + "/" + Dice::DIGEST_FILE, "w"
-    )
-    digest_file.puts digest
-    digest_file.close
+    true
   end
 
   def change_working_dir
@@ -44,7 +32,24 @@ class Recipe
 
   private
 
-  def ok?
+  def writeRecipeScan(solver_result)
+    recipe_scan = File.open(
+      "#{basepath}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
+    )
+    recipe_scan.write(JSON.pretty_generate(solver_result))
+    recipe_scan.close
+  end
+
+  def writeRecipeChecksum
+    digest = calculateDigest
+    digest_file = File.new(
+      basepath + "/" + Dice::META + "/" + Dice::DIGEST_FILE, "w"
+    )
+    digest_file.puts digest
+    digest_file.close
+  end
+
+  def ok?(description)
     recipe = Pathname.new(description)
     if !File.exists?(recipe) || !File.directory?(recipe.realpath)
       raise Dice::Errors::NoDirectory.new(
@@ -74,7 +79,7 @@ class Recipe
     recipe
   end
 
-  def createDigest
+  def calculateDigest
     result = ""
     recipe_items = Find.find(".")
     recipe_items.each do |item|

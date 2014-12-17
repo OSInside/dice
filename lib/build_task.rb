@@ -15,9 +15,7 @@ class BuildTask
         return Dice::Status::BuildSystemLocked.new
       end
     end
-    packages = Solver.new(recipe)
-    recipe.writeRecipeScan(packages.solve)
-    if recipe.job_required?
+    if !recipe.uptodate?
       status = Dice::Status::BuildRequired.new
     else
       status = Dice::Status::UpToDate.new
@@ -35,7 +33,7 @@ class BuildTask
       buildsystem.up
       buildsystem.provision
       perform_job
-      recipe.writeRecipeChecksum
+      recipe.update
       release_lock
       cleanup_screen_job
       buildsystem.halt

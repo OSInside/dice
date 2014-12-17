@@ -41,11 +41,11 @@ describe Recipe do
     end
   end
 
-  describe "#createDigest" do
+  describe "#calculateDigest" do
     it "creates expected sha256 digest" do
       expect(Find).to receive(:find).with(".").
         and_return(["spec/helper/recipe_good/config.xml"])
-      expect(@recipe.instance_eval{ createDigest }).to eq(
+      expect(@recipe.instance_eval{ calculateDigest }).to eq(
         "spec/helper/recipe_good/config.xml:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n"
       )
     end
@@ -59,20 +59,20 @@ describe Recipe do
       expect(JSON).to receive(:pretty_generate).and_return("foo")
       expect(recipe_scan).to receive(:write).with("foo")
       expect(recipe_scan).to receive(:close)
-      @recipe.writeRecipeScan("foo")
+      @recipe.instance_eval{ writeRecipeScan("foo") }
     end
   end
 
   describe "#writeRecipeChecksum" do
     it "wants to create .checksum.sha256" do
       digest_file = double(File)
-      expect(@recipe).to receive(:createDigest).and_return("foo")
+      expect(@recipe).to receive(:calculateDigest).and_return("foo")
       expect(File).to receive(:new).with(
         "#{@recipe.basepath}/.dice/checksum.sha256", "w"
       ).and_return(digest_file)
       expect(digest_file).to receive(:puts)
       expect(digest_file).to receive(:close)
-      @recipe.writeRecipeChecksum
+      @recipe.instance_eval{ writeRecipeChecksum }
     end
   end
 
@@ -84,11 +84,22 @@ describe Recipe do
     end
   end
 
-  describe "#job_required?" do
-    it "compares two digests" do
+  describe "#uptodate?" do
+    it "update package scan and compares the new checksum with current one" do
+      packages = double
+      expect(Solver).to receive(:new).with(@recipe).and_return(packages)
+      expect(packages).to receive(:solve)
+      expect(@recipe).to receive(:writeRecipeScan)
       expect(@recipe).to receive(:readDigest).and_return("foo")
-      expect(@recipe).to receive(:createDigest).and_return("foo")
-      expect(@recipe.job_required?).to eq(false)
+      expect(@recipe).to receive(:calculateDigest).and_return("foo")
+      expect(@recipe.uptodate?).to eq(true)
+    end
+  end
+
+  describe "#update" do
+    it "update the recipe checksum and writes a new one" do
+      expect(@recipe).to receive(:writeRecipeChecksum)
+      @recipe.update
     end
   end
 end
