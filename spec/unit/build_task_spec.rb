@@ -17,7 +17,8 @@ describe BuildTask do
       expect(@buildsystem).to receive(:is_locked?).and_return(false)
       solver = double(Solver)
       expect(Solver).to receive(:new).and_return(solver)
-      expect(solver).to receive(:writeScan)
+      expect(solver).to receive(:solve)
+      expect(@recipe).to receive(:writeRecipeScan)
       expect(@recipe).to receive(:job_required?).and_return(true)
       expect(@task.build_status).to be_a(Dice::Status::BuildRequired)
     end

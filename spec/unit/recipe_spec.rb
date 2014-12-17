@@ -51,6 +51,18 @@ describe Recipe do
     end
   end
 
+  describe "#writeRecipeScan" do
+    it "stores json formatted list of solved packages and their attrs" do
+      recipe_scan = double(File)
+      expect(File).to receive(:open).with(/\/.dice\/scan/, "w").
+        and_return(recipe_scan)
+      expect(JSON).to receive(:pretty_generate).and_return("foo")
+      expect(recipe_scan).to receive(:write).with("foo")
+      expect(recipe_scan).to receive(:close)
+      @recipe.writeRecipeScan("foo")
+    end
+  end
+
   describe "#writeRecipeChecksum" do
     it "wants to create .checksum.sha256" do
       digest_file = double(File)

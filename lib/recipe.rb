@@ -17,6 +17,14 @@ class Recipe
     false
   end
 
+  def writeRecipeScan(solver_result)
+    recipe_scan = File.open(
+      "#{basepath}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
+    )
+    recipe_scan.write(JSON.pretty_generate(solver_result))
+    recipe_scan.close
+  end
+
   def writeRecipeChecksum
     digest = createDigest
     digest_file = File.new(

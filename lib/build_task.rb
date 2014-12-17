@@ -15,8 +15,8 @@ class BuildTask
         return Dice::Status::BuildSystemLocked.new
       end
     end
-    solver = Solver.new(recipe)
-    solver.writeScan
+    packages = Solver.new(recipe)
+    recipe.writeRecipeScan(packages.solve)
     if recipe.job_required?
       status = Dice::Status::BuildRequired.new
     else

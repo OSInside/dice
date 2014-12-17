@@ -1,24 +1,32 @@
 class Solver
-  attr_reader :description, :kiwi
+  attr_reader :recipe, :kiwi
 
   def initialize(recipe)
-    @description = recipe.basepath
-    @kiwi = KiwiConfig.new(description)
+    @recipe = recipe
   end
 
-  def writeScan
-    Dice.logger.info("Solver: Checking for repository updates")
-    solver_result = solve
-    solve_errors(solver_result.problems)
-    solve_json = solve_result(solver_result.transaction)
-    recipe_scan = File.open(
-      "#{description}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
-    )
-    recipe_scan.write(JSON.pretty_generate(solve_json))
-    recipe_scan.close
+  def solve
+    Dice.logger.info("Solver: Running package solver")
+    read_kiwi_config
+    pool = setup_pool
+    solver = pool.Solver
+    jobs = setup_jobs pool
+
+    problems = solver.solve(jobs)
+    solver_errors(problems)
+
+    transaction = solver.transaction
+    result = solver_result(transaction)
+    result
   end
 
-  def solve_result(transaction)
+  private
+
+  def read_kiwi_config
+    @kiwi = KiwiConfig.new(recipe.basepath)
+  end
+
+  def solver_result(transaction)
     result = Array.new
     transaction.newpackages.each do |solvable|
       package = Hash.new
@@ -35,7 +43,7 @@ class Solver
     result
   end
 
-  def solve_errors(problems)
+  def solver_errors(problems)
     if !problems.empty?
       info = {
         :problems => { :count => problems.count, :problem => [] },
@@ -60,19 +68,6 @@ class Solver
         "Solver problems: #{message}"
       )
     end
-  end
-
-  private
-
-  def solve
-    result = OpenStruct.new
-    pool = setup_pool
-    solver = pool.Solver
-    jobs = setup_jobs pool
-    result.problems = solver.solve(jobs)
-    result.transaction = solver.transaction
-    result.solver = solver
-    result
   end
 
   def setup_pool
