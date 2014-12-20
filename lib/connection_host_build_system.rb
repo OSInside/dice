@@ -1,4 +1,4 @@
-class ConnectionHostBuildSystem < Connection
+class ConnectionHostBuildSystem < ConnectionBase
   attr_reader :recipe, :ssh_user, :ssh_host, :ssh_private_key
 
   def initialize(recipe)
@@ -15,6 +15,13 @@ class ConnectionHostBuildSystem < Connection
       url: #{ssh_user}@#{ssh_host} \n\
       key: #{ssh_private_key}"
     )
-    exec("ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 -i #{ssh_private_key} #{ssh_user}@#{ssh_host}")
+    exec(
+      [
+        "ssh", "-o", "StrictHostKeyChecking=no",
+        "-o", "NumberOfPasswordPrompts=0",
+        "-i", ssh_private_key,
+        "#{ssh_user}@#{ssh_host}"
+      ].join(" ")
+    )
   end
 end

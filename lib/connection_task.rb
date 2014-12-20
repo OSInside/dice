@@ -1,19 +1,19 @@
 class ConnectionTask
-  attr_reader :factory
+  attr_reader :connection
 
   def initialize(recipe)
-    @factory = ConnectionFactory.new(recipe)
+    @connection = Connection.new(recipe)
   end
 
   def log
     if Dice.option.show
-      factory.print_log
+      connection.print_log
     else
-      factory.get_log
+      connection.get_log
     end
   end
 
   def ssh
-    factory.ssh
+    connection.ssh
   end
 end

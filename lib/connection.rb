@@ -1,44 +1,20 @@
 class Connection
-  attr_reader :build_log
-
-  abstract_method :ssh
-
-  def initialize(recipe)
-    recipe.change_working_dir
-    @build_log = recipe.basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
-  end
-
-  def get_log
-    begin
-      fuser_data = Command.run("fuser", build_log, :stdout => :capture)
-    rescue Cheetah::ExecutionFailed => e
-      details = e.stderr
-      if details == ""
-        details = "No build process writing to logfile"
+  class << self
+    def new(recipe)
+      connection = nil
+      if Dice.config.buildhost == Dice::VAGRANT_BUILD
+        Dice.logger.info(
+          "#{self}: Connecting to Vagrant virtualized buildsystem"
+        )
+        connection = ConnectionVagrantBuildSystem.new(recipe)
+      else
+        hostname = Dice.config.buildhost
+        Dice.logger.info(
+          "#{self}: Connection to host buildsystem: #{hostname}"
+        )
+        connection = ConnectionHostBuildSystem.new(recipe)
       end
-      raise Dice::Errors::NoLogFile.new(
-        "Logfile not available: #{details}"
-      )
+      connection
     end
-    pid = Connection.strip_fuser_pid(fuser_data)
-    exec("tail -f #{build_log} --pid #{pid}")
-  end
-
-  def print_log
-    begin
-      puts File.read(build_log)
-    rescue => e
-      raise Dice::Errors::NoLogFile.new(
-        "Logfile not available: #{e}"
-      )
-    end
-  end
-
-  def self.strip_fuser_pid(fuser_data)
-    kiwi_pid = fuser_data
-    if kiwi_pid =~ /(\d+)/
-      kiwi_pid = $1
-    end
-    kiwi_pid
   end
 end

@@ -1,4 +1,4 @@
-class ConnectionVagrantBuildSystem < Connection
+class ConnectionVagrantBuildSystem < ConnectionBase
   attr_reader :recipe
 
   def initialize(recipe)
