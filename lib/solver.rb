@@ -65,8 +65,11 @@ class Solver
     end
   end
 
+  def pool
+    @pool ||= Solv::Pool.new
+  end
+
   def setup_pool
-    pool = Solv::Pool.new
     pool.setarch
     kiwi_config.repos.each do |uri|
       solv = pool.add_repo uri

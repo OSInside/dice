@@ -39,7 +39,7 @@ class RpmMdRepository < RepositoryBase
   end
 
   def get_repomd_files
-    result = Array.new
+    result = []
     types = ["primary", "patterns"]
     types.each do |type|
       rxml.elements.each("repomd/data[@type='#{type}']/location") do |e|

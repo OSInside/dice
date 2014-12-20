@@ -8,7 +8,7 @@ class KiwiConfig
   end
 
   def repos
-    repo_uri = Array.new
+    repo_uri = []
     xml.elements.each("*/repository/source") do |element|
       repo_uri << KiwiUri.translate(element.attributes["path"].gsub(/\?.*/,""))
     end
@@ -16,7 +16,7 @@ class KiwiConfig
   end
 
   def packages
-    packages = Array.new
+    packages = []
     xml.elements.each("*/packages/package") do |element|
       packages << element.attributes["name"]
     end

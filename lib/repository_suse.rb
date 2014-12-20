@@ -30,8 +30,8 @@ class SuSERepository < RepositoryBase
   private
 
   def get_pattern_files
-    result = Array.new
-    patterns = Array.new
+    result = []
+    patterns = []
     patbase = "suse/setup/descr"
     begin
       patterns = load_file(patbase + "/patterns").split("\n")
@@ -51,7 +51,7 @@ class SuSERepository < RepositoryBase
     result = OpenStruct.new
     begin
       result.tool = "rpmmd2solv"
-      result.list = Array.new
+      result.list = []
       xml = REXML::Document.new(load_file("suse/repodata/repomd.xml"))
       xml.elements.each("repomd/data[@type='primary']/location") do |e|
         href = e.attribute("href").to_s

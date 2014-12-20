@@ -1,12 +1,15 @@
 class Repository
   class << self
+    attr_reader :uri
+
     def solvable(uri)
+      @uri = uri
       repo = nil
       case repotype(uri)
       when Dice::RepoType::RpmMd
-        repo = RpmMdRepository.new(uri)
+        repo = rpmmd_repo
       when Dice::RepoType::SUSE
-        repo = SuSERepository.new(uri)
+        repo = suse_repo
       end
       repo.solvable
     end
@@ -28,6 +31,14 @@ class Repository
         )
       end
       repotype
+    end
+
+    def rpmmd_repo
+      RpmMdRepository.new(uri)
+    end
+
+    def suse_repo
+      SuSERepository.new(uri)
     end
   end
 end

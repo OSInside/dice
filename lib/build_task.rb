@@ -61,6 +61,10 @@ class BuildTask
 
   private
 
+  def job
+    @job ||= Job.new(buildsystem)
+  end
+
   def cleanup_screen_job
     screen_job = recipe.basepath + "/" +
       Dice::META + "/" + Dice::SCREEN_JOB
@@ -68,7 +72,6 @@ class BuildTask
   end
 
   def perform_job
-    job = Job.new(buildsystem)
     job.build
     job.bundle
     job.get_result

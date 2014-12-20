@@ -1,6 +1,8 @@
 class Command
-  def self.run(*args)
-    Dice.logger.command(*args)
-    Cheetah.run(*args)
+  class << self
+    def run(*args)
+      Dice.logger.command(*args)
+      Cheetah.run(*args)
+    end
   end
 end

@@ -27,7 +27,7 @@ class BuildStatus
   end
 
   def active_jobs(job_file)
-    active = Array.new
+    active = []
     begin
       File.open(job_file).each do |job_name|
         job_name = job_name.chomp

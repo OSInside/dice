@@ -14,9 +14,14 @@ class BuildSystemBase
     recipe.change_working_dir
     if self.is_a?(HostBuildSystem)
       # set a global lock for the used worker host
+      # running multiple builds in parallel on one host is not supported
+      # by kiwi. Thus we set a lock for the entire host
       @lock = "/tmp/.lock-" + Dice.config.buildhost
     else
-      # set a recipe lock
+      # set a recipe specific lock
+      # building the same recipe multiple times is possible if the
+      # buildsystem is a container or a vm but not useful. Thus we
+      # prevent that by a recipe lock
       @lock = recipe.basepath + "/" + Dice::META + "/" + Dice::LOCK
     end
   end
