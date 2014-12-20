@@ -1,4 +1,4 @@
-class HostBuildSystem < BuildSystem
+class HostBuildSystem < BuildSystemBase
   attr_reader :recipe, :host, :user, :ssh_private_key, :basepath
 
   def initialize(recipe)

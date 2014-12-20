@@ -1,4 +1,4 @@
-class VagrantBuildSystem < BuildSystem
+class VagrantBuildSystem < BuildSystemBase
   attr_reader :recipe, :ssh_output
 
   def initialize(recipe)

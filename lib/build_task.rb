@@ -2,7 +2,7 @@ class BuildTask
   attr_reader :buildsystem, :recipe
 
   def initialize(recipe)
-    @buildsystem = BuildSystemFactory.new(recipe)
+    @buildsystem = BuildSystem.new(recipe)
     @recipe = recipe
   end
 
