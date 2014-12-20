@@ -27,6 +27,7 @@ module Dice
     class UriLoadFileFailed < DiceError; end
     class UriTypeUnknown < DiceError; end
     class NoBuildHistory < DiceError; end
+    class RepoTypeUnknown < DiceError; end
   end
 
   module Status

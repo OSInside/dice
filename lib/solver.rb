@@ -1,13 +1,12 @@
 class Solver
-  attr_reader :recipe, :kiwi
+  attr_reader :kiwi_config
 
-  def initialize(recipe)
-    @recipe = recipe
+  def initialize(kiwi_config)
+    @kiwi_config = kiwi_config
   end
 
   def solve
     Dice.logger.info("Solver: Running package solver")
-    read_kiwi_config
     pool = setup_pool
     solver = pool.Solver
     jobs = setup_jobs pool
@@ -22,15 +21,11 @@ class Solver
 
   private
 
-  def read_kiwi_config
-    @kiwi = KiwiConfig.new(recipe.basepath)
-  end
-
   def solver_result(transaction)
-    result = Array.new
+    result = []
     transaction.newpackages.each do |solvable|
-      package = Hash.new
-      details = Hash.new
+      package = {}
+      details = {}
       details[:url] = solvable.repo.name
       details[:installsize] = solvable.lookup_num(Solv::SOLVABLE_INSTALLSIZE)
       details[:arch] = solvable.lookup_str(Solv::SOLVABLE_ARCH)
@@ -73,10 +68,9 @@ class Solver
   def setup_pool
     pool = Solv::Pool.new
     pool.setarch
-    kiwi.repos.each do |uri|
-      repo = RepositoryFactory.new(uri)
+    kiwi_config.repos.each do |uri|
       solv = pool.add_repo uri
-      solv.add_solv repo.solvable
+      solv.add_solv Repository.solvable(uri)
       pool.addfileprovides
       pool.createwhatprovides
     end
@@ -84,8 +78,8 @@ class Solver
   end
 
   def setup_jobs(pool)
-    jobs = Array.new
-    kiwi.packages.each do |package|
+    jobs = []
+    kiwi_config.packages.each do |package|
       item = pool.select(package, Solv::Selection::SELECTION_NAME)
       if item.isempty?
         raise Dice::Errors::SolvJobFailed.new(

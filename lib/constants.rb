@@ -18,4 +18,9 @@ module Dice
   SCREEN_JOB = "job"
 
   HISTORY = "dice.history"
+
+  module RepoType
+    RpmMd = "rmp-md"
+    SUSE = "yast2"
+  end
 end

@@ -12,7 +12,8 @@ class Recipe
   end
 
   def uptodate?
-    packages = Solver.new(self)
+    kiwi_config = KiwiConfig.new(basepath)
+    packages = Solver.new(kiwi_config)
     writeRecipeScan(packages.solve)
     cur_digest = readDigest
     new_digest = calculateDigest
