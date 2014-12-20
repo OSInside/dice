@@ -14,14 +14,28 @@ class SuSERepository < RepositoryBase
     tmp_dir = create_tmpdir
     solv_dir = tmp_dir + "/solv"
     get_pattern_files.each do |pattern|
-      curl_file(pattern, tmp_dir + "/" + File.basename(pattern))
+      curl_file(
+        :source => pattern,
+        :dest   => tmp_dir + "/" + File.basename(pattern)
+      )
     end
-    create_solv("susetags2solv", tmp_dir, solv_dir)
+    create_solv(
+      :tool       => "susetags2solv",
+      :source_dir => tmp_dir,
+      :dest_dir   => solv_dir
+    )
     primary_files = get_primary_files
     primary_files.list.each do |primary|
-      curl_file(primary, tmp_dir + "/primary/" + File.basename(primary))
+      curl_file(
+        :source => primary,
+        :dest   => tmp_dir + "/primary/" + File.basename(primary)
+      )
     end
-    create_solv(primary_files.tool, tmp_dir + "/primary", solv_dir)
+    create_solv(
+      :tool       => primary_files.tool,
+      :source_dir => tmp_dir + "/primary",
+      :dest_dir   => solv_dir
+    )
     merge_solv(solv_dir)
     cleanup
     solvable

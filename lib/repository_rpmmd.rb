@@ -15,10 +15,17 @@ class RpmMdRepository < RepositoryBase
     end
     tmp_dir = create_tmpdir
     get_repomd_files.each do |repo_file|
-      curl_file(repo_file, tmp_dir + "/" + File.basename(repo_file))
+      curl_file(
+        :source => repo_file,
+        :dest   => tmp_dir + "/" + File.basename(repo_file)
+      )
     end
     solv_dir = tmp_dir + "/solv"
-    create_solv("rpmmd2solv", tmp_dir, solv_dir)
+    create_solv(
+      :tool       => "rpmmd2solv",
+      :source_dir => tmp_dir,
+      :dest_dir   => solv_dir
+    )
     merge_solv(solv_dir, time)
     cleanup
     solv_file

@@ -25,10 +25,14 @@ describe RpmMdRepository do
       expect(@repo).to receive(:uptodate?).and_return(false)
       expect(@repo).to receive(:create_tmpdir).and_return("tmp")
       expect(@repo).to receive(:get_repomd_files).and_return(["a", "b"])
-      expect(@repo).to receive(:curl_file).with("a", "tmp/a")
-      expect(@repo).to receive(:curl_file).with("b", "tmp/b")
+      expect(@repo).to receive(:curl_file).with(
+        :source => "a", :dest => "tmp/a"
+      )
+      expect(@repo).to receive(:curl_file).with(
+        :source => "b", :dest => "tmp/b"
+      )
       expect(@repo).to receive(:create_solv).with(
-        "rpmmd2solv", "tmp", "tmp/solv"
+        :tool => "rpmmd2solv", :source_dir => "tmp", :dest_dir => "tmp/solv"
       )
       expect(@repo).to receive(:merge_solv).with("tmp/solv", "today")
       expect(@repo).to receive(:cleanup)

@@ -17,7 +17,9 @@ class RepositoryBase
     end
   end
 
-  def curl_file(source, dest)
+  def curl_file(args)
+    source = args[:source]
+    dest   = args[:dest]
     FileUtils.mkdir_p(File.dirname(dest))
     outfile = File.open(dest, "wb")
     begin
@@ -30,7 +32,10 @@ class RepositoryBase
     outfile.close
   end
 
-  def create_solv(tool, source_dir, dest_dir)
+  def create_solv(args)
+    tool       = args[:tool]
+    source_dir = args[:source_dir]
+    dest_dir   = args[:dest_dir]
     FileUtils.mkdir_p(dest_dir)
     rand_name = "solvable-" + (0...8).map { (65 + Kernel.rand(26)).chr }.join
     solvable = File.open(dest_dir + "/" + rand_name, "wb")

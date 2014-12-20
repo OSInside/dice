@@ -45,7 +45,7 @@ describe RepositoryBase do
         "curl", "-L", @uri + "/" + @source, :stdout => outfile
       )
       expect(outfile).to receive(:close)
-      @repo.curl_file(@source, dest)
+      @repo.curl_file(:source => @source, :dest => dest)
     end
 
     it "raises if curl can't find the file" do
@@ -54,7 +54,7 @@ describe RepositoryBase do
       expect(Cheetah).to receive(:run).and_raise(
         Dice::Errors::CurlFileFailed.new(nil)
       )
-      expect{ @repo.curl_file(@source, "") }.to raise_error(
+      expect{ @repo.curl_file(:source => @source, :dest => "") }.to raise_error(
         Dice::Errors::CurlFileFailed
       )
     end
@@ -75,7 +75,9 @@ describe RepositoryBase do
         :stdout => solvable
       )
       expect(solvable).to receive(:close)
-      expect(@repo.create_solv(tool, source_dir, dest_dir)).to eq(
+      expect(@repo.create_solv(
+        :tool => tool, :source_dir => source_dir, :dest_dir => dest_dir
+      )).to eq(
         "solvable-FFFFFFFF"
       )
     end
@@ -86,7 +88,9 @@ describe RepositoryBase do
       expect(Cheetah).to receive(:run).and_raise(
         Dice::Errors::SolvToolFailed.new(nil)
       )
-      expect{ @repo.create_solv("", "", "") }.to raise_error(
+      expect{ @repo.create_solv(
+        :tool => "", :source_dir => "", :dest_dir => ""
+      ) }.to raise_error(
         Dice::Errors::SolvToolFailed
       )
     end
