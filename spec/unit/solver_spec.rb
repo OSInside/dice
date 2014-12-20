@@ -45,7 +45,6 @@ describe Solver do
       pool = double
       solver = double
       jobs = double
-      expect(@packages).to receive(:read_kiwi_config)
       expect(@packages).to receive(:setup_pool).and_return(pool)
       expect(pool).to receive(:Solver).and_return(solver)
       expect(@packages).to receive(:setup_jobs).with(pool).and_return(jobs)
@@ -69,7 +68,6 @@ describe Solver do
     it "raises on solver errors" do
       pool = double
       solver = double
-      expect(@packages).to receive(:read_kiwi_config)
       expect(@packages).to receive(:setup_pool).and_return(pool)
       expect(pool).to receive(:Solver).and_return(solver)
       expect(@packages).to receive(:setup_jobs).with(pool)

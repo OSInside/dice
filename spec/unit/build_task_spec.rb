@@ -2,9 +2,8 @@ require_relative "spec_helper"
 
 describe BuildTask do
   before(:each) do
-    @factory = double(BuildSystemFactory)
     @buildsystem = double(BuildSystem)
-    expect(BuildSystemFactory).to receive(:new).and_return(
+    expect(BuildSystem).to receive(:new).and_return(
       @buildsystem
     )
     @recipe = double(Recipe)

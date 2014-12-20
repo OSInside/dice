@@ -2,13 +2,15 @@ require_relative "spec_helper"
 
 describe Job do
   before(:each) do
-    allow_any_instance_of(BuildSystem).to receive(:get_ip).
+    # test job with an instance of a vagrant build system
+    allow_any_instance_of(VagrantBuildSystem).to receive(:get_ip).
       and_return("127.0.0.1")
-    allow_any_instance_of(BuildSystem).to receive(:get_port).
+    allow_any_instance_of(VagrantBuildSystem).to receive(:get_port).
       and_return("2200")
+    allow_any_instance_of(VagrantBuildSystem).to receive(:halt)
     recipe = Recipe.new("spec/helper/recipe_good")
     expect_any_instance_of(Recipe).to receive(:change_working_dir)
-    system = BuildSystem.new(recipe)
+    system = VagrantBuildSystem.new(recipe)
     @job = Job.new(system)
     @basepath = recipe.basepath
   end
@@ -33,7 +35,6 @@ describe Job do
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
       expect(logfile).to receive(:close)
-      expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.build }.to raise_error(Dice::Errors::BuildFailed)
     end
   end
@@ -52,7 +53,6 @@ describe Job do
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
       expect(logfile).to receive(:close)
-      expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.bundle }.to raise_error(Dice::Errors::BuildFailed)
     end
   end
@@ -71,7 +71,6 @@ describe Job do
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
       expect(result).to receive(:close)
-      expect_any_instance_of(BuildSystem).to receive(:halt)
       expect { @job.get_result }.to raise_error(
         Dice::Errors::ResultRetrievalFailed
       )

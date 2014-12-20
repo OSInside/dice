@@ -3,7 +3,7 @@ class Job
   attr_reader :build_log, :archive, :buildsystem, :ip, :port
 
   def initialize(system)
-    if !system.is_a?(BuildSystem)
+    if !system.is_a?(BuildSystemBase)
       raise
     end
     @job_user = Dice.config.ssh_user
