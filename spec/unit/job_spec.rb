@@ -77,18 +77,4 @@ describe Job do
       )
     end
   end
-
-  describe "#prepare_build" do
-    it "cleans up the buildsystem environment" do
-      expect(Command).to receive(:run).
-        with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
-          "-i", Dice.config.ssh_private_key,
-          "root@127.0.0.1",
-          "sudo rm -rf /tmp/image /tmp/bundle"
-        ).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
-      expect_any_instance_of(BuildSystem).to receive(:halt)
-      expect { @job.instance_eval{ prepare_build }}.
-        to raise_error(Dice::Errors::PrepareBuildFailed)
-    end
-  end
 end

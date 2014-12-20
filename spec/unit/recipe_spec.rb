@@ -41,49 +41,6 @@ describe Recipe do
     end
   end
 
-  describe "#calculateDigest" do
-    it "creates expected sha256 digest" do
-      expect(Find).to receive(:find).with(".").
-        and_return(["spec/helper/recipe_good/config.xml"])
-      expect(@recipe.instance_eval{ calculateDigest }).to eq(
-        "spec/helper/recipe_good/config.xml:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n"
-      )
-    end
-  end
-
-  describe "#writeRecipeScan" do
-    it "stores json formatted list of solved packages and their attrs" do
-      recipe_scan = double(File)
-      expect(File).to receive(:open).with(/\/.dice\/scan/, "w").
-        and_return(recipe_scan)
-      expect(JSON).to receive(:pretty_generate).and_return("foo")
-      expect(recipe_scan).to receive(:write).with("foo")
-      expect(recipe_scan).to receive(:close)
-      @recipe.instance_eval{ writeRecipeScan("foo") }
-    end
-  end
-
-  describe "#writeRecipeChecksum" do
-    it "wants to create .checksum.sha256" do
-      digest_file = double(File)
-      expect(@recipe).to receive(:calculateDigest).and_return("foo")
-      expect(File).to receive(:new).with(
-        "#{@recipe.basepath}/.dice/checksum.sha256", "w"
-      ).and_return(digest_file)
-      expect(digest_file).to receive(:puts)
-      expect(digest_file).to receive(:close)
-      @recipe.instance_eval{ writeRecipeChecksum }
-    end
-  end
-
-  describe "#readDigest" do
-    it "reads and returns current digest" do
-      expect(File).to receive(:read).with(".dice/checksum.sha256").
-        and_return("foo")
-      expect(@recipe.instance_eval{ readDigest }).to eq("foo")
-    end
-  end
-
   describe "#uptodate?" do
     it "update package scan and compares the new checksum with current one" do
       packages = double
