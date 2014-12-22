@@ -1,11 +1,14 @@
 class Recipe
-  attr_reader :basepath, :cwd, :kiwi_config
+  attr_reader :basepath, :cwd, :kiwi_config, :description
 
   def initialize(description)
-    recipe = ok?(description)
-    @basepath = recipe.realpath.to_s
-    @cwd = Pathname.new(Dir.pwd).realpath.to_s
-    @kiwi_config = KiwiConfig.new(basepath)
+    @description = description
+    @basepath = resolve_description
+    @cwd = get_cwd
+    validate_description
+    load_dice_config
+    load_kiwi_config
+    create_metadir
   end
 
   def update
@@ -32,6 +35,20 @@ class Recipe
 
   private
 
+  def resolve_description
+    recipe_path = Pathname.new(description)
+    if !File.exists?(recipe_path) || !File.directory?(recipe_path.realpath)
+      raise Dice::Errors::NoDirectory.new(
+        "Given recipe does not exist or is not a directory"
+      )
+    end
+    recipe_path.realpath.to_s
+  end
+
+  def get_cwd
+    Pathname.new(Dir.pwd).realpath.to_s
+  end
+
   def writeRecipeScan(solver_result)
     recipe_scan = File.open(
       "#{basepath}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
@@ -49,16 +66,7 @@ class Recipe
     digest_file.close
   end
 
-  def ok?(description)
-    recipe = Pathname.new(description)
-    if !File.exists?(recipe) || !File.directory?(recipe.realpath)
-      raise Dice::Errors::NoDirectory.new(
-        "Given recipe does not exist or is not a directory"
-      )
-    end
-    vagrantFile = File.file?(description + "/" + Dice::VAGRANT_FILE)
-    diceFile = File.file?(description + "/" + Dice::DICE_FILE)
-    kiwiFile = File.file?(description + "/" + Dice::KIWI_FILE)
+  def validate_description
     if !kiwiFile
       raise Dice::Errors::NoKIWIConfig.new(
         "No kiwi configuration found"
@@ -69,14 +77,33 @@ class Recipe
         "No vagrant and/or dice configuration found"
       )
     end
+  end
+
+  def create_metadir
+    metadir = basepath + "/" + Dice::META
+    FileUtils.mkdir(metadir) if !File.directory?(metadir)
+  end
+
+  def load_kiwi_config
+    @kiwi_config ||= KiwiConfig.new(basepath)
+  end
+
+  def load_dice_config
     if diceFile
-      load description + "/" + Dice::DICE_FILE
+      load basepath + "/" + Dice::DICE_FILE
     end
-    metadir = recipe.realpath.to_s + "/" + Dice::META
-    if !File.directory?(metadir)
-      FileUtils.mkdir(metadir)
-    end
-    recipe
+  end
+
+  def vagrantFile
+    File.file?(basepath + "/" + Dice::VAGRANT_FILE)
+  end
+
+  def diceFile
+    File.file?(basepath + "/" + Dice::DICE_FILE)
+  end
+
+  def kiwiFile
+    File.file?(basepath + "/" + Dice::KIWI_FILE)
   end
 
   def calculateDigest
