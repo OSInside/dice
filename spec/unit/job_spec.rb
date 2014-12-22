@@ -24,7 +24,7 @@ describe Job do
       ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "root@127.0.0.1", "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile terminal", {:stdout=>logfile, :stderr=>logfile}
+        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile terminal", {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
@@ -41,7 +41,7 @@ describe Job do
       ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "root@127.0.0.1", "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile terminal",
+        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile terminal",
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
@@ -58,7 +58,7 @@ describe Job do
       expect(Command).to receive(:run).
       with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
         "-i", "/home/ms/Project/dice/key/vagrant",
-        "root@127.0.0.1",
+        "vagrant@127.0.0.1",
         "sudo tar --exclude image-root -C /tmp/bundle -c .",
         {:stdout=>result}).
       and_raise(

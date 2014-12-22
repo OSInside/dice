@@ -60,7 +60,13 @@ class Cli
     c.action do |global_options,options,args|
       Dice.setup_options(options)
       dir = shift_arg(args, "RECIPE-DIR")
-      BuildScheduler.run_tasks(dir)
+      dir_list = BuildScheduler.description_list(dir)
+      dir_list.each do |description|
+        Dice.logger.info("Checking dice recipe in: #{description}")
+        recipe = Recipe.new(description)
+        recipe.validate
+      end
+      BuildScheduler.run_tasks(dir_list)
     end
   end
 
@@ -79,6 +85,8 @@ class Cli
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      recipe.validate
+      recipe.setup
       Dice.logger.recipe = recipe
       buildsystem = BuildSystem.new(recipe)
       @task = BuildTask.new(buildsystem)
@@ -99,6 +107,8 @@ class Cli
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      recipe.validate
+      recipe.setup
       Dice.logger.recipe = recipe
       connection = ConnectionTask.new(recipe)
       connection.log
@@ -116,6 +126,7 @@ class Cli
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      recipe.validate
       Dice.logger.recipe = recipe
       Dice.logger.filelog = false
       Dice.logger.history
@@ -134,6 +145,8 @@ class Cli
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      recipe.validate
+      recipe.setup
       Dice.logger.recipe = recipe
       buildsystem = BuildSystem.new(recipe)
       task = BuildTask.new(buildsystem)
@@ -152,6 +165,8 @@ class Cli
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
+      recipe.validate
+      recipe.setup
       Dice.logger.recipe = recipe
       connection = ConnectionTask.new(recipe)
       connection.ssh

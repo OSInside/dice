@@ -1,32 +1,24 @@
 class BuildScheduler
   class << self
-    def run_tasks(dir)
-      dir_list = Dir.glob("#{dir}/*")
-      if dir_list.empty?
-        raise Dice::Errors::NoDirectory.new(
-          "No description directories found below: #{dir}"
-        )
-      end
-      validate_recipes(dir_list)
-      dir_list.sort.each do |description|
+    def run_tasks(dir_list)
+      dir_list.each do |description|
         fork do
           run description
         end
       end
     end
 
-    private
-
-    def validate_recipes(dir_list)
-      dir_list.sort.each do |description|
-        Dice.logger.info("#{self}: Checking dice recipe in: #{description}")
-        recipe(description)
+    def description_list(dir)
+      dir_list = Dir.glob("#{dir}/*")
+      if dir_list.empty?
+        raise Dice::Errors::NoDirectory.new(
+          "No description directories found below: #{dir}"
+        )
       end
+      dir_list.sort
     end
 
-    def recipe(description)
-      Recipe.new(description)
-    end
+    private
 
     def run(description)
       job_name = set_job_name

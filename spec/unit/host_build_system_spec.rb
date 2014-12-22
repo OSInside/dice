@@ -25,7 +25,7 @@ describe HostBuildSystem do
         "rsync", "-e",
         /ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 -i .*key\/vagrant/,
         "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
-        "--exclude", ".*", ".", "root@#{@host}:/vagrant",
+        "--exclude", ".*", ".", "vagrant@#{@host}:/vagrant",
         {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
@@ -42,7 +42,7 @@ describe HostBuildSystem do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-o",
         "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,
-        "root@#{@host}", "sudo", "killall", "kiwi"
+        "vagrant@#{@host}", "sudo", "killall", "kiwi"
       )
       expect(@recipe).to receive(:reset_working_dir)
       @system.halt
@@ -66,7 +66,7 @@ describe HostBuildSystem do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-o",
         "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,
-        "root@#{@host}", "sudo", "pidof", "-x", "kiwi"
+        "vagrant@#{@host}", "sudo", "pidof", "-x", "kiwi"
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )

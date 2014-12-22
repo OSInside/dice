@@ -1,11 +1,12 @@
 class Recipe
-  attr_reader :basepath, :cwd, :kiwi_config, :description
+  attr_reader :cwd, :kiwi_config, :description
 
   def initialize(description)
     @description = description
-    @basepath = resolve_description
     @cwd = get_cwd
-    validate_description
+  end
+
+  def setup
     load_dice_config
     load_kiwi_config
     create_metadir
@@ -33,17 +34,31 @@ class Recipe
     Dir.chdir(cwd)
   end
 
-  private
-
-  def resolve_description
+  def basepath
+    return @basepath if @basepath
     recipe_path = Pathname.new(description)
     if !File.exists?(recipe_path) || !File.directory?(recipe_path.realpath)
       raise Dice::Errors::NoDirectory.new(
         "Given recipe does not exist or is not a directory"
       )
     end
-    recipe_path.realpath.to_s
+    @basepath = recipe_path.realpath.to_s
   end
+
+  def validate
+    if !kiwiFile
+      raise Dice::Errors::NoKIWIConfig.new(
+        "No kiwi configuration found"
+      )
+    end
+    if !vagrantFile && !diceFile
+      raise Dice::Errors::NoConfigFile.new(
+        "No vagrant and/or dice configuration found"
+      )
+    end
+  end
+
+  private
 
   def get_cwd
     Pathname.new(Dir.pwd).realpath.to_s
@@ -64,19 +79,6 @@ class Recipe
     )
     digest_file.puts digest
     digest_file.close
-  end
-
-  def validate_description
-    if !kiwiFile
-      raise Dice::Errors::NoKIWIConfig.new(
-        "No kiwi configuration found"
-      )
-    end
-    if !vagrantFile && !diceFile
-      raise Dice::Errors::NoConfigFile.new(
-        "No vagrant and/or dice configuration found"
-      )
-    end
   end
 
   def create_metadir
