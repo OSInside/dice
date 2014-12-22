@@ -2,9 +2,12 @@ require_relative "spec_helper"
 
 describe ConnectionHostBuildSystem do
   before(:each) do
-    @recipe = Recipe.new("spec/helper/recipe_good")
-    expect(@recipe).to receive(:change_working_dir)
-    @connection = ConnectionHostBuildSystem.new(@recipe)
+    description = "some-description-dir"
+    recipe = Recipe.new(description)
+    allow(recipe).to receive(:basepath).and_return(description)
+    allow(recipe).to receive(:change_working_dir)
+
+    @connection = ConnectionHostBuildSystem.new(recipe)
     @ssh_user = @connection.instance_variable_get(:@ssh_user)
     @ssh_host = @connection.instance_variable_get(:@ssh_host)
     @ssh_private_key = @connection.instance_variable_get(:@ssh_private_key)

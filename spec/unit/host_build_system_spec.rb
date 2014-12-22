@@ -3,8 +3,11 @@ require_relative "spec_helper"
 describe HostBuildSystem do
   before(:each) do
     Dice.config.buildhost = "example.com"
-    @recipe = Recipe.new("spec/helper/recipe_good")
-    expect(@recipe).to receive(:change_working_dir)
+    description = "some-description-dir"
+    @recipe = Recipe.new(description)
+    allow(@recipe).to receive(:basepath).and_return(description)
+    allow(@recipe).to receive(:change_working_dir)
+
     @system = HostBuildSystem.new(@recipe)
     @host = @system.instance_variable_get(:@host)
   end

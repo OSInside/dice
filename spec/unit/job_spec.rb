@@ -8,11 +8,16 @@ describe Job do
     allow_any_instance_of(VagrantBuildSystem).to receive(:get_port).
       and_return("2200")
     allow_any_instance_of(VagrantBuildSystem).to receive(:halt)
-    recipe = Recipe.new("spec/helper/recipe_good")
-    expect_any_instance_of(Recipe).to receive(:change_working_dir)
+
+    # build a recipe to initialize the buildsystem with
+    description = "some-description-dir"
+    recipe = Recipe.new(description)
+    allow(recipe).to receive(:basepath).and_return(description)
+    allow(recipe).to receive(:change_working_dir)
+
     system = VagrantBuildSystem.new(recipe)
+
     @job = Job.new(system)
-    @basepath = recipe.basepath
   end
 
   describe "#build" do
@@ -24,7 +29,9 @@ describe Job do
       ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile terminal", {:stdout=>logfile, :stderr=>logfile}
+        /key\/vagrant/, "vagrant@127.0.0.1",
+        "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile terminal",
+        {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
@@ -41,7 +48,8 @@ describe Job do
       ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "vagrant@127.0.0.1", "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile terminal",
+        /key\/vagrant/, "vagrant@127.0.0.1",
+        "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile terminal",
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)

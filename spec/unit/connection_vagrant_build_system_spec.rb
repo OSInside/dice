@@ -2,9 +2,12 @@ require_relative "spec_helper"
 
 describe ConnectionVagrantBuildSystem do
   before(:each) do
-    @recipe = Recipe.new("spec/helper/recipe_good")
-    expect(@recipe).to receive(:change_working_dir)
-    @connection = ConnectionVagrantBuildSystem.new(@recipe)
+    description = "some-description-dir"
+    recipe = Recipe.new(description)
+    allow(recipe).to receive(:basepath).and_return(description)
+    allow(recipe).to receive(:change_working_dir)
+
+    @connection = ConnectionVagrantBuildSystem.new(recipe)
   end
 
   describe "#ssh" do

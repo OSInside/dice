@@ -2,8 +2,10 @@ require_relative "spec_helper"
 
 describe Connection do
   before(:each) do
-    @recipe = Recipe.new("spec/helper/recipe_good")
-    allow_any_instance_of(Recipe).to receive(:change_working_dir)
+    description = "some-description-dir"
+    @recipe = Recipe.new(description)
+    allow(@recipe).to receive(:basepath).and_return(description)
+    allow(@recipe).to receive(:change_working_dir)
   end
 
   describe "#connection" do

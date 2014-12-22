@@ -2,8 +2,11 @@ require_relative "spec_helper"
 
 describe VagrantBuildSystem do
   before(:each) do
-    @recipe = Recipe.new("spec/helper/recipe_good")
-    expect(@recipe).to receive(:change_working_dir)
+    description = "some-description-dir"
+    @recipe = Recipe.new(description)
+    allow(@recipe).to receive(:basepath).and_return(description)
+    allow(@recipe).to receive(:change_working_dir)
+
     @system = VagrantBuildSystem.new(@recipe)
     @system.instance_variable_set(
       :@ssh_output, 'INFO ssh: Executing SSH in subprocess: ["vagrant@192.168.121.65", "-p", "22", "-o", "Compression=yes", "-o", "DSAAuthentication=yes", "-o", "LogLevel=FATAL", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "IdentitiesOnly=yes", "-i", "/home/ms/.vagrant.d/insecure_private_key", "-t", "bash -l -c \'/bin/true\'"]'

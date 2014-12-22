@@ -2,9 +2,11 @@ require_relative "spec_helper"
 
 describe ConnectionBase do
   before(:each) do
-    @recipe = Recipe.new("spec/helper/recipe_good")
-    expect(@recipe).to receive(:change_working_dir)
-    @connection = ConnectionBase.new(@recipe)
+    @description = "some-description-dir"
+    recipe = Recipe.new(@description)
+    allow(recipe).to receive(:basepath).and_return(@description)
+    allow(recipe).to receive(:change_working_dir)
+    @connection = ConnectionBase.new(recipe)
   end
 
   describe "#get_log" do
@@ -20,7 +22,7 @@ describe ConnectionBase do
     it "tails the log on normal operation" do
       expect(Command).to receive(:run)
       expect(@connection).to receive(:exec).with(
-        /tail -f \/.*build\.log --pid/
+        /tail -f #{@description}\/.dice\/build.log --pid/
       )
       @connection.get_log
     end

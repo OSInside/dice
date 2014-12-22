@@ -2,9 +2,11 @@ require_relative "spec_helper"
 
 describe BuildSystemBase do
   before(:each) do
-    @recipe = Recipe.new("spec/helper/recipe_good")
-    expect(@recipe).to receive(:change_working_dir)
-    @system = BuildSystemBase.new(@recipe)
+    description = "some-description-dir"
+    recipe = Recipe.new(description)
+    allow(recipe).to receive(:basepath).and_return(description)
+    allow(recipe).to receive(:change_working_dir)
+    @system = BuildSystemBase.new(recipe)
   end
 
   describe "#is_building?" do

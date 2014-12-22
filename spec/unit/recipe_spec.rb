@@ -47,7 +47,7 @@ describe Recipe do
   end
 
   describe "#change_working_dir" do
-    it "receives a Dir.chdir containing helper/recipe_good" do
+    it "receives a Dir.chdir on description" do
       expect(@recipe).to receive(:basepath).and_return(@description)
       expect(Dir).to receive(:chdir).with(@description)
       @recipe.change_working_dir
