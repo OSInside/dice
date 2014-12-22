@@ -48,4 +48,8 @@ class BuildSystemBase
   def release_lock
     FileUtils.rm(lock) if File.file?(lock)
   end
+
+  def prepare_job
+    @job ||= Job.new(self)
+  end
 end

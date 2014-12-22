@@ -7,7 +7,7 @@ class BuildScheduler
           "No description directories found below: #{dir}"
         )
       end
-      validate(dir_list)
+      validate_recipes(dir_list)
       dir_list.sort.each do |description|
         fork do
           run description
@@ -17,7 +17,7 @@ class BuildScheduler
 
     private
 
-    def validate(dir_list)
+    def validate_recipes(dir_list)
       dir_list.sort.each do |description|
         Dice.logger.info("#{self}: Checking dice recipe in: #{description}")
         recipe(description)

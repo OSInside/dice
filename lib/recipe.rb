@@ -1,10 +1,11 @@
 class Recipe
-  attr_reader :basepath, :cwd
+  attr_reader :basepath, :cwd, :kiwi_config
 
   def initialize(description)
     recipe = ok?(description)
     @basepath = recipe.realpath.to_s
     @cwd = Pathname.new(Dir.pwd).realpath.to_s
+    @kiwi_config = KiwiConfig.new(basepath)
   end
 
   def update
@@ -12,7 +13,7 @@ class Recipe
   end
 
   def uptodate?
-    writeRecipeScan(package_solver.solve)
+    writeRecipeScan(kiwi_config.solve_packages)
     cur_digest = readDigest
     new_digest = calculateDigest
     if (cur_digest != new_digest)
@@ -30,14 +31,6 @@ class Recipe
   end
 
   private
-
-  def kiwi_config
-    @kiwi_config ||= KiwiConfig.new(basepath)
-  end
-
-  def package_solver
-    @package_solver ||= Solver.new(kiwi_config)
-  end
 
   def writeRecipeScan(solver_result)
     recipe_scan = File.open(

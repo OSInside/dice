@@ -43,15 +43,6 @@ describe Recipe do
 
   describe "#uptodate?" do
     it "update package scan and compares the new checksum with current one" do
-      package_solver = double
-      kiwi_config = double(KiwiConfig)
-      expect(KiwiConfig).to receive(:new).with(@recipe.basepath).and_return(
-        kiwi_config
-      )
-      expect(Solver).to receive(:new).with(kiwi_config).and_return(
-        package_solver
-      )
-      expect(package_solver).to receive(:solve)
       expect(@recipe).to receive(:writeRecipeScan)
       expect(@recipe).to receive(:readDigest).and_return("foo")
       expect(@recipe).to receive(:calculateDigest).and_return("foo")

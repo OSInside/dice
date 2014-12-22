@@ -1,9 +1,10 @@
 class BuildTask
-  attr_reader :buildsystem, :recipe
+  attr_reader :buildsystem, :recipe, :screen_job
 
-  def initialize(recipe)
-    @buildsystem = BuildSystem.new(recipe)
-    @recipe = recipe
+  def initialize(buildsystem)
+    @buildsystem = buildsystem
+    @recipe = buildsystem.recipe
+    @screen_job = recipe.basepath + "/" + Dice::META + "/" + Dice::SCREEN_JOB
   end
 
   def build_status
@@ -29,16 +30,14 @@ class BuildTask
       status = build_status
     end
     if status.is_a?(Dice::Status::BuildRequired)
-      set_lock
+      buildsystem.set_lock
       buildsystem.up
       buildsystem.provision
       perform_job
       recipe.update
-      release_lock
-      cleanup_screen_job
-      buildsystem.halt
+      cleanup
     else
-      status.message @recipe
+      status.message(recipe)
     end
   end
 
@@ -46,32 +45,16 @@ class BuildTask
     buildsystem.get_log
   end
 
-  def set_lock
-    buildsystem.set_lock
-  end
-
-  def release_lock
-    buildsystem.release_lock
-  end
-
   def cleanup
-    release_lock
+    buildsystem.release_lock
+    FileUtils.rm(screen_job) if File.file?(screen_job)
     buildsystem.halt
   end
 
   private
 
-  def job
-    @job ||= Job.new(buildsystem)
-  end
-
-  def cleanup_screen_job
-    screen_job = recipe.basepath + "/" +
-      Dice::META + "/" + Dice::SCREEN_JOB
-    FileUtils.rm(screen_job) if File.file?(screen_job)
-  end
-
   def perform_job
+    job = buildsystem.prepare_job
     job.build
     job.bundle
     job.get_result

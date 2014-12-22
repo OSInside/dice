@@ -15,12 +15,6 @@ describe Job do
     @basepath = recipe.basepath
   end
 
-  describe "#initialize" do
-    it "raises if job gets no BuildSystem" do
-      expect { Job.new(File) }.to raise_error
-    end
-  end
-
   describe "#build" do
     it "raises if build failed" do
       logfile = double(File)

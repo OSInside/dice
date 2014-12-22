@@ -25,4 +25,14 @@ class KiwiConfig
     end
     packages.sort.uniq
   end
+
+  def solve_packages
+    package_solver.solve
+  end
+
+  private
+
+  def package_solver
+    @package_solver ||= Solver.new(self)
+  end
 end

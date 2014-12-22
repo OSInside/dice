@@ -12,7 +12,7 @@ describe BuildScheduler do
        expect(Dir).to receive(:glob).with("foo/*").and_return(
          dir_list
        )
-       expect(BuildScheduler).to receive(:validate).with(dir_list)
+       expect(BuildScheduler).to receive(:validate_recipes).with(dir_list)
        expect(BuildScheduler).to receive(:fork).and_yield do |block|
          expect(block).to receive(:run).with("a")
        end

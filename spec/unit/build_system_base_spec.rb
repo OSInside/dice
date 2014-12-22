@@ -41,4 +41,11 @@ describe BuildSystemBase do
       @system.release_lock
     end
   end
+
+  describe "#prepare_job" do
+    it "creates a new job instance" do
+      expect(Job).to receive(:new).with(@system)
+      @system.prepare_job
+    end
+  end
 end

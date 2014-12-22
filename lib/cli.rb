@@ -18,7 +18,7 @@ class Cli
       exit 1
     when Dice::Errors::DiceError
       Dice.logger.error(e.message)
-      @task.release_lock if @task
+      @task.buildsystem.release_lock if @task
       exit 1
     when SystemExit
       raise
@@ -80,7 +80,8 @@ class Cli
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
       Dice.logger.recipe = recipe
-      @task = BuildTask.new(recipe)
+      buildsystem = BuildSystem.new(recipe)
+      @task = BuildTask.new(buildsystem)
       @task.run
     end
   end
@@ -134,9 +135,10 @@ class Cli
       description = shift_arg(args, "RECIPE-PATH")
       recipe = Recipe.new(description)
       Dice.logger.recipe = recipe
-      task = BuildTask.new(recipe)
+      buildsystem = BuildSystem.new(recipe)
+      task = BuildTask.new(buildsystem)
       status = task.build_status
-      status.message recipe
+      status.message(recipe)
     end
   end
 

@@ -2,18 +2,16 @@ class Job
   attr_reader :job_user, :job_ssh_private_key
   attr_reader :build_log, :archive, :buildsystem, :ip, :port
 
-  def initialize(system)
-    if !system.is_a?(BuildSystemBase)
-      raise
-    end
+  def initialize(buildsystem)
+    @buildsystem = buildsystem
     @job_user = Dice.config.ssh_user
     @job_ssh_private_key = Dice.config.ssh_private_key
-    recipe_path = system.recipe.basepath
-    @build_log = recipe_path + "/" + Dice::META + "/" + Dice::BUILD_LOG
-    @archive  = recipe_path + "/" + Dice::META + "/" + Dice::BUILD_RESULT
-    @buildsystem = system
-    @ip = system.get_ip
-    @port = system.get_port
+    @build_log = buildsystem.recipe.basepath + "/" +
+      Dice::META + "/" + Dice::BUILD_LOG
+    @archive  = buildsystem.recipe.basepath + "/" +
+      Dice::META + "/" + Dice::BUILD_RESULT
+    @ip = buildsystem.get_ip
+    @port = buildsystem.get_port
   end
 
   def build

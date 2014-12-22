@@ -28,4 +28,13 @@ describe KiwiConfig do
       expect(@kiwi_config.packages).to eq(result)
     end
   end
+
+  describe "solve_packages" do
+    it "calls solver operation over packages" do
+      package_solver = double(Solver)
+      expect(Solver).to receive(:new).and_return(package_solver)
+      expect(package_solver).to receive(:solve)
+      @kiwi_config.solve_packages
+    end
+  end
 end
