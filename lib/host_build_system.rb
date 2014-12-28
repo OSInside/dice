@@ -10,6 +10,14 @@ class HostBuildSystem < BuildSystemBase
     @basepath = @recipe.basepath
   end
 
+  def get_lockfile
+    # set a global lock for the used worker host
+    # running multiple builds in parallel on one host is not supported
+    # by kiwi. Thus we set a lock for the entire host
+    lock = "/tmp/.lock-" + Dice.config.buildhost
+    lock
+  end
+
   def up
     Dice.logger.info(
       "#{self.class}: Using buildsystem #{host} for #{basepath}..."

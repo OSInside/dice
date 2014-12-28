@@ -13,6 +13,12 @@ describe VagrantBuildSystem do
     )
   end
 
+  describe "#get_lockfile" do
+    it "returns the correct lock file for a vagrant buildsystem" do
+      expect(@system.get_lockfile).to eq("some-description-dir/.dice/lock")
+    end
+  end
+
   describe "#up" do
     it "raises if up failed" do
       expect(Command).to receive(:run).and_raise(

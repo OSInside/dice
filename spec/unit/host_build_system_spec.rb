@@ -12,6 +12,12 @@ describe HostBuildSystem do
     @host = @system.instance_variable_get(:@host)
   end
 
+  describe "#get_lockfile" do
+    it "returns the correct lock file for a host buildsystem" do
+      expect(@system.get_lockfile).to eq("/tmp/.lock-example.com")
+    end
+  end
+
   describe "#up" do
     it "checks if build worked is busy with other task" do
       expect(Dice::logger).to receive(:info).with(/#{@host}/)

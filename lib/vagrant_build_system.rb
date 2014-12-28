@@ -6,6 +6,15 @@ class VagrantBuildSystem < BuildSystemBase
     @recipe = recipe
   end
 
+  def get_lockfile
+    # set a recipe specific lock
+    # building the same recipe multiple times is possible if the
+    # buildsystem is a container or a vm but not useful. Thus we
+    # prevent that by a recipe lock
+    lock = recipe.basepath + "/" + Dice::META + "/" + Dice::LOCK
+    lock
+  end
+
   def up
     Dice.logger.info(
       "#{self.class}: Starting up buildsystem for #{recipe.basepath}..."
