@@ -7,7 +7,7 @@ class BuildStatus
     @running = false
     @locked  = false
     @uptodate = false
-    get_status
+    init_status
   end
 
   def message
@@ -16,9 +16,24 @@ class BuildStatus
     build_result_info
   end
 
+  def rebuild?
+    rebuild = false
+    if locked
+      # never start a build on a locked build system
+      return rebuild
+    end
+    if Dice.option.force
+      rebuild = true
+    end
+    if !uptodate
+      rebuild = true
+    end
+    rebuild
+  end
+
   private
 
-  def get_status
+  def init_status
     if buildsystem.is_locked?
       @locked = true
       @running = buildsystem.is_building?
@@ -28,10 +43,15 @@ class BuildStatus
   end
 
   def status_info
-    Dice.logger.info("BuildStatus: BuildRunning") if running
-    Dice.logger.info("BuildStatus: BuildSystemLocked") if locked
-    Dice.logger.info("BuildStatus: UpToDate") if uptodate
-    Dice.logger.info("BuildStatus: BuildRequired") if !uptodate
+    if running
+      Dice.logger.info("BuildStatus: BuildRunning")
+    elsif locked
+      Dice.logger.info("BuildStatus: BuildSystemLocked")
+    elsif uptodate
+      Dice.logger.info("BuildStatus: UpToDate")
+    else
+      Dice.logger.info("BuildStatus: BuildRequired")
+    end
   end
 
   def active_job_info

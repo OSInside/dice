@@ -8,7 +8,7 @@ class BuildTask
   end
 
   def run
-    if Dice.option.force || !status.uptodate
+    if status.rebuild?
       buildsystem.set_lock
       buildsystem.up
       buildsystem.provision

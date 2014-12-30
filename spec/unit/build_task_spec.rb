@@ -13,7 +13,7 @@ describe BuildTask do
     it "starts a box and runs a job" do
       status = double(BuildStatus)
       expect(@task).to receive(:status).and_return(status)
-      expect(status).to receive(:uptodate).and_return(false)
+      expect(status).to receive(:rebuild?).and_return(true)
       expect(@buildsystem).to receive(:set_lock)
       expect(@buildsystem).to receive(:up)
       expect(@buildsystem).to receive(:provision)
