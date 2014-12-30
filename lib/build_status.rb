@@ -1,15 +1,40 @@
 class BuildStatus
-  def message(recipe)
-    Dice.logger.info("BuildStatus: #{self.class}")
-    job_info recipe
-    if self.is_a?(Dice::Status::UpToDate)
-      result_info recipe
-    end
+  attr_reader :running, :locked, :recipe, :uptodate, :buildsystem
+
+  def initialize(buildsystem)
+    @buildsystem = buildsystem
+    @recipe = buildsystem.recipe
+    @running = false
+    @locked  = false
+    @uptodate = false
+    get_status
+  end
+
+  def message
+    status_info
+    active_job_info
+    build_result_info
   end
 
   private
 
-  def job_info(recipe)
+  def get_status
+    if buildsystem.is_locked?
+      @locked = true
+      @running = buildsystem.is_building?
+    else
+      @uptodate = recipe.uptodate?
+    end
+  end
+
+  def status_info
+    Dice.logger.info("BuildStatus: BuildRunning") if running
+    Dice.logger.info("BuildStatus: BuildSystemLocked") if locked
+    Dice.logger.info("BuildStatus: UpToDate") if uptodate
+    Dice.logger.info("BuildStatus: BuildRequired") if !uptodate
+  end
+
+  def active_job_info
     jobs = active_jobs(recipe.basepath + "/" +
       Dice::META + "/" + Dice::SCREEN_JOB
     )
@@ -18,7 +43,8 @@ class BuildStatus
     end
   end
 
-  def result_info(recipe)
+  def build_result_info
+    return if !uptodate
     result_file = recipe.basepath + "/" +
       Dice::META + "/" + Dice::BUILD_RESULT
     if File.exists?(result_file)

@@ -7,29 +7,8 @@ class BuildTask
     @screen_job = recipe.basepath + "/" + Dice::META + "/" + Dice::SCREEN_JOB
   end
 
-  def build_status
-    status = Dice::Status::Undefined.new
-    if buildsystem.is_locked?
-      if buildsystem.is_building?
-        return Dice::Status::BuildRunning.new
-      else
-        return Dice::Status::BuildSystemLocked.new
-      end
-    end
-    if !recipe.uptodate?
-      status = Dice::Status::BuildRequired.new
-    else
-      status = Dice::Status::UpToDate.new
-    end
-    status
-  end
-
   def run
-    status = Dice::Status::BuildRequired.new
-    if !Dice.option.force
-      status = build_status
-    end
-    if status.is_a?(Dice::Status::BuildRequired)
+    if Dice.option.force || !status.uptodate
       buildsystem.set_lock
       buildsystem.up
       buildsystem.provision
@@ -37,7 +16,7 @@ class BuildTask
       recipe.update
       cleanup
     else
-      status.message(recipe)
+      status.message
     end
   end
 
@@ -58,5 +37,9 @@ class BuildTask
     job.build
     job.bundle
     job.get_result
+  end
+
+  def status
+    @status ||= BuildStatus.new(buildsystem)
   end
 end

@@ -27,8 +27,12 @@ class Cli
       @task.cleanup if @task
       exit 1
     else
-      result = "dice unexpected error: #{e.message}"
-      Dice.logger.error(result)
+      Dice.logger.error("dice unexpected error: #{e.message}")
+      Dice.logger.error(
+        "Please file a bug report at https://github.com/schaefi/dice"
+      )
+      Dice.logger.error("backtrace")
+      Dice.logger.error(e.backtrace.join("\n"))
       exit 1
     end
     true
@@ -149,9 +153,8 @@ class Cli
       recipe.setup
       Dice.logger.recipe = recipe
       buildsystem = BuildSystem.new(recipe)
-      task = BuildTask.new(buildsystem)
-      status = task.build_status
-      status.message(recipe)
+      status = BuildStatus.new(buildsystem)
+      status.message
     end
   end
 
