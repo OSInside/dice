@@ -23,27 +23,31 @@ describe BuildSystemBase do
   end
 
   describe "#is_locked?" do
-    it "checks if a lock file exists" do
-      expect(File).to receive(:file?).with(@lockfile).and_return(false)
+    it "checks semaphore value and returns lock boolean state" do
+      semaphore = double(Semaphore)
+      expect(@system).to receive(:semaphore).and_return(semaphore)
+      expect(@system).to receive(:semaphore_id).and_return(42)
+      expect(semaphore).to receive(:getval).and_return(0)
       expect(@system.is_locked?).to eq(false)
     end
   end
 
   describe "#set_lock" do
-    it "creates a lock file" do
-      lockfile = double(File)
-      expect(File).to receive(:new).with(@lockfile, "w").and_return(
-        lockfile
-      )
-      expect(lockfile).to receive(:close)
+    it "set semaphore value to lock state = 1" do
+      semaphore = double(Semaphore)
+      expect(@system).to receive(:semaphore).and_return(semaphore)
+      expect(@system).to receive(:semaphore_id).and_return(42)
+      expect(semaphore).to receive(:setval).with(42, 1)
       @system.set_lock
     end
   end
 
   describe "#release_lock" do
-    it "removes a possibly existing lock file" do
-      expect(File).to receive(:file?).with(@lockfile).and_return(true)
-      expect(FileUtils).to receive(:rm).with(@lockfile)
+    it "delete semaphore" do
+      semaphore = double(Semaphore)
+      expect(@system).to receive(:semaphore).and_return(semaphore)
+      expect(@system).to receive(:semaphore_id).and_return(42)
+      expect(semaphore).to receive(:remove).with(42)
       @system.release_lock
     end
   end

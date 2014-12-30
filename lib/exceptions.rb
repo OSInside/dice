@@ -28,5 +28,6 @@ module Dice
     class UriTypeUnknown < DiceError; end
     class NoBuildHistory < DiceError; end
     class RepoTypeUnknown < DiceError; end
+    class SemaphoreSemGetFailed < DiceError; end
   end
 end

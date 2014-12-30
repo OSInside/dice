@@ -14,6 +14,7 @@ require "json"
 require "inifile"
 require "time"
 
+require_relative "semaphore/semaphore"
 require_relative "dice_options"
 require_relative "dice_logger"
 require_relative "colorstring"

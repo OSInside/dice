@@ -27,6 +27,7 @@ BuildRequires:  fdupes
 %if %suse_version == 1315
 %define rb_build_versions %{rb_default_ruby}
 BuildRequires:  %{rubydevel}
+BuildRequires:  %{rubygem rice}
 BuildRequires:  %{rubygem gem2rpm}
 BuildRequires:  %{rubygem bundler}
 <% build_requires.each do |require| -%>
@@ -70,6 +71,7 @@ RDoc and RI documentation for dice is a light weight image build system for kiwi
 %prep
 
 %build
+make -C lib/semaphore all && rm -f lib/semaphore/semaphore.o
 
 %install
 

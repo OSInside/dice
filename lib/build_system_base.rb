@@ -27,19 +27,41 @@ class BuildSystemBase
   end
 
   def is_locked?
-    File.file?(lock)
+    if semaphore.getval(semaphore_id) >= 1
+      return true
+    end
+    false
   end
 
   def set_lock
-    lockfile = File.new(lock, "w")
-    lockfile.close
+    semaphore.setval(semaphore_id, 1)
   end
 
   def release_lock
-    FileUtils.rm(lock) if File.file?(lock)
+    semaphore.remove(semaphore_id)
   end
 
   def prepare_job
     @job ||= Job.new(self)
+  end
+
+  private
+
+  def semaphore_id
+    @semaphore_id ||= get_semaphore
+  end
+
+  def semaphore
+    @semaphore ||= Semaphore.new
+  end
+
+  def get_semaphore
+    id = semaphore.semget(lock.sum)
+    if (id < 0)
+      raise Dice::Errors::SemaphoreSemGetFailed.new(
+        "Can't create semaphore: semget returned #{id}"
+      )
+    end
+    id
   end
 end
