@@ -36,6 +36,7 @@ BuildRequires:  %{rubygem <%= require[:name] %> <%= require[:operator] %> <%= re
 %else
 BuildRequires:  rubygem(gem2rpm)
 BuildRequires:  rubygem(bundler)
+BuildRequires:  rubygem(rice)
 <% build_requires.each do |require| -%>
 BuildRequires:  rubygem(<%= require[:name] %>) <%= require[:operator] %> <%= require[:version] %>
 <% end -%>
@@ -71,7 +72,6 @@ RDoc and RI documentation for dice is a light weight image build system for kiwi
 %prep
 
 %build
-make -C lib/semaphore all && rm -f lib/semaphore/semaphore.o
 
 %install
 
@@ -79,9 +79,13 @@ make -C lib/semaphore all && rm -f lib/semaphore/semaphore.o
 
 %gem_install -f
 
-# Bundle dependencies
-
 pushd %{buildroot}%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}
+
+# Build CPP extensions
+
+( cd lib/semaphore && ruby ./extconf.rb && make && rm -f semaphore.o )
+
+# Bundle dependencies
 
 cat > Gemfile <<EOT
 <% @dependencies.each do |dependency| -%>

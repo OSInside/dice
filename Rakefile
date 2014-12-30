@@ -36,6 +36,8 @@ end
 
 desc "Prepare package data for submission"
 RSpec::Core::RakeTask.new("rpm:prepare") do |t|
+  Cheetah.run "make", "-C", "lib/semaphore"
+  Cheetah.run "rm", "-f", "lib/semaphore/semaphore.o"
   release = Release.new
   release.prepare
   Rake::Task["package"].prerequisites.delete("test")
