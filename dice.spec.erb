@@ -85,7 +85,7 @@ pushd %{buildroot}%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}
 
 # Build CPP extensions
 
-( cd lib/semaphore && make && rm -f semaphore.o )
+( cd lib/semaphore && ruby ./extconf.rb && make && rm -f semaphore.o )
 
 # Bundle dependencies
 

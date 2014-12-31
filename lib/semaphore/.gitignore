@@ -1,2 +1,3 @@
 semaphore.o
 semaphore.so
+Makefile
