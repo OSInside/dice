@@ -24,6 +24,7 @@ Release:        0
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  ruby-macros >= 1
 BuildRequires:  fdupes
+BuildRequires:  ruby-devel
 %if %suse_version == 1315
 %define rb_build_versions %{rb_default_ruby}
 BuildRequires:  %{rubydevel}
