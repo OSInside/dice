@@ -58,12 +58,23 @@ class BuildSystemBase
   end
 
   def get_semaphore
-    id = semaphore.semget(lock.sum)
+    id = semaphore.semget(get_lock_id)
     if (id < 0)
       raise Dice::Errors::SemaphoreSemGetFailed.new(
         "Can't create semaphore: semget returned #{id}"
       )
     end
     id
+  end
+
+  def get_lock_id
+    encoded_path = Digest::SHA256.bubblebabble(lock)
+    # for creating a named IPC semaphore we need an integer key
+    # value representing the lock file path. The value is build
+    # from the sum of the ascii codes of the SHA256 encoded
+    # lock path value. This is not 100% safe because the sum
+    # could be the same for different encoded results. If one
+    # has a better idea feel free to fix :-)
+    encoded_path.sum
   end
 end
