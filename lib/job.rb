@@ -18,6 +18,9 @@ class Job
     prepare_build
     Dice.logger.info("#{self.class}: Building...")
     build_opts = "--build /vagrant -d /tmp/image --logfile terminal"
+    if Dice.option.kiwitype
+      build_opts += " --type #{Dice.option.kiwitype}"
+    end
     logfile = File.open(build_log, "w")
     begin
       Command.run(

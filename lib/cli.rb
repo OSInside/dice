@@ -85,6 +85,8 @@ class Cli
   command :build do |c|
     c.switch ["force", :f], :required => false, :negatable => false,
       :desc => "Force building even if status is up to data"
+    c.flag ["kiwitype", :t], :kiwitype => String, :required => false,
+      :desc => "Set kiwi build type"
     c.action do |global_options,options,args|
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
@@ -153,6 +155,7 @@ class Cli
       recipe.setup
       Dice.logger.recipe = recipe
       buildsystem = BuildSystem.new(recipe)
+      buildsystem.import_build_options
       status = BuildStatus.new(buildsystem)
       status.message
     end

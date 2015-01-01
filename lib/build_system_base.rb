@@ -47,6 +47,19 @@ class BuildSystemBase
     @job ||= Job.new(self)
   end
 
+  def import_build_options
+    build_options_file =
+      recipe.basepath + "/" + Dice::META + "/" + Dice::BUILD_OPTS_FILE
+    begin
+      build_options = File.open(build_options_file, "rb")
+      options = Marshal.load(build_options)
+      build_options.close
+      Dice.option.kiwitype = options.kiwitype if !Dice.option.kiwitype
+    rescue
+      # ignore if no buildoptions exists
+    end
+  end
+
   private
 
   def semaphore_id

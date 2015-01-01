@@ -18,6 +18,7 @@ class Recipe
 
   def uptodate?
     writeRecipeScan(kiwi_config.solve_packages)
+    writeBuildOptions
     cur_digest = readDigest
     new_digest = calculateDigest
     if (cur_digest != new_digest)
@@ -64,6 +65,18 @@ class Recipe
     Pathname.new(Dir.pwd).realpath.to_s
   end
 
+  def writeBuildOptions
+    options = OpenStruct.new
+    build_options_file =
+      basepath + "/" + Dice::META + "/" + Dice::BUILD_OPTS_FILE
+    if Dice.option.kiwitype
+      options.kiwitype = Dice.option.kiwitype
+    end
+    build_options = File.open(build_options_file, "wb")
+    Marshal.dump(options, build_options)
+    build_options.close
+  end
+
   def writeRecipeScan(solver_result)
     recipe_scan = File.open(
       "#{basepath}/#{Dice::META}/#{Dice::SCAN_FILE}", "w"
@@ -74,7 +87,7 @@ class Recipe
 
   def writeRecipeChecksum
     digest = calculateDigest
-    digest_file = File.new(
+    digest_file = File.open(
       basepath + "/" + Dice::META + "/" + Dice::DIGEST_FILE, "w"
     )
     digest_file.puts digest
@@ -119,10 +132,13 @@ class Recipe
       sha256 = Digest::SHA256.file item
       result += item + ":" + sha256.hexdigest + "\n"
     end
-    solver_scan = ".dice/scan"
-    if File.exists?(solver_scan)
-      sha256 = Digest::SHA256.file solver_scan
-      result += "scan:" + sha256.hexdigest + "\n"
+    metafiles = [Dice::SCAN_FILE, Dice::BUILD_OPTS_FILE]
+    metafiles.each do |filename|
+      file = Dice::META + "/" + filename
+      if File.exists?(file)
+        sha256 = Digest::SHA256.file file
+        result += "#{filename}:" + sha256.hexdigest + "\n"
+      end
     end
     result
   end

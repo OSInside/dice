@@ -64,6 +64,7 @@ describe Recipe do
   describe "#uptodate?" do
     it "update package scan and compares the new checksum with current one" do
       expect(@recipe).to receive(:writeRecipeScan)
+      expect(@recipe).to receive(:writeBuildOptions)
       expect(@recipe).to receive(:readDigest).and_return("digest")
       expect(@recipe).to receive(:calculateDigest).and_return("digest")
       expect(@recipe.uptodate?).to eq(true)

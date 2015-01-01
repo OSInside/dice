@@ -2,10 +2,10 @@ require_relative "spec_helper"
 
 describe BuildSystemBase do
   before(:each) do
-    description = "some-description-dir"
+    @description = "some-description-dir"
     @lockfile = "some-lock-file"
-    recipe = Recipe.new(description)
-    allow(recipe).to receive(:basepath).and_return(description)
+    recipe = Recipe.new(@description)
+    allow(recipe).to receive(:basepath).and_return(@description)
     allow(recipe).to receive(:change_working_dir)
     allow_any_instance_of(BuildSystemBase).to receive(:get_lockfile).and_return(
       @lockfile
@@ -57,6 +57,18 @@ describe BuildSystemBase do
     it "creates a new job instance" do
       expect(Job).to receive(:new).with(@system)
       @system.prepare_job
+    end
+  end
+
+  describe "#import_build_options" do
+    it "imports build options from recipe meta data" do
+      build_options = double(File)
+      expect(File).to receive(:open).with(
+        @description + "/" + Dice::META + "/" + Dice::BUILD_OPTS_FILE, "rb"
+      ).and_return(build_options)
+      expect(Marshal).to receive(:load).with(build_options)
+      expect(build_options).to receive(:close)
+      @system.import_build_options
     end
   end
 end

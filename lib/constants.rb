@@ -11,6 +11,7 @@ module Dice
 
   DIGEST_FILE = "checksum.sha256"
   SCAN_FILE = "scan"
+  BUILD_OPTS_FILE = "buildoptions"
 
   BUILD_LOG = "build.log"
   BUILD_RESULT = "build_results.tar"
