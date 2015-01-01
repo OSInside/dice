@@ -1,5 +1,5 @@
 class BuildSystemBase
-  attr_reader :recipe, :build_log, :lock
+  attr_reader :recipe, :build_log, :lock, :set_lock_called
 
   abstract_method :up
   abstract_method :provision
@@ -14,6 +14,7 @@ class BuildSystemBase
     @build_log = recipe.basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
     recipe.change_working_dir
     @lock = get_lockfile
+    @set_lock_called = false
   end
 
   def is_building?
@@ -35,10 +36,11 @@ class BuildSystemBase
 
   def set_lock
     semaphore.setval(semaphore_id, 1)
+    @set_lock_called = true
   end
 
   def release_lock
-    semaphore.remove(semaphore_id)
+    semaphore.remove(semaphore_id) if set_lock_called
   end
 
   def prepare_job

@@ -18,7 +18,7 @@ class Cli
       exit 1
     when Dice::Errors::DiceError
       Dice.logger.error(e.message)
-      @buildsystem.release_lock if @buildsystem
+      @task.cleanup if @task
       exit 1
     when SystemExit
       raise
@@ -92,8 +92,8 @@ class Cli
       recipe.validate
       recipe.setup
       Dice.logger.recipe = recipe
-      @buildsystem = BuildSystem.new(recipe)
-      @task = BuildTask.new(@buildsystem)
+      buildsystem = BuildSystem.new(recipe)
+      @task = BuildTask.new(buildsystem)
       @task.run
     end
   end
@@ -152,8 +152,8 @@ class Cli
       recipe.validate
       recipe.setup
       Dice.logger.recipe = recipe
-      @buildsystem = BuildSystem.new(recipe)
-      status = BuildStatus.new(@buildsystem)
+      buildsystem = BuildSystem.new(recipe)
+      status = BuildStatus.new(buildsystem)
       status.message
     end
   end

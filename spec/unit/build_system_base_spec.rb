@@ -48,6 +48,7 @@ describe BuildSystemBase do
       expect(@system).to receive(:semaphore).and_return(semaphore)
       expect(@system).to receive(:semaphore_id).and_return(42)
       expect(semaphore).to receive(:remove).with(42)
+      @system.instance_variable_set(:@set_lock_called, true)
       @system.release_lock
     end
   end
