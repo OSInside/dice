@@ -36,7 +36,7 @@ end
 
 desc "Prepare package data for submission"
 RSpec::Core::RakeTask.new("rpm:prepare") do |t|
-  Cheetah.run "bash", "-c", "cd lib/semaphore && ruby ./extconf.rb"
+  Cheetah.run "bash", "-c", "cd lib/semaphore && ./extconf.rb"
   Cheetah.run "make", "-C", "lib/semaphore"
   Cheetah.run "rm", "-f", "lib/semaphore/semaphore.o"
   release = Release.new
