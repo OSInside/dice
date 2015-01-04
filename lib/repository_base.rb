@@ -23,7 +23,7 @@ class RepositoryBase
     FileUtils.mkdir_p(File.dirname(dest))
     outfile = File.open(dest, "wb")
     begin
-      Cheetah.run("curl", "-L", uri + "/" + source, :stdout => outfile)
+      Command.run("curl", "-L", uri + "/" + source, :stdout => outfile)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::CurlFileFailed.new(
         "Downloading file: #{uri}/#{source} failed: #{e.stderr}"
@@ -40,7 +40,7 @@ class RepositoryBase
     rand_name = "solvable-" + (0...8).map { (65 + Kernel.rand(26)).chr }.join
     solvable = File.open(dest_dir + "/" + rand_name, "wb")
     begin
-      Cheetah.run(
+      Command.run(
         "bash", "-c", "gzip -cd --force #{source_dir}/* | #{tool}",
         :stdout => solvable
       )
@@ -58,7 +58,7 @@ class RepositoryBase
     FileUtils.mkdir_p(@@kiwi_solv) if !File.exists?(@@kiwi_solv)
     solvable = File.open(@@kiwi_solv + "/" + meta.solv, "wb")
     begin
-      Cheetah.run(
+      Command.run(
         "bash", "-c", "mergesolv #{source_dir}/*",
         :stdout => solvable
       )
