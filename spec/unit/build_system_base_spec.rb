@@ -38,7 +38,8 @@ describe BuildSystemBase do
       expect(@system).to receive(:semaphore).and_return(semaphore)
       expect(@system).to receive(:semaphore_id).and_return(42)
       expect(semaphore).to receive(:setval).with(42, 1)
-      @system.set_lock
+      # returns uniq lock key for given recipe path which we test here
+      expect(@system.set_lock).to eq(9905)
     end
   end
 

@@ -29,5 +29,7 @@ module Dice
     class NoBuildHistory < DiceError; end
     class RepoTypeUnknown < DiceError; end
     class SemaphoreSemGetFailed < DiceError; end
+    class EmptyOptions < DiceError; end
+    class ActiveSemaphoreLock < DiceError; end
   end
 end

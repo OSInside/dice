@@ -178,4 +178,34 @@ class Cli
       connection.ssh
     end
   end
+
+  desc "cleanup recipe metadata"
+  long_desc <<-LONGDESC
+    cleanup build metadata. On build several metadata like the
+    semaphore lock or vagrant instance metadata as well the caller
+    history is created. This command allows to cleanup the data
+    to its original state.
+  LONGDESC
+  arg "RECIPE-PATH"
+  command :cleanup do |c|
+    c.switch ["lock", :l], :required => false, :negatable => false,
+      :desc => "Cleanup stale semaphore lock if present"
+    c.action do |global_options,options,args|
+      Dice.setup_options(options)
+      description = shift_arg(args, "RECIPE-PATH")
+      recipe = Recipe.new(description)
+      recipe.validate
+      recipe.setup
+      Dice.logger.recipe = recipe
+      buildsystem = BuildSystem.new(recipe)
+      cleaner = Cleaner.new(buildsystem)
+      if Dice.option.lock
+        cleaner.clean_stale_lock
+      else
+        raise Dice::Errors::EmptyOptions.new(
+          "Cleaner requires at least one cleanup target"
+        )
+      end
+    end
+  end
 end

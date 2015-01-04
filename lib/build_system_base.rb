@@ -37,6 +37,7 @@ class BuildSystemBase
   def set_lock
     semaphore.setval(semaphore_id, 1)
     @set_lock_called = true
+    get_lock_key
   end
 
   def release_lock
@@ -71,7 +72,7 @@ class BuildSystemBase
   end
 
   def get_semaphore
-    id = semaphore.semget(get_lock_id)
+    id = semaphore.semget(get_lock_key)
     if (id < 0)
       raise Dice::Errors::SemaphoreSemGetFailed.new(
         "Can't create semaphore: semget returned #{id}"
@@ -80,7 +81,7 @@ class BuildSystemBase
     id
   end
 
-  def get_lock_id
+  def get_lock_key
     encoded_path = Digest::SHA256.bubblebabble(lock)
     # for creating a named IPC semaphore we need an integer key
     # value representing the lock file path. The value is build
