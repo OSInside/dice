@@ -45,6 +45,7 @@ describe RepositoryBase do
         "curl", "-L", @uri + "/" + @source, :stdout => outfile
       )
       expect(outfile).to receive(:close)
+      expect(@repo).to receive(:check_404_header)
       @repo.curl_file(:source => @source, :dest => dest)
     end
 

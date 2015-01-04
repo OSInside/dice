@@ -30,6 +30,7 @@ class RepositoryBase
       )
     end
     outfile.close
+    check_404_header(source, dest)
   end
 
   def create_solv(args)
@@ -105,6 +106,21 @@ class RepositoryBase
 
   def cleanup
     FileUtils.rm_rf @tmp_dir if defined?(tmp_dir)
+  end
+
+  private
+
+  def check_404_header(source, dest)
+    outfile = File.open(dest, "rb")
+    # if there is a 404 not found information it will be in the first two lines
+    header = outfile.readline
+    header+= outfile.readline
+    outfile.close
+    if header =~ /404 Not Found/
+      raise Dice::Errors::CurlFileFailed.new(
+        "Downloading file: #{uri}/#{source} failed: 404 not found"
+      )
+    end
   end
 end
 
