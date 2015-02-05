@@ -164,7 +164,7 @@ machine a dice worker the following software and configurations must exist:
 Access to the machine running the build job is performed by the public ssh key
 method. Therefore the machine has to have the sshd service running as well as
 the public keys of users who are allowed to login stored in the
-`~build_user/.ssh/authorized_keys` file. All vagrant capable build worker
+`~<build_user>/.ssh/authorized_keys` file. All vagrant capable build worker
 images provided by us allow access via the __vagrant__ user as follows:
 
 ```
@@ -179,11 +179,13 @@ If using the vagrant private key is acceptable the following steps are
 required to make the key available to the user who starts build jobs:
 
 ```
-$ mkdir -p ~build_user/.dice/key
+$ cd ~<build_user>
 
-$ cp -a /usr/share/doc/packages/dice/key/vagrant ~build_user/.dice/key
+$ mkdir -p .dice/key
 
-$ chmod 600 ~/.dice/key/vagrant
+$ cp -a /usr/share/doc/packages/dice/key/vagrant .dice/key
+
+$ chmod 600 .dice/key/vagrant
 ```
 
 This key can now be referenced in the dice configuration [DiceFile](#dicefile)
