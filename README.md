@@ -10,8 +10,10 @@ on e.g public cloud instances.
   * [Motivation](#motivation)
   * [Installation](#installation)
   * [Setup](#setup)
-    - [Vagrant and VirtualBox](#vagrant-and-virtualbox)
-    - [BuildWorker](#buildworker)
+    - [Build Worker Vagrant Virtual System](#build-worker-vagrant-virtual-system)
+    - [Build Worker Generic Machine](#build-worker-generic-machine)
+    - [Accessing Build Worker](#accessing-build-worker)
+  * [DiceFile](#dicefile)
   * [Usage](#usage)
 
 ## Motivation
@@ -27,7 +29,9 @@ With Dice there is a tool which allows on demand and/or automatically
 building of appliances stored in a directory. Advantages are:
 
   * Build as normal user
-  * Benefit from prebuild worker boxes by us for vagrant and docker
+  * Benefit from prebuild worker boxes by us for vagrant and docker.
+    Refer to the following article describing
+    [how to build images in a docker container](https://github.com/openSUSE/kiwi/wiki/Building-images-in-a-Docker-container)
   * No need to have kiwi installed on your machine
   * Build for different distributions on appropriate worker
   * Setup your own buildsystem and keep control
@@ -47,12 +51,12 @@ also for image building using KIWI.
 
 ## Installation
 
-Dice is available as rpm package for the openSUSE 13.1 (x86\_64) distribution.
-Installation can be done via zypper as follows:
+Dice is available as rpm package, installation can be done via
+zypper as follows:
 
 ```
 $ zypper ar \
-  http://download.opensuse.org/repositories/Virtualization:/Appliances/openSUSE_13.1/ \
+  http://download.opensuse.org/repositories/Virtualization:/Appliances/<distribution>/ \
   dice
 
 $ zypper in dice
@@ -60,10 +64,9 @@ $ zypper in dice
 
 ## Setup
 
-Dice can either run a build job on a build worker machine which could be
+Dice starts a build job on a build worker. The worker machine could be
 anything starting from the local system up to a cloud instance at a cloud
-service provider, or it starts a local virtual system and dedicates the
-build to this virtual system.
+service provider, or a local virtual system.
 
 If you don't plan to use virtual systems for building you can skip
 the following and head directly to the [BuildWorker](#buildworker)
@@ -91,7 +94,7 @@ documentation here:
 In order to install vagrant, VirtualBox and the base box
 for running a build in a virtual system do the following:
 
-### Vagrant and VirtualBox
+### Build Worker Vagrant Virtual System
 
   * As user root Install the latest vagrant rpm package from here
 
@@ -101,14 +104,14 @@ for running a build in a virtual system do the following:
 
     ```
     $ zypper ar \
-      http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1 \
+      http://download.opensuse.org/repositories/Virtualization/<distribution> \
       virtualbox
 
     $ zypper install virtualbox
     ```
 
   * As normal user download the
-    VagrantBox-openSUSE-13.1.x86\_64-1.13.1.virtualbox-Build[XX].box file
+    VagrantBox-openSUSE-*.x86\_64-*.virtualbox-Build[XX].box file
     from here:
 
     http://download.opensuse.org/repositories/Virtualization:/Appliances/images
@@ -118,8 +121,7 @@ for running a build in a virtual system do the following:
 
     * RHEL6
     * RHEL7
-    * openSUSE 12.3
-    * openSUSE 13.1
+    * openSUSE 13.x
     * SLES11
     * SLES12
 
@@ -127,7 +129,7 @@ for running a build in a virtual system do the following:
 
     ```
     $ vagrant box add kiwi-build-box \
-      VagrantBox-openSUSE-13.1.x86_64-1.13.1.virtualbox-Build[XX].box
+      VagrantBox-openSUSE-*.x86_64-*.virtualbox-Build[XX].box
     ```
 
   * As normal user check if the box was added
@@ -138,7 +140,7 @@ for running a build in a virtual system do the following:
     kiwi-build-box (virtualbox)
     ```
 
-### BuildWorker
+### Build Worker Generic Machine
 
 While the vagrant box files already contains all software and configurations
 to perform a build, a worker machine might not have it. In order to make a
@@ -152,24 +154,81 @@ machine a dice worker the following software and configurations must exist:
   * package rsync
   * package tar
   * package psmisc
-  * a build user e.g kiwi
+  * a build user e.g vagrant
   * passwordless root access for build user via sudo
   * ssh login as build user with ssh key
+
+
+## Accessing Build Worker
+
+Access to the machine running the build job is performed by the public ssh key
+method. Therefore the machine has to have the sshd service running as well as
+the public keys of users who are allowed to login stored in the
+`~build_user/.ssh/authorized\_keys` file. All vagrant capable build worker
+images provided by us allow access via the __vagrant__ user as follows:
+
+```
+$ ssh -i <vagrant-private-key> vagrant@<machine>
+```
+
+The vagrant private key is publicly distributed and therefore __not__ a secure
+key ! If this is unwanted it's required to update the `authorized\_keys` file
+inside of the build worker image before registering the image in vagrant.
+
+If using the vagrant private key is acceptable the following steps are
+required to make the key available to the user who starts build jobs:
+
+```
+$ mkdir -p ~build_user/.dice/key
+
+$ cp -a /usr/share/doc/packages/dice/key/vagrant ~build_user/.dice/key
+
+$ chmod 600 ~/.dice/key/vagrant
+```
+
+This key can now be referenced in the dice configuration [DiceFile](#dicefile)
+as follows:
+
+```ruby
+Dice.configure do |config|
+  config.ssh_private_key = File.join(ENV["HOME"], ".dice/key/vagrant")
+end
+```
+
+# DiceFile
+
+The DiceFile is part of the dice recipe and represents dice specific
+configuration parameters such as the user and/or ssh key to use to access
+the build worker, as well as the name or ip address of the machine to
+contact if no extra virtual machine should be started for a job.
+
+Following parameters can be set in a DiceFile
+
+```ruby
+Dice.configure do |config|
+  # The build worker machine which should run the build job. If no such
+  # information is present dice starts a virtual instance which is
+  # configured by an additional VagrantFile. Refer to the vagrant
+  # documentation for further details
+  config.buildhost = "ip/name"
+
+  # The ssh user name to contact the build worker, default is: vagrant
+  config.ssh_user = "vagrant"
+
+  # The ssh private key which belongs to the public key setup in
+  # the ssh_user/.ssh/authorized_keys file stored inside of the build
+  # worker. Default path is: <dice-install-path>/key/vagrant
+  config.ssh_private_key = File.join(ENV["HOME"], ".dice/key/vagrant")
+end
+```
 
 ## Dice it
 
 Given you have imported the vagrant build box as described in
-[Vagrant and VirtualBox](#vagrant-and-virtualbox) you can start an
-example build as normal user by calling:
+[Build Worker Vagrant Virtual System](#build-worker-vagrant-virtual-system) you can start an example build as normal user by calling:
 
 ```
 $ rsync -zavL /usr/share/doc/packages/dice/recipes/suse-13.1-JeOS /tmp
-
-$ mkdir -p ~/.dice/key
-
-$ cp -a /usr/share/doc/packages/dice/key/vagrant ~/.dice/key
-
-$ chmod 600 ~/.dice/key/vagrant
 
 $ dice build /tmp/suse-13.1-JeOS
 ```
