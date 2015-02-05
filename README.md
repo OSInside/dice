@@ -69,7 +69,7 @@ anything starting from the local system up to a cloud instance at a cloud
 service provider, or a local virtual system.
 
 If you don't plan to use virtual systems for building you can skip
-the following and head directly to the [BuildWorker](#buildworker)
+the following and head directly to the [Build Worker Generic Machine](#build-worker-generic-machine)
 chapter
 
 Building in virtual systems requires the
