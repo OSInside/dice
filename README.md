@@ -111,7 +111,7 @@ for running a build in a virtual system do the following:
     ```
 
   * As normal user download the
-    VagrantBox-openSUSE-*.x86\_64-*.virtualbox-Build[XX].box file
+    `VagrantBox-openSUSE-*.x86_64-*.virtualbox-Build[XX].box` file
     from here:
 
     http://download.opensuse.org/repositories/Virtualization:/Appliances/images
@@ -164,7 +164,7 @@ machine a dice worker the following software and configurations must exist:
 Access to the machine running the build job is performed by the public ssh key
 method. Therefore the machine has to have the sshd service running as well as
 the public keys of users who are allowed to login stored in the
-`~build_user/.ssh/authorized\_keys` file. All vagrant capable build worker
+`~build_user/.ssh/authorized_keys` file. All vagrant capable build worker
 images provided by us allow access via the __vagrant__ user as follows:
 
 ```
@@ -172,7 +172,7 @@ $ ssh -i <vagrant-private-key> vagrant@<machine>
 ```
 
 The vagrant private key is publicly distributed and therefore __not__ a secure
-key ! If this is unwanted it's required to update the `authorized\_keys` file
+key ! If this is unwanted it's required to update the `authorized_keys` file
 inside of the build worker image before registering the image in vagrant.
 
 If using the vagrant private key is acceptable the following steps are
