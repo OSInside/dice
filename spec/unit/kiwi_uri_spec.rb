@@ -8,6 +8,18 @@ describe KiwiUri do
       )
     end
 
+    it "translates dir url to full path" do
+      expect(KiwiUri.translate("dir:///some/path")).to eq(
+        "/some/path"
+      )
+    end
+
+    it "translates path by leaving it as it is" do
+      expect(KiwiUri.translate("/some/path")).to eq(
+        "/some/path"
+      )
+    end
+
     it "translates http url by leaving it as it is" do
       expect(KiwiUri.translate("http://xxx")).to eq(
         "http://xxx"
