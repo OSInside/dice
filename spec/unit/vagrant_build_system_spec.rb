@@ -61,13 +61,14 @@ describe VagrantBuildSystem do
   end
 
   describe "#halt" do
-    it "raises if halt failed" do
+    it "print error if halt failed" do
       expect(Command).to receive(:run).and_raise(
-        Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
+        Cheetah::ExecutionFailed.new(nil, nil, nil, "foo")
       )
-      expect { @system.halt }.to raise_error(
-        Dice::Errors::VagrantHaltFailed
-      )    
+      expect(Dice::logger).to receive(:error).with(
+        "VagrantBuildSystem: System stop failed with: foo"
+      )
+      @system.halt
     end
 
     it "puts headline and halt output on normal operation, reset_working_dir" do

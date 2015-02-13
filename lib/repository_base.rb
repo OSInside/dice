@@ -22,11 +22,15 @@ class RepositoryBase
     dest   = args[:dest]
     FileUtils.mkdir_p(File.dirname(dest))
     outfile = File.open(dest, "wb")
+    location = uri
+    if location.start_with?('/')
+      location = 'file://' + location
+    end
     begin
-      Command.run("curl", "-L", uri + "/" + source, :stdout => outfile)
+      Command.run("curl", "-L", location + "/" + source, :stdout => outfile)
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::CurlFileFailed.new(
-        "Downloading file: #{uri}/#{source} failed: #{e.stderr}"
+        "Downloading file: #{location}/#{source} failed: #{e.stderr}"
       )
     end
     outfile.close

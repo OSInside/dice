@@ -60,8 +60,8 @@ class VagrantBuildSystem < BuildSystemBase
     begin
       halt_output = Command.run("vagrant", "halt", "-f", :stdout => :capture)
     rescue Cheetah::ExecutionFailed => e
-      raise Dice::Errors::VagrantHaltFailed.new(
-        "System stop failed with: #{e.stderr}"
+      Dice.logger.error(
+        "#{self.class}: System stop failed with: #{e.stderr}"
       )
     end
     Dice.logger.info("#{self.class}: #{halt_output}")
