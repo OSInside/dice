@@ -31,5 +31,8 @@ module Dice
     class SemaphoreSemGetFailed < DiceError; end
     class EmptyOptions < DiceError; end
     class ActiveSemaphoreLock < DiceError; end
+    class UriStyleMatchFailed < DiceError; end
+    class UriTypeUnknown < DiceError; end
+    class MountISOFailed < DiceError; end
   end
 end

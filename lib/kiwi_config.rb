@@ -10,9 +10,10 @@ class KiwiConfig
   def repos
     repo_uri = []
     xml.elements.each("*/repository/source") do |element|
-      repo_uri << KiwiUri.translate(element.attributes["path"].gsub(/\?.*/,""))
+      source_path = element.attributes["path"].gsub(/\?.*/,"")
+      repo_uri << KiwiUri.translate(source_path)
     end
-    repo_uri.sort.uniq
+    repo_uri
   end
 
   def packages

@@ -8,7 +8,7 @@ describe RepositoryBase do
     allow(@meta).to receive(:time).and_return("today")
     allow(@meta).to receive(:info).and_return("info")
     @kiwi_solv_pool = "/var/tmp/kiwi/satsolver"
-    @uri = "http://foo"
+    @uri = Uri.new("http://foo")
     @source = "bar"
     @repo = RepositoryBase.new(@uri)
   end
@@ -17,15 +17,16 @@ describe RepositoryBase do
     it "reads in a file supporting ruby open-uri and return its contents" do
       file = double(File)
       expect(@repo).to receive(:open).with(
-        @uri + "/" + @source, "rb"
+        @uri.name + "/" + @source, "rb"
       ).and_return(file)
       expect(file).to receive(:read).and_return("data")
+      expect(file).to receive(:close)
       expect(@repo.load_file(@source)).to eq("data")
     end
 
     it "raises if file could not be opened" do
       expect(@repo).to receive(:open).with(
-        @uri + "/" + @source, "rb"
+        @uri.name + "/" + @source, "rb"
       ).and_raise(
         Dice::Errors::UriLoadFileFailed.new(nil)
       )
@@ -42,7 +43,7 @@ describe RepositoryBase do
       expect(FileUtils).to receive(:mkdir_p).with("/some/path")
       expect(File).to receive(:open).with(dest, "wb").and_return(outfile)
       expect(Cheetah).to receive(:run).with(
-        "curl", "-L", @uri + "/" + @source, :stdout => outfile
+        "curl", "-L", @uri.name + "/" + @source, :stdout => outfile
       )
       expect(outfile).to receive(:close)
       expect(@repo).to receive(:check_404_header)
@@ -122,7 +123,7 @@ describe RepositoryBase do
       expect(File).to receive(:open).with(
         @kiwi_solv_pool + "/" + @meta.info, "wb" 
       ).and_return(info)
-      expect(info).to receive(:write).with(@uri)
+      expect(info).to receive(:write).with(@uri.name)
       expect(info).to receive(:close)
       expect(@repo.merge_solv(source_dir)).to eq(@meta.solv)
     end
@@ -156,8 +157,10 @@ describe RepositoryBase do
       ref.solv = "foo"
       ref.time = "foo.timestamp"
       ref.info = "foo.info"
-      ref.uri  = @uri
-      expect(Digest::MD5).to receive(:hexdigest).with(@uri).and_return("foo")
+      ref.uri  = @uri.name
+      expect(Digest::MD5).to receive(:hexdigest).with(@uri.name).and_return(
+        "foo"
+      )
       expect(@repo.solv_meta).to eq(ref)
     end
   end

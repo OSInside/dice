@@ -17,8 +17,8 @@ describe KiwiConfig do
 
   describe "#repos" do
     it "reads repository/source from XML tree" do
-      result = ["http://bob"]
-      expect(@kiwi_config.repos).to eq(result)
+      result = "http://bob"
+      expect(@kiwi_config.repos.first.name).to eq(result)
     end
   end
 

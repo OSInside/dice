@@ -8,13 +8,31 @@ class RepositoryBase
   end
 
   def load_file(source)
+    data = nil
+    location = uri.location
+    if uri.is_iso?
+      location = uri.map_loop
+    elsif uri.is_remote?
+      # uses ruby's openuri implementation to handle mime types
+      # Thus loading small amount of data from a network location
+      # can also be done with load_file instead of curl_file and
+      # directly reads the data into a variable instead of creating
+      # an output file like curl_file does
+      location = uri.name
+    end
     begin
-      open(uri + "/" + source, "rb").read
+      handle = open(location + "/" + source, "rb")
+      data = handle.read
+      handle.close
     rescue => e
       raise Dice::Errors::UriLoadFileFailed.new(
-        "Downloading file: #{uri}/#{source} failed: #{e}"
+        "Downloading file: #{location}/#{source} failed: #{e}"
       )
     end
+    if uri.is_iso?
+      uri.unmap_loop
+    end
+    data
   end
 
   def curl_file(args)
@@ -22,9 +40,11 @@ class RepositoryBase
     dest   = args[:dest]
     FileUtils.mkdir_p(File.dirname(dest))
     outfile = File.open(dest, "wb")
-    location = uri
-    if location.start_with?('/')
-      location = 'file://' + location
+    location = uri.name
+    if uri.is_iso?
+      location = "file://" + uri.map_loop
+    elsif !uri.is_remote?
+      location = "file://" + uri.location
     end
     begin
       Command.run("curl", "-L", location + "/" + source, :stdout => outfile)
@@ -34,6 +54,9 @@ class RepositoryBase
       )
     end
     outfile.close
+    if uri.is_iso?
+      uri.unmap_loop
+    end
     check_404_header(source, dest)
   end
 
@@ -77,7 +100,7 @@ class RepositoryBase
     time.write(timestamp)
     time.close
     info = File.open(@@kiwi_solv + "/" + meta.info, "wb")
-    info.write(uri)
+    info.write(uri.name)
     info.close
     meta.solv
   end
@@ -96,10 +119,10 @@ class RepositoryBase
 
   def solv_meta
     meta = OpenStruct.new
-    meta.solv = Digest::MD5.hexdigest(uri)
+    meta.solv = Digest::MD5.hexdigest(uri.name)
     meta.time = meta.solv + ".timestamp"
     meta.info = meta.solv + ".info"
-    meta.uri  = uri
+    meta.uri  = uri.name
     meta
   end
 
@@ -109,7 +132,7 @@ class RepositoryBase
   end
 
   def cleanup
-    FileUtils.rm_rf @tmp_dir if defined?(tmp_dir)
+    FileUtils.rm_rf tmp_dir if tmp_dir
   end
 
   private
@@ -122,7 +145,7 @@ class RepositoryBase
     outfile.close
     if header =~ /404 Not Found/
       raise Dice::Errors::CurlFileFailed.new(
-        "Downloading file: #{uri}/#{source} failed: 404 not found"
+        "Downloading file: #{uri.name}/#{source} failed: 404 not found"
       )
     end
   end

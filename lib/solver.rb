@@ -72,7 +72,7 @@ class Solver
   def setup_pool
     pool.setarch
     kiwi_config.repos.each do |uri|
-      solv = pool.add_repo uri
+      solv = pool.add_repo uri.name
       solv.add_solv Repository.solvable(uri)
       pool.addfileprovides
       pool.createwhatprovides
