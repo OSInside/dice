@@ -17,9 +17,12 @@ class Repository
     private
 
     def repotype
-      # We use the uri.name as location because because ruby's
-      # open-uri implementation understands remote mime types
-      location = uri.name
+      location = uri.location
+      if uri.is_remote?
+        # We use the uri.name as location because because ruby's
+        # open-uri implementation understands remote mime types
+        location = uri.name
+      end
 
       if uri.is_iso?
         location = uri.map_loop
