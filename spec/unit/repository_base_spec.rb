@@ -8,7 +8,7 @@ describe RepositoryBase do
     allow(@meta).to receive(:time).and_return("today")
     allow(@meta).to receive(:info).and_return("info")
     @kiwi_solv_pool = "/var/tmp/kiwi/satsolver"
-    @uri = Uri.new("http://foo")
+    @uri = Uri.new(:name => "http://foo", :repo_type => "rpm-md")
     @source = "bar"
     @repo = RepositoryBase.new(@uri)
   end

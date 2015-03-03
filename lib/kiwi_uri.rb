@@ -1,18 +1,18 @@
 class KiwiUri
   class << self
-    def translate(uri)
+    def translate(args)
       # normalize url types available in a kiwi configuration into
       # standard mime types. This also includes resolving open build
       # service resource locator into http addresses
-      case uri
+      case args[:name]
       when /^obs:\/\/(\d.*)/
         # distribution URL, starting with the number e.g 13.1
-        uri = "http://download.opensuse.org/distribution/#{$1}/"
+        args[:name] = "http://download.opensuse.org/distribution/#{$1}/"
       when /^(\/.*)/
         # Simple path, should be a distribution dir
-        uri = "dir://#{$1}/"
+        args[:name] = "dir://#{$1}/"
       end
-      Uri.new(uri)
+      Uri.new(args)
     end
   end
 end

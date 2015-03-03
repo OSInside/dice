@@ -7,9 +7,9 @@ class SuSERepository < RepositoryBase
   end
 
   def solvable
-    solvable = @@kiwi_solv + "/" + meta.solv
+    solv_file = @@kiwi_solv + "/" + meta.solv
     if uptodate?
-      return solvable
+      return solv_file
     end
     tmp_dir = create_tmpdir
     solv_dir = tmp_dir + "/solv"
@@ -38,7 +38,7 @@ class SuSERepository < RepositoryBase
     )
     merge_solv(solv_dir)
     cleanup
-    solvable
+    solv_file
   end
 
   private

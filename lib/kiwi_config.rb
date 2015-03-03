@@ -9,9 +9,14 @@ class KiwiConfig
 
   def repos
     repo_uri = []
-    xml.elements.each("*/repository/source") do |element|
-      source_path = element.attributes["path"].gsub(/\?.*/,"")
-      repo_uri << KiwiUri.translate(source_path)
+    xml.elements.each("*/repository") do |repo|
+      repo_type = repo.attributes["type"]
+      repo.elements.each("source") do |element|
+        source_path = element.attributes["path"].gsub(/\?.*/,"")
+        repo_uri << KiwiUri.translate(
+          :name => source_path, :repo_type => repo_type
+        )
+      end
     end
     repo_uri
   end

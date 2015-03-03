@@ -10,7 +10,8 @@ describe RpmMdRepository do
       .and_return(@meta)
     allow_any_instance_of(RpmMdRepository).to receive(:get_repoxml)
       .and_return(@rxml)
-    @repo = RpmMdRepository.new("foo")
+    uri = double(Uri)
+    @repo = RpmMdRepository.new(uri)
   end
 
   describe "#solvable" do

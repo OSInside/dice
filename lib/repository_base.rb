@@ -68,10 +68,17 @@ class RepositoryBase
     rand_name = "solvable-" + (0...8).map { (65 + Kernel.rand(26)).chr }.join
     solvable = File.open(dest_dir + "/" + rand_name, "wb")
     begin
-      Command.run(
-        "bash", "-c", "gzip -cd --force #{source_dir}/* | #{tool}",
-        :stdout => solvable
-      )
+      if tool == 'rpms2solv'
+        Command.run(
+          "bash", "-c", "#{tool} #{source_dir}/*.rpm",
+          :stdout => solvable
+        )
+      else
+        Command.run(
+          "bash", "-c", "gzip -cd --force #{source_dir}/* | #{tool}",
+          :stdout => solvable
+        )
+      end
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::SolvToolFailed.new(
         "Creating solvable failed: #{e.stderr}"

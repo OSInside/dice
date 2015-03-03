@@ -5,57 +5,22 @@ class Repository
     def solvable(uri)
       @uri = uri
       repo = nil
-      case repotype
+      case uri.repo_type
       when Dice::RepoType::RpmMd
         repo = rpmmd_repo
       when Dice::RepoType::SUSE
         repo = suse_repo
+      when Dice::RepoType::PlainDir
+        repo = plaindir_repo
+      else
+        raise Dice::Errors::RepoTypeUnknown.new(
+          "repo type #{uri.repo_type} unknown for uri: #{uri.name}"
+        )
       end
       repo.solvable
     end
 
     private
-
-    def repotype
-      location = uri.location
-      if uri.is_remote?
-        # We use the uri.name as location because because ruby's
-        # open-uri implementation understands remote mime types
-        location = uri.name
-      end
-
-      if uri.is_iso?
-        location = uri.map_loop
-      end
-
-      lookup_locations = Hash.new
-      lookup_locations["/suse/setup/descr/directory.yast"] =
-        Dice::RepoType::SUSE
-      lookup_locations["/repodata/repomd.xml.key"] =
-        Dice::RepoType::RpmMd
-
-      repotype = nil
-      lookup_locations.each do |indicator, type|
-        begin
-          handle = open(location + indicator, "rb")
-          repotype = type
-          handle.close
-        rescue
-          # ignore if open failed, result handled later
-        end
-      end
-
-      if uri.is_iso?
-        uri.unmap_loop
-      end
-
-      if !repotype
-        raise Dice::Errors::RepoTypeUnknown.new(
-          "repo type detection failed for uri: #{uri.name}"
-        )
-      end
-      repotype
-    end
 
     def rpmmd_repo
       RpmMdRepository.new(uri)
@@ -63,6 +28,10 @@ class Repository
 
     def suse_repo
       SuSERepository.new(uri)
+    end
+
+    def plaindir_repo
+      PlainDirRepository.new(uri)
     end
   end
 end

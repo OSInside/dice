@@ -21,7 +21,8 @@ module Dice
   HISTORY = "dice.history"
 
   module RepoType
-    RpmMd = "rmp-md"
+    RpmMd = "rpm-md"
     SUSE = "yast2"
+    PlainDir = "rpm-dir"
   end
 end

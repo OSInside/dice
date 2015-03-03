@@ -1,19 +1,19 @@
 class Uri
-  attr_reader :name, :type, :location
+  attr_reader :name, :type, :location, :repo_type
   attr_reader :allowed_local_types, :allowed_remote_types
   attr_reader :mount_point
 
-  def initialize(name)
-    @name = name
-    set_type_and_location
+  def initialize(args)
+    @name = args[:name]
+    @repo_type = args[:repo_type]
+    set_uri_type_and_location
 
     @allowed_remote_types = OpenStruct.new
-    @allowed_local_types  = OpenStruct.new
-
     allowed_remote_types.http  = true
     allowed_remote_types.https = true
     allowed_remote_types.ftp   = true
 
+    @allowed_local_types  = OpenStruct.new
     allowed_local_types.iso    = true
     allowed_local_types.dir    = true
 
@@ -76,7 +76,7 @@ class Uri
     mount_dir
   end
 
-  def set_type_and_location
+  def set_uri_type_and_location
     if name =~ /^(.*):\/\/(.*)/
       @type = "#{$1}"
       @location = "#{$2}"
