@@ -57,7 +57,7 @@ class RepositoryBase
     if uri.is_iso?
       uri.unmap_loop
     end
-    check_404_header(source, dest)
+    check_404_header(source, dest) if uri.is_remote?
   end
 
   def create_solv(args)
