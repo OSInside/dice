@@ -4,12 +4,13 @@ class DiceConfig
   attr_accessor :ssh_user
 
   def initialize
-    # default host is localhost which triggers the use of vagrant
+    # default buildhost is a vagrant identification symbol
+    # which triggers the use of vagrant
     @buildhost = Dice::VAGRANT_BUILD
     # default ssh private key is the vagrant key
-    @ssh_private_key = File.join(Dice::ROOT, "key/vagrant")
+    @ssh_private_key = Dice::SSH_PRIVATE_KEY_PATH
     # default ssh user is vagrant
-    @ssh_user = "vagrant"
+    @ssh_user = Dice::SSH_USER
   end
 end
 

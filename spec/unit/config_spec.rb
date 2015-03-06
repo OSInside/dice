@@ -12,7 +12,7 @@ describe DiceConfig do
       ssh_user = @config.instance_variable_get(:@ssh_user)
       expect(ssh_user).to eq("vagrant")
       expect(ssh_private_key).to match(/dice\/key\/vagrant/)
-      expect(buildhost).to eq("__VAGRANT__")
+      expect(buildhost).to eq(Dice::VAGRANT_BUILD)
     end
   end
 
