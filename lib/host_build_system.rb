@@ -1,12 +1,11 @@
 class HostBuildSystem < BuildSystemBase
-  attr_reader :recipe, :host, :user, :ssh_private_key, :basepath
+  attr_reader :recipe, :host, :user, :basepath
 
   def initialize(recipe)
     super(recipe)
     @recipe = recipe
     @host = Dice.config.buildhost
     @user = Dice.config.ssh_user
-    @ssh_private_key = Dice.config.ssh_private_key
     @basepath = @recipe.basepath
   end
 
@@ -35,7 +34,7 @@ class HostBuildSystem < BuildSystemBase
       ssh_options = "-o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0"
       provision_output = Command.run(
         "rsync", "-e",
-        "ssh #{ssh_options} -i #{ssh_private_key}",
+        "ssh #{ssh_options} -i #{get_private_key_path}",
         "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
         "--exclude", ".*", ".", "#{user}@#{host}:/vagrant",
         :stdout => :capture
@@ -57,7 +56,7 @@ class HostBuildSystem < BuildSystemBase
         "ssh",
         "-o", "StrictHostKeyChecking=no",
         "-o", "NumberOfPasswordPrompts=0",
-        "-i", ssh_private_key, "#{user}@#{host}",
+        "-i", get_private_key_path, "#{user}@#{host}",
         "sudo", "killall", "kiwi"
       )
     rescue Cheetah::ExecutionFailed => e
@@ -75,6 +74,10 @@ class HostBuildSystem < BuildSystemBase
     host
   end
 
+  def get_private_key_path
+    Dice.config.ssh_private_key
+  end
+
   def is_busy?
     busy = true
     begin
@@ -82,7 +85,7 @@ class HostBuildSystem < BuildSystemBase
         "ssh",
         "-o", "StrictHostKeyChecking=no",
         "-o", "NumberOfPasswordPrompts=0",
-        "-i", ssh_private_key, "#{user}@#{host}",
+        "-i", get_private_key_path, "#{user}@#{host}",
         "sudo", "pidof", "-x", "kiwi"
       )
     rescue Cheetah::ExecutionFailed => e

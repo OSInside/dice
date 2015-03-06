@@ -8,9 +8,9 @@ describe ConnectionHostBuildSystem do
     allow(recipe).to receive(:change_working_dir)
 
     @connection = ConnectionHostBuildSystem.new(recipe)
-    @ssh_user = @connection.instance_variable_get(:@ssh_user)
-    @ssh_host = @connection.instance_variable_get(:@ssh_host)
-    @ssh_private_key = @connection.instance_variable_get(:@ssh_private_key)
+    @ssh_user = Dice.config.ssh_user
+    @ssh_host = Dice.config.buildhost
+    @ssh_private_key = Dice.config.ssh_private_key
   end
 
   describe "#ssh" do

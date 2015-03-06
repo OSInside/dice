@@ -1,11 +1,10 @@
 class Job
-  attr_reader :job_user, :job_ssh_private_key
+  attr_reader :job_user
   attr_reader :build_log, :archive, :buildsystem, :ip, :port
 
   def initialize(buildsystem)
     @buildsystem = buildsystem
     @job_user = Dice.config.ssh_user
-    @job_ssh_private_key = Dice.config.ssh_private_key
     @build_log = buildsystem.recipe.basepath + "/" +
       Dice::META + "/" + Dice::BUILD_LOG
     @archive  = buildsystem.recipe.basepath + "/" +
@@ -25,7 +24,7 @@ class Job
     begin
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
-        "-i", job_ssh_private_key, "#{job_user}@#{ip}",
+        "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
         "sudo /usr/sbin/kiwi #{build_opts}",
         :stdout => logfile,
         :stderr => logfile
@@ -49,7 +48,7 @@ class Job
     begin
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
-        "-i", job_ssh_private_key, "#{job_user}@#{ip}",
+        "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
         "sudo /usr/sbin/kiwi #{bundle_opts}",
         :stdout => logfile,
         :stderr => logfile
@@ -71,7 +70,7 @@ class Job
     begin
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
-        "-i", job_ssh_private_key, "#{job_user}@#{ip}",
+        "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
         "sudo tar --exclude image-root -C /tmp/bundle -c .",
         :stdout => result
       )
@@ -94,7 +93,7 @@ class Job
     begin
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
-        "-i", job_ssh_private_key, "#{job_user}@#{ip}",
+        "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
         "sudo rm -rf /tmp/image /tmp/bundle"
       )
     rescue Cheetah::ExecutionFailed => e

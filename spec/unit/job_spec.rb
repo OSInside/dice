@@ -7,6 +7,8 @@ describe Job do
       and_return("127.0.0.1")
     allow_any_instance_of(VagrantBuildSystem).to receive(:get_port).
       and_return("2200")
+    allow_any_instance_of(VagrantBuildSystem).to receive(:get_private_key_path).
+      and_return("key")
     allow_any_instance_of(VagrantBuildSystem).to receive(:halt)
 
     # build a recipe to initialize the buildsystem with
@@ -29,7 +31,7 @@ describe Job do
       ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "vagrant@127.0.0.1",
+        "key", "vagrant@127.0.0.1",
         "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile terminal",
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
@@ -48,7 +50,7 @@ describe Job do
       ).and_return(logfile)
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
-        /key\/vagrant/, "vagrant@127.0.0.1",
+        "key", "vagrant@127.0.0.1",
         "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile terminal",
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
@@ -65,7 +67,7 @@ describe Job do
       expect(File).to receive(:open).and_return(result)
       expect(Command).to receive(:run).
       with("ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
-        "-i", "/home/ms/Project/dice/key/vagrant",
+        "-i", "key",
         "vagrant@127.0.0.1",
         "sudo tar --exclude image-root -C /tmp/bundle -c .",
         {:stdout=>result}).

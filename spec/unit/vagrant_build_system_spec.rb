@@ -100,6 +100,18 @@ describe VagrantBuildSystem do
     end
   end
 
+  describe "#get_private_key_path" do
+    it "returns path to ssh private key" do
+      expect(@system.get_private_key_path).to eq(
+        "/home/ms/.vagrant.d/insecure_private_key"
+      )
+      @system.instance_variable_set(:@ssh_output, "")
+      expect { @system.get_private_key_path }.to raise_error(
+        Dice::Errors::GetSSHPrivateKeyPathFailed, /<empty-output>/
+      )
+    end
+  end
+
   describe "#is_busy?" do
     it "returns false, never busy" do
       expect(@system.is_busy?).to eq(false)

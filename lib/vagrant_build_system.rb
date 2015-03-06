@@ -98,6 +98,21 @@ class VagrantBuildSystem < BuildSystemBase
     ip
   end
 
+  def get_private_key_path
+    pkey = nil
+    if ssh_output =~ /Executing SSH.*\-i.*\"(\/.*?)\".*/
+      pkey = $1
+    else
+      if ssh_output.to_s.empty?
+        @ssh_output = "<empty-output>"
+      end
+      raise Dice::Errors::GetSSHPrivateKeyPathFailed.new(
+        "SSH private key retrieval failed no match in ssh output: #{ssh_output}"
+      )
+    end
+    pkey
+  end
+
   def is_busy?
     # vagrant VM is never busy, because started by us
     false

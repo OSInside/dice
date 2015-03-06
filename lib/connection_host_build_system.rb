@@ -1,25 +1,25 @@
 class ConnectionHostBuildSystem < ConnectionBase
-  attr_reader :recipe, :ssh_user, :ssh_host, :ssh_private_key
+  attr_reader :recipe
 
   def initialize(recipe)
     super(recipe)
-    @recipe   = recipe
-    @ssh_user = Dice.config.ssh_user
-    @ssh_host = Dice.config.buildhost
-    @ssh_private_key  = Dice.config.ssh_private_key
+    @recipe = recipe
   end
 
   def ssh
+    ssh_pkey = Dice.config.ssh_private_key
+    ssh_user = Dice.config.ssh_user
+    ssh_host = Dice.config.buildhost
     Dice.logger.info(
       "#{self.class}: ssh into worker for #{recipe.basepath} with \n\
       url: #{ssh_user}@#{ssh_host} \n\
-      key: #{ssh_private_key}"
+      key: #{ssh_pkey}"
     )
     exec(
       [
         "ssh", "-o", "StrictHostKeyChecking=no",
         "-o", "NumberOfPasswordPrompts=0",
-        "-i", ssh_private_key,
+        "-i", ssh_pkey,
         "#{ssh_user}@#{ssh_host}"
       ].join(" ")
     )
