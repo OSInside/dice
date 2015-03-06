@@ -10,10 +10,10 @@ on e.g public cloud instances.
   * [Motivation](#motivation)
   * [Installation](#installation)
   * [Setup](#setup)
-    - [Build Worker Vagrant Virtual System](#build-worker-vagrant-virtual-system)
-    - [Build Worker Generic Machine](#build-worker-generic-machine)
-    - [Accessing Build Worker](#accessing-build-worker)
-  * [DiceFile](#dicefile)
+    - [Vagrant Virtual Worker System](#vagrant-virtual-worker-system)
+    - [Generic Worker System](#generic-worker-system)
+    - [Accessing Worker System](#accessing-worker-system)
+  * [Dicefile](#dicefile)
   * [Usage](#usage)
 
 ## Motivation
@@ -94,7 +94,7 @@ documentation here:
 In order to install vagrant, VirtualBox and the base box
 for running a build in a virtual system do the following:
 
-### Build Worker Vagrant Virtual System
+### Vagrant Virtual Worker System
 
   * As user root Install the latest vagrant rpm package from here
 
@@ -140,7 +140,7 @@ for running a build in a virtual system do the following:
     kiwi-build-box (virtualbox)
     ```
 
-### Build Worker Generic Machine
+### Generic Worker System
 
 While the vagrant box files already contains all software and configurations
 to perform a build, a worker machine might not have it. In order to make a
@@ -159,24 +159,33 @@ machine a dice worker the following software and configurations must exist:
   * ssh login as build user with ssh key
 
 
-## Accessing Build Worker
+## Accessing Worker System
 
 Access to the machine running the build job is performed by the public ssh key
 method. Therefore the machine has to have the sshd service running as well as
 the public keys of users who are allowed to login stored in the
-`~<build_user>/.ssh/authorized_keys` file. All vagrant capable build worker
-images provided by us allow access via the __vagrant__ user as follows:
+`~<build_user>/.ssh/authorized_keys` file.
 
-```
-$ ssh -i <vagrant-private-key> vagrant@<machine>
-```
+All vagrant capable build worker images provided by us are prepared
+to allow access via the __vagrant__ user and the default vagrant
+private key. This is done for backward capability with older versions
+of vagrant.
 
 The vagrant private key is publicly distributed and therefore __not__ a secure
-key ! If this is unwanted it's required to update the `authorized_keys` file
-inside of the build worker image before registering the image in vagrant.
+key ! Current versions of vagrant detects this key and creates a new
+key pair which it then inject into the instance. The insecure key will
+be removed during that process.
 
-If using the vagrant private key is acceptable the following steps are
-required to make the key available to the user who starts build jobs:
+When dice works with vagrant it asks for the generated key and uses
+this key for any ssh connection to perform jobs on the instance.
+Because of this it's not required to provide a path to the private
+key file as part of the Dicefile when working with vagrant worker
+systems.
+
+However for generic reachable worker systems the knowledge about the
+path to the ssh private key is mandatory. If using the vagrant private
+key is acceptable the following steps are required to make the key
+available to the user who starts build jobs:
 
 ```
 $ cd ~<build_user>
@@ -196,6 +205,10 @@ Dice.configure do |config|
   config.ssh_private_key = File.join(ENV["HOME"], ".dice/key/vagrant")
 end
 ```
+
+By analogy with this process any other than the insecure vagrant private
+key can be configured.
+
 
 # DiceFile
 
@@ -227,7 +240,7 @@ end
 ## Dice it
 
 Given you have imported the vagrant build box as described in
-[Build Worker Vagrant Virtual System](#build-worker-vagrant-virtual-system) you can start an example build as normal user by calling:
+[Vagrant Virtual Worker System](#vagrant-virtual-worker-system) you can start an example build as normal user by calling:
 
 ```
 $ rsync -zavL /usr/share/doc/packages/dice/recipes/suse-13.1-JeOS /tmp
