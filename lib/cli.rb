@@ -29,7 +29,7 @@ class Cli
     else
       Dice.logger.error("dice unexpected error: #{e.message}")
       Dice.logger.error(
-        "Please file a bug report at https://github.com/schaefi/dice"
+        "Please file a bug report at https://github.com/SUSE/dice"
       )
       Dice.logger.error("backtrace")
       Dice.logger.error(e.backtrace.join("\n"))
