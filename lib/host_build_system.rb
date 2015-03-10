@@ -1,12 +1,9 @@
 class HostBuildSystem < BuildSystemBase
-  attr_reader :recipe, :host, :user, :basepath
+  attr_reader :host, :user
 
-  def initialize(recipe)
-    super(recipe)
-    @recipe = recipe
+  def post_initialize
     @host = Dice.config.buildhost
     @user = Dice.config.ssh_user
-    @basepath = @recipe.basepath
   end
 
   def get_lockfile
@@ -19,7 +16,7 @@ class HostBuildSystem < BuildSystemBase
 
   def up
     Dice.logger.info(
-      "#{self.class}: Using buildsystem #{host} for #{basepath}..."
+      "#{self.class}: Using buildsystem #{host} for #{recipe.basepath}..."
     )
     if is_busy?
       raise Dice::Errors::BuildWorkerBusy.new(

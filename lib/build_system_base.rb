@@ -15,6 +15,11 @@ class BuildSystemBase
     recipe.change_working_dir
     @lock = get_lockfile
     @set_lock_called = false
+    post_initialize
+  end
+
+  def post_initialize
+    nil
   end
 
   def is_building?

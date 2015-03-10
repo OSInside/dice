@@ -1,9 +1,8 @@
 class VagrantBuildSystem < BuildSystemBase
-  attr_reader :recipe, :ssh_output
+  attr_reader :ssh_output
 
-  def initialize(recipe)
-    super(recipe)
-    @recipe = recipe
+  def post_initialize
+    @ssh_output = nil
   end
 
   def get_lockfile
