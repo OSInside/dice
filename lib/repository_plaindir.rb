@@ -1,11 +1,4 @@
 class PlainDirRepository < RepositoryBase
-  attr_reader :meta
-
-  def initialize(uri)
-    super(uri)
-    @meta = solv_meta
-  end
-
   def solvable
     solv_file = @@kiwi_solv + "/" + meta.solv
     tmp_dir = create_tmpdir

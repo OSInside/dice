@@ -1,9 +1,7 @@
 class RpmMdRepository < RepositoryBase
-  attr_reader :meta, :rxml
+  attr_reader :rxml
 
-  def initialize(uri)
-    super(uri)
-    @meta = solv_meta
+  def post_initialize
     @rxml = get_repoxml
   end
 

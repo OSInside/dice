@@ -1,10 +1,16 @@
 class RepositoryBase
-  attr_reader :uri, :tmp_dir
+  attr_reader :uri, :tmp_dir, :meta
 
   @@kiwi_solv = "/var/tmp/kiwi/satsolver"
 
   def initialize(uri)
     @uri = uri
+    @meta = solv_meta
+    post_initialize
+  end
+
+  def post_initialize
+    nil
   end
 
   def load_file(source)
