@@ -1,11 +1,4 @@
 class ConnectionHostBuildSystem < ConnectionBase
-  attr_reader :recipe
-
-  def initialize(recipe)
-    super(recipe)
-    @recipe = recipe
-  end
-
   def ssh
     ssh_pkey = Dice.config.ssh_private_key
     ssh_user = Dice.config.ssh_user

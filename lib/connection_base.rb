@@ -1,11 +1,17 @@
 class ConnectionBase
-  attr_reader :build_log
+  attr_reader :build_log, :recipe
 
   abstract_method :ssh
 
   def initialize(recipe)
-    recipe.change_working_dir
+    @recipe = recipe
     @build_log = recipe.basepath + "/" + Dice::META + "/" + Dice::BUILD_LOG
+    recipe.change_working_dir
+    post_initialize
+  end
+
+  def post_initialize
+    nil
   end
 
   def get_log

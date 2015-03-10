@@ -1,11 +1,4 @@
 class ConnectionVagrantBuildSystem < ConnectionBase
-  attr_reader :recipe
-
-  def initialize(recipe)
-    super(recipe)
-    @recipe = recipe
-  end
-
   def ssh
     Dice.logger.info(
       "#{self.class}: ssh into worker for #{recipe.basepath}..."
