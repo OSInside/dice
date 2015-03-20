@@ -35,7 +35,6 @@ class Job
     rescue Cheetah::ExecutionFailed => e
       Dice.logger.info("#{self.class}: Build failed")
       logfile.close
-      buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
         "Build failed for details check: #{build_log}"
       )
@@ -59,7 +58,6 @@ class Job
     rescue Cheetah::ExecutionFailed => e
       Dice.logger.info("#{self.class}: Bundler failed")
       logfile.close
-      buildsystem.halt
       raise Dice::Errors::BuildFailed.new(
         "Bundle result failed for details check: #{build_log}"
       )
@@ -80,7 +78,6 @@ class Job
     rescue Cheetah::ExecutionFailed => e
       Dice.logger.info("#{self.class}: Archiving failed")
       result.close
-      buildsystem.halt
       raise Dice::Errors::ResultRetrievalFailed.new(
         "Archiving result failed with: #{e.stderr}"
       )
@@ -101,7 +98,6 @@ class Job
       )
     rescue Cheetah::ExecutionFailed => e
       Dice.logger.info("#{self.class}: Preparation failed")
-      buildsystem.halt
       raise Dice::Errors::PrepareBuildFailed.new(
         "Preparing build environment failed with: #{e.stderr}"
       )

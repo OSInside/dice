@@ -9,7 +9,6 @@ describe Job do
       and_return("2200")
     allow_any_instance_of(VagrantBuildSystem).to receive(:get_private_key_path).
       and_return("key")
-    allow_any_instance_of(VagrantBuildSystem).to receive(:halt)
 
     # build a recipe to initialize the buildsystem with
     description = "some-description-dir"

@@ -32,6 +32,7 @@ class Recipe
   end
 
   def reset_working_dir
+    Dice.logger.info("Reset working directory")
     Dir.chdir(cwd)
   end
 
