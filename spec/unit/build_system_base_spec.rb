@@ -63,13 +63,17 @@ describe BuildSystemBase do
 
   describe "#import_build_options" do
     it "imports build options from recipe meta data" do
+      options = OpenStruct.new
+      options.a = "a"
+      options.b = "b"
       build_options = double(File)
       expect(File).to receive(:open).with(
         @description + "/" + Dice::META + "/" + Dice::BUILD_OPTS_FILE, "rb"
       ).and_return(build_options)
-      expect(Marshal).to receive(:load).with(build_options)
+      expect(Marshal).to receive(:load).with(build_options).and_return(options)
       expect(build_options).to receive(:close)
       @system.import_build_options
+      expect(Dice.option).to eq(options)
     end
   end
 end

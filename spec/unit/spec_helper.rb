@@ -8,8 +8,9 @@ end
 
 RSpec.configure do |config|
   config.before(:each) do
+    options = OpenStruct.new
     allow(Dice.logger).to receive(:info)
-    Dice.setup_options(Hash.new)
+    allow(Dice).to receive(:option).and_return(options)
   end
 end
 

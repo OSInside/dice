@@ -87,6 +87,8 @@ class Cli
       :desc => "Force building even if status is up to data"
     c.flag ["kiwitype", :t], :kiwitype => String, :required => false,
       :desc => "Set kiwi build type"
+    c.flag ["kiwiprofile", :p], :kiwiprofile => String, :required => false,
+      :desc => "Set kiwi build profile"
     c.action do |global_options,options,args|
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")

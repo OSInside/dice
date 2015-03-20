@@ -60,7 +60,9 @@ class BuildSystemBase
       build_options = File.open(build_options_file, "rb")
       options = Marshal.load(build_options)
       build_options.close
-      Dice.option.kiwitype = options.kiwitype if !Dice.option.kiwitype
+      options.marshal_dump.each do |key, value|
+        Dice.option[key] = value
+      end
     rescue
       # ignore if no buildoptions exists
     end

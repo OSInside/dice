@@ -20,6 +20,9 @@ class Job
     if Dice.option.kiwitype
       build_opts += " --type #{Dice.option.kiwitype}"
     end
+    if Dice.option.kiwiprofile
+      build_opts += " --add-profile #{Dice.option.kiwiprofile}"
+    end
     logfile = File.open(build_log, "w")
     begin
       Command.run(

@@ -72,6 +72,9 @@ class Recipe
     if Dice.option.kiwitype
       options.kiwitype = Dice.option.kiwitype
     end
+    if Dice.option.kiwiprofile
+      options.kiwiprofile = Dice.option.kiwiprofile
+    end
     build_options = File.open(build_options_file, "wb")
     Marshal.dump(options, build_options)
     build_options.close
