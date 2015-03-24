@@ -66,8 +66,8 @@
     <users group="root">
         <user password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0" home="/root" name="root"/>
     </users>
-    <repository type="rpm-md" alias="suse-13.1">
-        <source path="obs://openSUSE:13.1/standard"/>
+    <repository type="yast2" alias="suse-13.1">
+        <source path="obs://13.1/repo/oss"/>
     </repository>
     <repository type="rpm-md" alias="suse-13.1-update">
         <source path="obs://openSUSE:13.1:Update/standard"/>
