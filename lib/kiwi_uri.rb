@@ -5,6 +5,9 @@ class KiwiUri
       # standard mime types. This also includes resolving open build
       # service resource locator into http addresses
       case args[:name]
+      when /^obs:\/\/(\d.*)/
+        # distribution URL pointing to a yast distro repo
+        args[:name] = "http://download.opensuse.org/distribution/#{$1}/"
       when /^obs:\/\/(.*)/
         # obs url, translate to http url
         bs_path = $1.gsub(/:/, ":/")
