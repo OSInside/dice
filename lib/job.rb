@@ -94,7 +94,7 @@ class Job
       Command.run(
         "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
         "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
-        "sudo rm -rf /tmp/image /tmp/bundle"
+        "sudo rm -rf /tmp/image /tmp/bundle /var/lock/kiwi-init.lock"
       )
     rescue Cheetah::ExecutionFailed => e
       Dice.logger.info("#{self.class}: Preparation failed")
