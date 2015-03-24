@@ -68,11 +68,11 @@
     <users group="root">
         <user password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0" home="/root" name="root"/>
     </users>
-    <repository type="yast2">
-        <source path="http://download.opensuse.org/distribution/13.2/repo/oss"/>
+    <repository type="rpm-md">
+        <source path="obs://openSUSE:13.2/standard"/>
     </repository>
     <repository type="rpm-md">
-        <source path="http://download.opensuse.org/update/13.2"/>
+        <source path="obs://openSUSE:13.2:Update/standard"/>
     </repository>
     <packages type="image">
 <!--
