@@ -8,6 +8,9 @@ class KiwiUri
       when /^obs:\/\/(\d.*)/
         # distribution URL, starting with the number e.g 13.1
         args[:name] = "http://download.opensuse.org/distribution/#{$1}/"
+      when /^obs:\/\/update\/(\d.*)/
+        # distribution update URL
+        args[:name] = "http://download.opensuse.org/update/#{$1}/"
       when /^(\/.*)/
         # Simple path, should be a distribution dir
         args[:name] = "dir://#{$1}/"
