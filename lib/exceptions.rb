@@ -35,5 +35,6 @@ module Dice
     class UriTypeUnknown < DiceError; end
     class MountISOFailed < DiceError; end
     class GetSSHPrivateKeyPathFailed < DiceError; end
+    class UriNotFound < DiceError; end
   end
 end

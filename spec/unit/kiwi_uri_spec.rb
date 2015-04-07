@@ -19,6 +19,7 @@ describe KiwiUri do
     end
 
     it "translates path to dir mime type" do
+      expect(File).to receive(:exists?).and_return(true)
       expect(KiwiUri.translate(
         :name => "/some/path", :repo_type => "rpm-md"
       ).name).to eq(

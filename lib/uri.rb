@@ -18,6 +18,8 @@ class Uri
     allowed_local_types.dir    = true
 
     type_ok?
+
+    set_absolute_location if !is_remote?
   end
 
   def is_remote?
@@ -30,7 +32,7 @@ class Uri
 
   def is_iso?
     iso_file = false
-    if type == 'iso'
+    if type == "iso"
       iso_file = true
     end
     iso_file
@@ -48,6 +50,15 @@ class Uri
   end
 
   private
+
+  def set_absolute_location
+    @location = File.expand_path(@location)
+    if !File.exists?(@location)
+      raise Dice::Errors::UriNotFound.new(
+        "Repository #{location} does not exist"
+      )
+    end
+  end
 
   def umount_loop(mount_dir)
     begin
