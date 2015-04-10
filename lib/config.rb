@@ -4,6 +4,10 @@ class DiceConfig
   attr_accessor :ssh_user
 
   def initialize
+    # default provider is docker if not specified in env
+    if !ENV["VAGRANT_DEFAULT_PROVIDER"]
+      ENV["VAGRANT_DEFAULT_PROVIDER"] = "docker"
+    end
     # default buildhost is a vagrant identification symbol
     # which triggers the use of vagrant
     @buildhost = Dice::VAGRANT_BUILD

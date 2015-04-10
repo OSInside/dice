@@ -19,7 +19,10 @@ class VagrantBuildSystem < BuildSystemBase
       "#{self.class}: Starting up buildsystem for #{recipe.basepath}..."
     )
     begin
-      up_output = Command.run("vagrant", "up", :stdout => :capture)
+      up_output = Command.run(
+        "vagrant", "up", "--provider", ENV["VAGRANT_DEFAULT_PROVIDER"],
+        :stdout => :capture
+      )
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::VagrantUpFailed.new(
         "Starting up virtual system failed with: #{e.stderr}"

@@ -30,7 +30,7 @@ describe VagrantBuildSystem do
     it "puts headline and up output on normal operation" do
       expect(Dice::logger).to receive(:info).with(/VagrantBuildSystem:/)
       expect(Command).to receive(:run).with(
-        "vagrant", "up", {:stdout=>:capture}
+        "vagrant", "up", "--provider", "docker", {:stdout=>:capture}
       ).and_return("foo")
       expect(Dice::logger).to receive(:info).with(/Receiving Host/)
       expect(Command).to receive(:run).with(
