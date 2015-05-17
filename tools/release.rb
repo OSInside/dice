@@ -32,6 +32,7 @@ class Release
   def copy_rpmlintrc
     Dir.chdir(Dice::ROOT) do
       FileUtils.cp "dice-rpmlintrc", "package/dice-rpmlintrc"
+      FileUtils.cp "dice.gem2rpm.yml", "package/gem2rpm.yml"
     end
   end
 

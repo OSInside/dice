@@ -1,6 +1,6 @@
 # spec file for package dice
 #
-# Copyright (c) 2014 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright (c) 2014 SUSE LINUX GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -18,39 +18,30 @@ Version:        <%= @version %>
 Release:        0
 %define mod_name dice
 %define mod_full_name %{mod_name}-%{version}
-%define mod_branch -%{version}
-%define mod_weight 1
-
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-BuildRequires:  ruby-macros >= 1
-BuildRequires:  fdupes
-BuildRequires:  ruby-devel
-BuildRequires:  gcc-c++
-%if %suse_version == 1315
 %define rb_build_versions %{rb_default_ruby}
-BuildRequires:  %{rubydevel}
-BuildRequires:  %{rubygem rice}
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+BuildRequires:  fdupes
+BuildRequires:  gcc-c++
+BuildRequires:  ruby-devel
+BuildRequires:  ruby-macros >= 5
+BuildRequires:  update-alternatives
+BuildRequires:  %{ruby}
 BuildRequires:  %{rubygem gem2rpm}
+BuildRequires:  %{rubygem rice}
 BuildRequires:  %{rubygem bundler}
 <% build_requires.each do |require| -%>
 BuildRequires:  %{rubygem <%= require[:name] %> <%= require[:operator] %> <%= require[:version] %>}
 <% end -%>
-%else
-BuildRequires:  rubygem(gem2rpm)
-BuildRequires:  rubygem(bundler)
-BuildRequires:  rubygem(rice)
-<% build_requires.each do |require| -%>
-BuildRequires:  rubygem(<%= require[:name] %>) <%= require[:operator] %> <%= require[:version] %>
-<% end -%>
-%endif
+
 # Disable autogenerating "Requires:" headers for bundled gems.
 %define __requires_exclude ^rubygem
 Requires:       ruby >= 2.0
 Requires:       ruby-solv
-Url:            http://suse.com
+Url:            http://www.suse.com
 Source0:        %{mod_full_name}.gem
 Source1:        %{mod_name}-rpmlintrc
-Summary:        light weight image build system
+Source2:        gem2rpm.yml
+Summary:        Light Weight Image Build System
 License:        GPL-3.0
 Group:          Development/Languages/Ruby
 
@@ -63,32 +54,24 @@ automatically triggered whenever the repository which stores all
 the software packages has changed. With Dice there is a tool which
 automatically builds all appliances stored in a directory
 
-%package doc
-Summary:        RDoc and RI documentation for Machinery
-Group:          Development/Languages/Ruby
-Requires:       %{name} = %{version}
-
-%description doc
-RDoc and RI documentation for dice is a light weight image build system for kiwi
-
 %prep
 
 %build
 
 %install
+# Install the Ruby source
+%gem_install \
+  --symlink-binaries \
+  --doc-files="COPYING recipes key" \
+  -f
 
-# Install the gem itself
-
-%gem_install -f
-
+# Change to ruby gem dir
 pushd %{buildroot}%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}
 
 # Build CPP extensions
-
 ( cd lib/semaphore && ruby ./extconf.rb && make && rm -f semaphore.o )
 
 # Bundle dependencies
-
 cat > Gemfile <<EOT
 <% @dependencies.each do |dependency| -%>
 <% dependency.requirement.requirements.map do |operator, version| -%>
@@ -110,8 +93,6 @@ bundle install --standalone --local
 
 rm -rf vendor .bundle Gemfile Gemfile.lock
 
-popd
-
 # Adapt the binary
 
 # Here we do a surgery on the binary to actually load the bundled gems. This is
@@ -120,34 +101,21 @@ popd
 sed -i '/gem/i \
 Gem.path.unshift("%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/bundle/ruby/%{rb_ver}")
 
-' %{buildroot}%{_bindir}/%{mod_name}
+' bin/%{mod_name}
 
-# Additional files
+# Delete devel source
+( cd lib/semaphore && rm -f semaphore.cpp Makefile extconf.rb )
 
+# Move bash completion
 mkdir -p %{buildroot}/etc/bash_completion.d
-ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/COPYING
-ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/recipes
-ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/key
-ln -s %{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/completion/dice.sh \
-   %{buildroot}/etc/bash_completion.d/dice.sh
+mv completion/dice.sh %{buildroot}/etc/bash_completion.d
+
+popd
 
 # Convert duplicate files to symlinks
-
 %fdupes -s %{buildroot}
 
-%files
-%defattr(-,root,root,-)
-%{_bindir}/%{mod_name}
-%{_libdir}/ruby/gems/%{rb_ver}/cache/%{mod_full_name}.gem
-%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/
-%{_libdir}/ruby/gems/%{rb_ver}/specifications/%{mod_full_name}.gemspec
+%gem_packages
 %config /etc/bash_completion.d/dice.sh
-%doc COPYING
-%doc recipes
-%doc key
-
-%files doc
-%defattr(-,root,root,-)
-%doc %{_libdir}/ruby/gems/%{rb_ver}/doc/%{mod_full_name}/
 
 %changelog
