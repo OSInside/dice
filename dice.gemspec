@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency "json", ">=1.8.0"
   s.add_dependency "inifile", ">=2.0.2"
 
-  s.files        = Dir["lib/**/*.rb", "lib/**/*.cpp", "lib/semaphore/mkmf-rice.rb", "bin/*", "completion/*", "key/*", "recipes/**/*", "COPYING"]
+  s.files        = Dir["lib/**/*.rb", "lib/**/*.cpp", "lib/semaphore/mkmf-rice.rb", "bin/*", "completion/*", "key/*", "COPYING"]
   s.executables  = "dice"
   s.require_path = "lib"
 
