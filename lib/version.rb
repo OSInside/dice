@@ -1,3 +1,3 @@
 module Dice
-  VERSION = "0.5.3"
+  VERSION = "0.6.1"
 end
