@@ -29,9 +29,7 @@ With Dice there is a tool which allows on demand and/or automatically
 building of appliances stored in a directory. Advantages are:
 
   * Build as normal user
-  * Benefit from prebuild worker boxes by us for vagrant and docker.
-    Refer to the following article describing
-    [how to build images in a docker container](https://github.com/openSUSE/kiwi/wiki/Building-images-in-a-Docker-container)
+  * Benefit from prebuild worker boxes by us for virtualbox, libvirt and docker.
   * No need to have kiwi installed on your machine
   * Build for different distributions on appropriate worker
   * Setup your own buildsystem and keep control
@@ -77,21 +75,20 @@ Building in virtual systems requires the
 which is used by dice to manage instances of virtual machines. In order
 to do that vagrant requires a base machine called a box which ships with
 all the required software to run an image build. As of today there are
-build boxes available for libvirt and virtualbox. This setup guide
-explains how to use the virtualbox based platform
+build boxes available for docker, libvirt and virtualbox. This setup guide
+explains how to use the docker based platform
 
-VirtualBox is one out of some other virtualization frameworks supported by
-vagrant. Using VirtualBox together with vagrant is the most
-simple way to get started which is why this setup guide recommends it.
+[docker](https://www.docker.com) is one out of some other
+virtualization/container frameworks supported by vagrant.
 Basically dice supports all virtualization frameworks supported by
 vagrant. That means it's also possible to run a dice build in kvm using
-libvirt as well as VMware, containers with docker and more. For more
+libvirt as well as VMware, VirtualBox and more. For more
 information about these so called providers check out the vagrant
 documentation here:
 
   * https://docs.vagrantup.com/v2/providers/index.html
 
-In order to install vagrant, VirtualBox and the base box
+In order to install vagrant, docker and the base box
 for running a build in a virtual system do the following:
 
 ### Vagrant Virtual Worker System
@@ -100,24 +97,43 @@ for running a build in a virtual system do the following:
 
     https://www.vagrantup.com/downloads.html
 
-  * As user root Install virtualbox >= v4.3 via zypper
+  * As user root Install docker via zypper
 
     ```
-    $ zypper ar \
-      http://download.opensuse.org/repositories/Virtualization/<distribution> \
-      virtualbox
-
-    $ zypper install virtualbox
+    $ zypper install docker
     ```
 
-  * As normal user download the
-    `VagrantBox-openSUSE-*.x86_64-*.virtualbox-Build[XX].box` file
-    from here:
+    Please make sure that the user who is intended to build images
+    is a member of the docker group. The following command requires
+    root permissons:
 
-    http://download.opensuse.org/repositories/Virtualization:/Appliances/images
+    ```
+    $ useradd -G docker builduser
+    ```
 
-    There are regularly updates on the box which is the reason why Build[XX] is
-    a moving target. This box is able to build images for the distributions:
+  * Start dockerd using the btrfs storage backend
+
+    ```
+    $ qemu-img create /var/lib/docker-storage.btrfs 20g
+    $ mkfs.btrfs /var/lib/docker-storage.btrfs
+    $ mkdir -p /var/lib/docker
+    $ mount /var/lib/docker-storage.btrfs /var/lib/docker
+
+    $ vi /etc/fstab
+    /var/lib/docker-storage.btrfs /var/lib/docker btrfs defaults 0 0
+
+    $ vi /etc/sysconfig/docker
+    DOCKER_OPTS="-s btrfs"
+
+    systemctl start docker
+    ```
+
+  * As normal user download the .tar.bz2 file which starts with
+    Docker-openSUSE-13.1 from here:
+
+    http://download.opensuse.org/repositories/Virtualization:/Appliances:/Images/images
+
+    This box is able to build images for the distributions:
 
     * RHEL6
     * RHEL7
@@ -125,19 +141,11 @@ for running a build in a virtual system do the following:
     * SLES11
     * SLES12
 
-  * As normal user add the box via vagrant
+  * As normal user add the box via docker
 
     ```
-    $ vagrant box add kiwi-build-box \
-      VagrantBox-openSUSE-*.x86_64-*.virtualbox-Build[XX].box
-    ```
-
-  * As normal user check if the box was added
-
-    ```
-    $ vagrant box list
-
-    kiwi-build-box (virtualbox)
+    $ cat Docker-openSUSE-13.1-docker.*.tar.xz |\
+      docker import - kiwi-build-box:new
     ```
 
 ### Generic Worker System
@@ -239,11 +247,13 @@ end
 
 ## Dice it
 
-Given you have imported the vagrant build box as described in
-[Vagrant Virtual Worker System](#vagrant-virtual-worker-system) you can start an example build as normal user by calling:
+Given you have imported the vagrant docker build box as described in
+[Vagrant Virtual Worker System](#vagrant-virtual-worker-system) you can start an example build as normal user as follows:
 
 ```
-$ rsync -zavL /usr/share/doc/packages/dice/recipes/suse-13.1-JeOS /tmp
+$ zypper in kiwi-templates
+
+$ rsync -zavL /usr/share/kiwi/image/suse-13.1-JeOS /tmp
 
 $ dice build /tmp/suse-13.1-JeOS
 ```
