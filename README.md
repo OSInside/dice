@@ -57,7 +57,10 @@ $ zypper ar \
   http://download.opensuse.org/repositories/Virtualization:/Appliances/<distribution>/ \
   dice
 
-$ zypper in dice
+$ zypper se dice
+
+  select the '.*-rubygem-dice' package listed for the ruby version of
+  the distribution
 ``` 
 
 ## Setup
