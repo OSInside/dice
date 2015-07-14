@@ -1,16 +1,12 @@
 class Job
-  attr_reader :job_user
-  attr_reader :build_log, :archive, :buildsystem, :ip, :port
+  attr_reader :build_log, :archive, :buildsystem
 
   def initialize(buildsystem)
     @buildsystem = buildsystem
-    @job_user = Dice.config.ssh_user
     @build_log = buildsystem.recipe.basepath + "/" +
       Dice::META + "/" + Dice::BUILD_LOG
     @archive  = buildsystem.recipe.basepath + "/" +
       Dice::META + "/" + Dice::BUILD_RESULT
-    @ip = buildsystem.get_ip
-    @port = buildsystem.get_port
   end
 
   def build
@@ -24,11 +20,10 @@ class Job
       build_opts += " --add-profile #{Dice.option.kiwiprofile}"
     end
     logfile = File.open(build_log, "w")
+    kiwi_command = ["sudo /usr/sbin/kiwi #{build_opts}"]
     begin
       Command.run(
-        "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
-        "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
-        "sudo /usr/sbin/kiwi #{build_opts}",
+        buildsystem.job_builder_command | kiwi_command,
         :stdout => logfile,
         :stderr => logfile
       )
@@ -47,11 +42,10 @@ class Job
     logfile = File.open(build_log, "a")
     bundle_opts = "--bundle-build /tmp/image --bundle-id DiceBuild " +
       "--destdir /tmp/bundle --logfile terminal"
+    kiwi_command = ["sudo /usr/sbin/kiwi #{bundle_opts}"]
     begin
       Command.run(
-        "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
-        "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
-        "sudo /usr/sbin/kiwi #{bundle_opts}",
+        buildsystem.job_builder_command | kiwi_command,
         :stdout => logfile,
         :stderr => logfile
       )
@@ -68,11 +62,10 @@ class Job
   def get_result
     Dice.logger.info("#{self.class}: Retrieving results in #{archive}...")
     result = File.open(archive, "w")
+    result_command = ["sudo tar --exclude image-root -C /tmp/bundle -c ."]
     begin
       Command.run(
-        "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
-        "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
-        "sudo tar --exclude image-root -C /tmp/bundle -c .",
+        buildsystem.job_builder_command | result_command,
         :stdout => result
       )
     rescue Cheetah::ExecutionFailed => e
@@ -90,11 +83,12 @@ class Job
   def prepare_build
     Dice.logger.info("#{self.class}: Preparing build...")
     FileUtils.rm(archive) if File.file?(archive)
+    prepare_command = [
+      "sudo rm -rf /tmp/image /tmp/bundle /var/lock/kiwi-init.lock"
+    ]
     begin
       Command.run(
-        "ssh", "-o", "StrictHostKeyChecking=no", "-p", port,
-        "-i", buildsystem.get_private_key_path, "#{job_user}@#{ip}",
-        "sudo rm -rf /tmp/image /tmp/bundle /var/lock/kiwi-init.lock"
+        buildsystem.job_builder_command | prepare_command
       )
     rescue Cheetah::ExecutionFailed => e
       Dice.logger.info("#{self.class}: Preparation failed")
