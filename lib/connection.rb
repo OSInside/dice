@@ -10,6 +10,11 @@ class Connection
           "#{self}: Connecting to Vagrant virtualized buildsystem"
         )
         connection = vagrant_connection
+      elsif Dice.config.buildhost == Dice::DOCKER_BUILD
+        Dice.logger.info(
+          "#{self}: Connecting to Docker container"
+        )
+        connection = docker_connection
       else
         hostname = Dice.config.buildhost
         Dice.logger.info(
@@ -21,6 +26,10 @@ class Connection
     end
 
     private
+
+    def docker_connection
+      ConnectionDockerBuildSystem.new(recipe)
+    end
 
     def vagrant_connection
       ConnectionVagrantBuildSystem.new(recipe)

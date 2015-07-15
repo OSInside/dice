@@ -3,11 +3,11 @@ require_relative "spec_helper"
 describe Job do
   before(:each) do
     # test job with an instance of a vagrant build system
-    allow_any_instance_of(VagrantBuildSystem).to receive(:get_ip).
+    allow_any_instance_of(VagrantBuildSystem).to receive(:host).
       and_return("127.0.0.1")
-    allow_any_instance_of(VagrantBuildSystem).to receive(:get_port).
+    allow_any_instance_of(VagrantBuildSystem).to receive(:port).
       and_return("2200")
-    allow_any_instance_of(VagrantBuildSystem).to receive(:get_private_key_path).
+    allow_any_instance_of(VagrantBuildSystem).to receive(:private_key_path).
       and_return("key")
 
     # build a recipe to initialize the buildsystem with

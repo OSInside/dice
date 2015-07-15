@@ -76,4 +76,37 @@ describe BuildSystemBase do
       expect(Dice.option).to eq(options)
     end
   end
+
+  describe "#job_builder_command" do
+    it "builds the commandline to run a command via ssh" do
+      expect(@system.job_builder_command("command_call")).to match(
+        [
+          "ssh",
+          "-o", "StrictHostKeyChecking=no",
+          "-p", "22",
+          "-i", /dice\/key\/vagrant/,
+          "vagrant@VAGRANT",
+          "sudo command_call"
+        ]
+      )
+    end
+  end
+
+  describe "#private_key_path" do
+    it "returns the path to the ssh private key" do
+      expect(@system.private_key_path).to match(/dice\/key\/vagrant/)
+    end
+  end
+
+  describe "#port" do
+    it "returns standard ssh port" do
+      expect(@system.port).to eq("22")
+    end
+  end
+
+  describe "#host" do
+    it "returns ip or host name" do
+      expect(@system.host).to eq(:VAGRANT)
+    end
+  end
 end

@@ -9,7 +9,6 @@ describe HostBuildSystem do
     allow(@recipe).to receive(:change_working_dir)
 
     @system = HostBuildSystem.new(@recipe)
-    @host = @system.instance_variable_get(:@host)
   end
 
   describe "#get_lockfile" do
@@ -20,7 +19,7 @@ describe HostBuildSystem do
 
   describe "#up" do
     it "checks if build worked is busy with other task" do
-      expect(Dice::logger).to receive(:info).with(/#{@host}/)
+      expect(Dice::logger).to receive(:info).with(/#{@system.host}/)
       expect(@system).to receive(:is_busy?).and_return(true)
       expect { @system.up }.to raise_error(
         Dice::Errors::BuildWorkerBusy
@@ -34,7 +33,7 @@ describe HostBuildSystem do
         "rsync", "-e",
         /ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 -i .*key\/vagrant/,
         "--rsync-path", "sudo rsync", "-z", "-a", "-v", "--delete",
-        "--exclude", ".*", ".", "vagrant@#{@host}:/vagrant",
+        "--exclude", ".*", ".", "vagrant@#{@system.host}:/vagrant",
         {:stdout=>:capture}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
@@ -51,22 +50,10 @@ describe HostBuildSystem do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-o",
         "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,
-        "vagrant@#{@host}", "sudo", "killall", "kiwi"
+        "vagrant@#{@system.host}", "sudo", "killall", "kiwi"
       )
       expect(@recipe).to receive(:reset_working_dir)
       @system.halt
-    end
-  end
-
-  describe "#get_port" do
-    it "returns standard ssh port" do
-      expect(@system.get_port).to eq("22")
-    end
-  end
-
-  describe "#get_ip" do
-    it "returns ip or host name" do
-      expect(@system.get_ip).to eq(@host)
     end
   end
 
@@ -75,7 +62,7 @@ describe HostBuildSystem do
       expect(Command).to receive(:run).with(
         "ssh", "-o", "StrictHostKeyChecking=no", "-o",
         "NumberOfPasswordPrompts=0", "-i", /key\/vagrant/,
-        "vagrant@#{@host}", "sudo", "pidof", "-x", "kiwi"
+        "vagrant@#{@system.host}", "sudo", "pidof", "-x", "kiwi"
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )

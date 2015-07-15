@@ -24,5 +24,13 @@ describe BuildSystem do
         HostBuildSystem
       )
     end
+
+    it "returns a DockerBuildSystem" do
+      Dice.config.buildhost = Dice::DOCKER_BUILD
+      buildsystem = BuildSystem.new(@recipe)
+      expect(buildsystem).to be_a(
+        DockerBuildSystem
+      )
+    end
   end
 end

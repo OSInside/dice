@@ -4,11 +4,8 @@ class BuildSystemBase
   abstract_method :up
   abstract_method :provision
   abstract_method :halt
-  abstract_method :get_port
-  abstract_method :get_ip
   abstract_method :is_busy?
   abstract_method :get_lockfile
-  abstract_method :get_private_key_path
 
   def initialize(recipe)
     @recipe = recipe
@@ -54,11 +51,14 @@ class BuildSystemBase
     @job ||= Job.new(self)
   end
 
-  def job_builder_command
-    job_user = Dice.config.ssh_user
+  def job_builder_command(action)
     command = [
-      "ssh", "-o", "StrictHostKeyChecking=no", "-p", get_port,
-      "-i", get_private_key_path, "#{job_user}@#{get_ip}"
+      "ssh",
+      "-o", "StrictHostKeyChecking=no",
+      "-p", port,
+      "-i", private_key_path,
+      "#{user}@#{host}",
+      "sudo #{action}"
     ]
     command
   end
@@ -76,6 +76,23 @@ class BuildSystemBase
     rescue
       # ignore if no buildoptions exists
     end
+  end
+
+  def private_key_path
+    Dice.config.ssh_private_key
+  end
+
+  def port
+    port = "22"
+    port
+  end
+
+  def host
+    Dice.config.buildhost
+  end
+
+  def user
+    Dice.config.ssh_user
   end
 
   private

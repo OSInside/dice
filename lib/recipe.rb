@@ -60,6 +60,11 @@ class Recipe
     end
   end
 
+  def build_name_from_path
+    name = basepath.gsub("/", "_").sub(/^_/, "")
+    name
+  end
+
   private
 
   def get_cwd

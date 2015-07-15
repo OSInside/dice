@@ -1,6 +1,7 @@
 module Dice
   ROOT = File.expand_path("..", File.dirname(__FILE__))
   VAGRANT_BUILD = :VAGRANT
+  DOCKER_BUILD = :DOCKER
   SSH_USER = "vagrant"
   SSH_PRIVATE_KEY_PATH = File.join(ROOT, "key/vagrant")
 

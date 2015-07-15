@@ -36,5 +36,6 @@ module Dice
     class MountISOFailed < DiceError; end
     class GetSSHPrivateKeyPathFailed < DiceError; end
     class UriNotFound < DiceError; end
+    class DockerPullFailed < DiceError; end
   end
 end

@@ -80,33 +80,33 @@ describe VagrantBuildSystem do
     end
   end
 
-  describe "#get_port" do
+  describe "#port" do
     it "extracts forwarded port from vagrant up output" do
-      expect(@system.get_port).to eq("22")
+      expect(@system.port).to eq("22")
       @system.instance_variable_set(:@ssh_output, "")
-      expect { @system.get_port }.to raise_error(
+      expect { @system.port }.to raise_error(
         Dice::Errors::GetPortFailed, /<empty-output>/
       )
     end
   end
 
-  describe "#get_ip" do
+  describe "#host" do
     it "returns loopback address" do
-      expect(@system.get_ip).to eq("192.168.121.65")
+      expect(@system.host).to eq("192.168.121.65")
       @system.instance_variable_set(:@ssh_output, "")
-      expect { @system.get_ip }.to raise_error(
+      expect { @system.host }.to raise_error(
         Dice::Errors::GetIPFailed, /<empty-output>/
       )
     end
   end
 
-  describe "#get_private_key_path" do
+  describe "#private_key_path" do
     it "returns path to ssh private key" do
-      expect(@system.get_private_key_path).to eq(
+      expect(@system.private_key_path).to eq(
         "/home/ms/.vagrant.d/insecure_private_key"
       )
       @system.instance_variable_set(:@ssh_output, "")
-      expect { @system.get_private_key_path }.to raise_error(
+      expect { @system.private_key_path }.to raise_error(
         Dice::Errors::GetSSHPrivateKeyPathFailed, /<empty-output>/
       )
     end

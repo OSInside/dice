@@ -24,5 +24,13 @@ describe Connection do
         ConnectionHostBuildSystem
       )
     end
+
+    it "returns a ConnectionDockerBuildSystem" do
+      Dice.config.buildhost = Dice::DOCKER_BUILD
+      connection = Connection.new(@recipe)
+      expect(connection).to be_a(
+        ConnectionDockerBuildSystem
+      )
+    end
   end
 end

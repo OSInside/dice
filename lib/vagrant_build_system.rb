@@ -70,7 +70,7 @@ class VagrantBuildSystem < BuildSystemBase
     @recipe.reset_working_dir
   end
 
-  def get_port
+  def port
     port = nil
     if ssh_output =~ /Executing SSH.*\-p.*\"(\d+)\".*/
       port = $1
@@ -85,7 +85,7 @@ class VagrantBuildSystem < BuildSystemBase
     port
   end
 
-  def get_ip
+  def host
     ip = nil
     if ssh_output =~ /Executing SSH.*@(.*?)\".*/
       ip = $1
@@ -100,7 +100,7 @@ class VagrantBuildSystem < BuildSystemBase
     ip
   end
 
-  def get_private_key_path
+  def private_key_path
     pkey = nil
     if ssh_output =~ /Executing SSH.*\-i.*\"(\/.*?)\".*/
       pkey = $1

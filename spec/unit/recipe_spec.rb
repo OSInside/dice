@@ -23,6 +23,13 @@ describe Recipe do
     end
   end
 
+  describe "#build_name_from_path" do
+    it "builds a name from the absolute base path" do
+      expect(@recipe).to receive(:basepath).and_return("some/path")
+      expect(@recipe.build_name_from_path).to eq("some_path")
+    end
+  end
+
   describe "#setup" do
     it "loads dice and kiwi config and creates the metadata directory" do
       expect(@recipe).to receive(:load_dice_config)
