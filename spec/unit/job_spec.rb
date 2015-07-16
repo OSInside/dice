@@ -19,6 +19,8 @@ describe Job do
     system = VagrantBuildSystem.new(recipe)
 
     @job = Job.new(system)
+    @job_name = @job.instance_variable_get(:@job_name)
+    @bundle_name = @job.instance_variable_get(:@bundle_name)
   end
 
   describe "#build" do
@@ -31,12 +33,13 @@ describe Job do
       expect(Command).to receive(:run).with(
         ["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
         "key", "vagrant@127.0.0.1",
-        "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/image --logfile terminal"],
+        "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/#{@job_name} --logfile terminal"],
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
       expect(logfile).to receive(:close)
+      expect(@job).to receive(:cleanup_build)
       expect { @job.build }.to raise_error(Dice::Errors::BuildFailed)
     end
   end
@@ -50,12 +53,13 @@ describe Job do
       expect(Command).to receive(:run).with(
         ["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
         "key", "vagrant@127.0.0.1",
-        "sudo /usr/sbin/kiwi --bundle-build /tmp/image --bundle-id DiceBuild --destdir /tmp/bundle --logfile terminal"],
+        "sudo /usr/sbin/kiwi --bundle-build /tmp/#{@job_name} --bundle-id DiceBuild --destdir /tmp/#{@bundle_name} --logfile terminal"],
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
       expect(logfile).to receive(:close)
+      expect(@job).to receive(:cleanup_build)
       expect { @job.bundle }.to raise_error(Dice::Errors::BuildFailed)
     end
   end
@@ -68,12 +72,13 @@ describe Job do
       with(["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
         "-i", "key",
         "vagrant@127.0.0.1",
-        "sudo tar --exclude image-root -C /tmp/bundle -c ."],
+        "sudo tar --exclude image-root -C /tmp/#{@bundle_name} -c ."],
         {:stdout=>result}).
       and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
       )
       expect(result).to receive(:close)
+      expect(@job).to receive(:cleanup_build)
       expect { @job.get_result }.to raise_error(
         Dice::Errors::ResultRetrievalFailed
       )
