@@ -63,6 +63,7 @@ class DockerBuildSystem < BuildSystemBase
       "--privileged=true",
       "--name=#{container_name}",
       "-v", "#{recipe.basepath}:/vagrant",
+      "-v", "/tmp:/tmp",
       Dice::DOCKER_BUILD_CONTAINER,
       "bash", "-c", action
     ]

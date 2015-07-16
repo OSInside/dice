@@ -108,6 +108,7 @@ describe DockerBuildSystem do
           "--privileged=true",
           "--name=some_description_dir",
           "-v", "some/description/dir:/vagrant",
+          "-v", "/tmp:/tmp",
           Dice::DOCKER_BUILD_CONTAINER,
           "bash", "-c", "command_call"
         ]
