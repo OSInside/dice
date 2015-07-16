@@ -14,11 +14,11 @@ class DockerBuildSystem < BuildSystemBase
     )
     begin
       up_output = Command.run(
-        "docker", "pull", "opensuse/kiwi", :stdout => :capture
+        "docker", "pull", Dice::DOCKER_BUILD_CONTAINER, :stdout => :capture
       )
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::DockerPullFailed.new(
-        "Pulling opensuse/kiwi failed with: #{e.stderr}"
+        "Pulling #{Dice::DOCKER_BUILD_CONTAINER} failed with: #{e.stderr}"
       )
     end
     Dice.logger.info("#{self.class}: #{up_output}")
@@ -34,6 +34,13 @@ class DockerBuildSystem < BuildSystemBase
   def halt
     container_name = recipe.build_name_from_path
     Dice.logger.info("#{self.class}: Delete container...")
+    begin
+       Command.run("docker", "inspect", container_name)
+    rescue Cheetah::ExecutionFailed
+       # given container is already gone, no action needed
+       recipe.reset_working_dir
+       return
+    end
     begin
       halt_output = Command.run(
         "docker", "rm", container_name, :stdout => :capture
@@ -51,11 +58,13 @@ class DockerBuildSystem < BuildSystemBase
     container_name = recipe.build_name_from_path
     command = [
       "docker", "run",
+      "--rm=true",
       "--entrypoint=sudo",
       "--privileged=true",
       "--name=#{container_name}",
       "-v", "#{recipe.basepath}:/vagrant",
-      "opensuse/kiwi", "sudo #{action}"
+      Dice::DOCKER_BUILD_CONTAINER,
+      "bash", "-c", action
     ]
     command
   end

@@ -27,7 +27,7 @@ describe DockerBuildSystem do
     it "puts headline and up output on normal operation" do
       expect(Dice::logger).to receive(:info).with(/DockerBuildSystem:/)
       expect(Command).to receive(:run).with(
-        "docker", "pull", "opensuse/kiwi", {:stdout=>:capture}
+        "docker", "pull", Dice::DOCKER_BUILD_CONTAINER, {:stdout=>:capture}
       ).and_return("foo")
       expect(Dice::logger).to receive(:info).with("DockerBuildSystem: foo")
       @system.up
@@ -41,8 +41,24 @@ describe DockerBuildSystem do
   end
 
   describe "#halt" do
+    it "resets the working directory if container is already gone" do
+      expect(@recipe).to receive(:build_name_from_path).and_return("foo")
+      expect(Command).to receive(:run).with(
+        "docker", "inspect", "foo"
+      ).and_raise(
+        Cheetah::ExecutionFailed.new(nil, nil, nil, "foo")
+      )
+      expect(@recipe).to receive(:reset_working_dir)
+      @system.halt
+    end
+
     it "print error if container deletion failed" do
-      expect(Command).to receive(:run).and_raise(
+      expect(@recipe).to receive(:build_name_from_path).and_return("foo")
+      expect(Command).to receive(:run).with("docker", "inspect", "foo")
+
+      expect(Command).to receive(:run).with(
+        "docker", "rm", "foo", :stdout => :capture
+      ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, "foo")
       )
       expect(Dice::logger).to receive(:error).with(
@@ -53,7 +69,8 @@ describe DockerBuildSystem do
 
     it "resets the working directory and deletes the container" do
       expect(@recipe).to receive(:build_name_from_path).and_return("foo")
-      expect(Dice::logger).to receive(:info)
+      expect(Command).to receive(:run).with("docker", "inspect", "foo")
+
       expect(Command).to receive(:run).with(
         "docker", "rm", 'foo', :stdout => :capture
       ).and_return("foo")
@@ -86,12 +103,13 @@ describe DockerBuildSystem do
       expect(@system.job_builder_command("command_call")).to eq(
         [
           "docker", "run",
+          "--rm=true",
           "--entrypoint=sudo",
           "--privileged=true",
           "--name=some_description_dir",
           "-v", "some/description/dir:/vagrant",
-          "opensuse/kiwi",
-          "sudo command_call"
+          Dice::DOCKER_BUILD_CONTAINER,
+          "bash", "-c", "command_call"
         ]
       )
     end
