@@ -30,6 +30,7 @@ describe Job do
       expect(File).to receive(:open).with(
         /build\.log/, "w"
       ).and_return(logfile)
+      expect(logfile).to receive(:sync=).with(true)
       expect(Command).to receive(:run).with(
         ["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
         "key", "vagrant@127.0.0.1",
@@ -50,6 +51,7 @@ describe Job do
       expect(File).to receive(:open).with(
         /build\.log/, "a"
       ).and_return(logfile)
+      expect(logfile).to receive(:sync=).with(true)
       expect(Command).to receive(:run).with(
         ["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
         "key", "vagrant@127.0.0.1",

@@ -22,6 +22,7 @@ class Job
       build_opts += " --add-profile #{Dice.option.kiwiprofile}"
     end
     logfile = File.open(build_log, "w")
+    logfile.sync = true
     kiwi_command = "/usr/sbin/kiwi #{build_opts}"
     begin
       Command.run(
@@ -43,6 +44,7 @@ class Job
   def bundle
     Dice.logger.info("#{self.class}: Bundle results...")
     logfile = File.open(build_log, "a")
+    logfile.sync = true
     bundle_opts = "--bundle-build /tmp/#{job_name} --bundle-id DiceBuild " +
       "--destdir /tmp/#{bundle_name} --logfile terminal"
     kiwi_command = "/usr/sbin/kiwi #{bundle_opts}"
