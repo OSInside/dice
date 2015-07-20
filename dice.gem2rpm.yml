@@ -47,9 +47,9 @@
 #   :post: |-
 #     /bin/echo foo
 # ## used by gem_packages
-# :main:
-#   :preamble: |-
-#     Requires: util-linux
+:main:
+  :preamble: |-
+    Requires: ruby-solv
 #     Recommends: pwgen
 #   :filelist: |-
 #     /usr/bin/gem2rpm-opensuse

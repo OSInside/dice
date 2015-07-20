@@ -93,16 +93,6 @@ bundle install --standalone --local
 
 rm -rf vendor .bundle Gemfile Gemfile.lock
 
-# Adapt the binary
-
-# Here we do a surgery on the binary to actually load the bundled gems. This is
-# a hack, but it can't be done anywhere else because the binary is generated
-# during gem install.
-sed -i '/gem/i \
-Gem.path.unshift("%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/bundle/ruby/%{rb_ver}")
-
-' bin/%{mod_name}
-
 # Delete devel source
 ( cd lib/semaphore && rm -f semaphore.cpp Makefile extconf.rb )
 
@@ -111,6 +101,15 @@ mkdir -p %{buildroot}/etc/bash_completion.d
 mv completion/dice.sh %{buildroot}/etc/bash_completion.d
 
 popd
+
+# Adapt the binary
+# Here we do a surgery on the binary to actually load the bundled gems.
+# This is a hack, but it can't be done anywhere else because the binary
+# is generated during gem install.
+sed -i '/gem/i \
+Gem.path.unshift("%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_full_name}/bundle/ruby/%{rb_ver}")
+
+' %{buildroot}/usr/bin/dice.ruby*-%{version}
 
 # Convert duplicate files to symlinks
 %fdupes -s %{buildroot}
