@@ -85,6 +85,8 @@ class Cli
   command :build do |c|
     c.switch ["force", :f], :required => false, :negatable => false,
       :desc => "Force building even if status is up to data"
+    c.switch ["skip-missing", :i], :required => false, :negatable => false,
+      :desc => "Skip packages not found in the repositories"
     c.flag ["kiwitype", :t], :kiwitype => String, :required => false,
       :desc => "Set kiwi build type"
     c.flag ["kiwiprofile", :p], :kiwiprofile => String, :required => false,
@@ -149,6 +151,8 @@ class Cli
   LONGDESC
   arg "RECIPE-PATH"
   command :status do |c|
+    c.switch ["skip-missing", :i], :required => false, :negatable => false,
+      :desc => "Skip packages not found in the repositories"
     c.action do |global_options,options,args|
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")

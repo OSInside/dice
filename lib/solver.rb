@@ -85,11 +85,15 @@ class Solver
     kiwi_config.packages.each do |package|
       item = pool.select(package, Solv::Selection::SELECTION_NAME)
       if item.isempty?
-        raise Dice::Errors::SolvJobFailed.new(
-          "No solver information for package: #{package}"
-        )
+        message = "Package #{package} not found in repository setup"
+        if Dice.option["skip-missing"]
+          Dice.logger.info("#{message}: skipped")
+        else
+          raise Dice::Errors::SolvJobFailed.new(message)
+        end
+      else
+        jobs += item.jobs(Solv::Job::SOLVER_INSTALL)
       end
-      jobs += item.jobs(Solv::Job::SOLVER_INSTALL)
     end
     jobs
   end
