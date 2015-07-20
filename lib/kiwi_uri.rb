@@ -11,6 +11,7 @@ class KiwiUri
       when /^obs:\/\/(.*)/
         # obs url, translate to http url
         bs_path = $1.gsub(/:/, ":/")
+        bs_path = bs_path.gsub(/:\/\//, ":/")
         args[:name] = "http://download.opensuse.org/repositories/#{bs_path}"
       when /^(\/.*)/
         # Simple path, should be a distribution dir
