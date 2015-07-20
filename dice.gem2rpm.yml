@@ -50,6 +50,7 @@
 :main:
   :preamble: |-
     Requires: ruby-solv
+    Requires: which
 #     Recommends: pwgen
 #   :filelist: |-
 #     /usr/bin/gem2rpm-opensuse

@@ -24,8 +24,8 @@ class RpmMdRepository < RepositoryBase
       :source_dir => tmp_dir,
       :dest_dir   => solv_dir
     )
-    # rpm-md repos created by the buildservice optionaly provides
-    # pattern information in suse style which we add to the solvable
+    # rpm-md repos created for SUSE/zypper optionaly provides
+    # pattern information which we add to the solvable
     # when present
     get_pattern_files.each do |pattern|
       curl_file(
@@ -38,6 +38,22 @@ class RpmMdRepository < RepositoryBase
       :source_dir => tmp_dir + "/patterns",
       :dest_dir   => solv_dir
     )
+    # rpm-md repos created for RHEL/yum optionaly provides
+    # group information which we add to the solvable
+    # when present
+    get_group_files do |group|
+      curl_file(
+        :source => group,
+        :dest   => tmp_dir + "/groups/" + File.basename(group)
+      )
+    end
+    if Command.exists?("comps2solv")
+      create_solv(
+        :tool       => "comps2solv",
+        :source_dir => tmp_dir + "/groups",
+        :dest_dir   => solv_dir
+      )
+    end
     merge_solv(solv_dir, time)
     cleanup
     solv_file
@@ -76,14 +92,27 @@ class RpmMdRepository < RepositoryBase
     begin
       patterns = load_file(patbase + "/patterns").split("\n")
     rescue
-      # the patterns information is an optional addition
-      # the buildservice could add to an rpm-md repo. if it
-      # does not exist it's not an error
+      # the patterns information is optional.
+      # There is no error if no such data exists
       return result
     end
     patterns.each do |pat|
       patfile = patbase + "/" + pat
       result << patfile
+    end
+    result
+  end
+
+  def get_group_files
+    result = []
+    rxml.elements.each("repomd/data[@type='group']/location") do |e|
+      href = e.attribute("href").to_s
+      result << href
+    end
+    if !result.empty? && !Command.exists?("comps2solv")
+      Dice.logger.info(
+        "#{self.class}: comps2solv missing, yum groups can't be processed"
+      )
     end
     result
   end

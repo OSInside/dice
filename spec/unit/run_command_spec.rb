@@ -8,4 +8,14 @@ describe Command do
       Command.run(args)
     end
   end
+
+  describe "#self.exists" do
+    it "checks via which if command exists and returns true" do
+      expect(Command.exists?("bash")).to eq(true)
+    end
+
+    it "checks via which if command exists and returns false" do
+      expect(Command.exists?("foo")).to eq(false)
+    end
+  end
 end
