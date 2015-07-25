@@ -16,6 +16,7 @@ class Uri
     @allowed_local_types  = OpenStruct.new
     allowed_local_types.iso    = true
     allowed_local_types.dir    = true
+    allowed_local_types.this   = true
 
     type_ok?
 
