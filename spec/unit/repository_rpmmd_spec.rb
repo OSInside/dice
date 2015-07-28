@@ -49,7 +49,10 @@ describe RpmMdRepository do
       expect(Command).to receive(:exists?).with(
         "comps2solv"
       ).and_return(true)
-      expect(@repo).to receive(:get_group_files).and_return(["a", "b"])
+      expect(@repo).to receive(:get_group_files).and_return(["a"])
+      expect(@repo).to receive(:curl_file).with(
+        :source => "a", :dest => "tmp/groups/a"
+      )
       expect(@repo).to receive(:create_solv).with(
         :tool => "comps2solv", :source_dir => "tmp/groups",
         :dest_dir => "tmp/solv"

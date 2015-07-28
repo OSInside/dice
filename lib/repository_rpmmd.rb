@@ -41,7 +41,7 @@ class RpmMdRepository < RepositoryBase
     # rpm-md repos created for RHEL/yum optionaly provides
     # group information which we add to the solvable
     # when present
-    get_group_files do |group|
+    get_group_files.each do |group|
       curl_file(
         :source => group,
         :dest   => tmp_dir + "/groups/" + File.basename(group)
@@ -105,7 +105,7 @@ class RpmMdRepository < RepositoryBase
 
   def get_group_files
     result = []
-    rxml.elements.each("repomd/data[@type='group']/location") do |e|
+    rxml.elements.each("repomd/data[@type='group_gz']/location") do |e|
       href = e.attribute("href").to_s
       result << href
     end
