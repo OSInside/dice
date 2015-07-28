@@ -132,7 +132,12 @@ class Recipe
 
   def calculateDigest
     result = ""
-    recipe_items = Find.find(".")
+    recipe_files = Dir.glob("*")
+    if File.exists?("root")
+      overlay_files = Find.find("root")
+    end
+    recipe_items = recipe_files.to_a + overlay_files.to_a
+    recipe_items = recipe_items.sort.uniq
     recipe_items.each do |item|
       item.gsub!(/^\.\//,'')
       next if File.directory?(item)
