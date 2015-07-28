@@ -84,8 +84,20 @@ class Solver
     jobs = []
     kiwi_config.packages.each do |package|
       item = pool.select(package, Solv::Selection::SELECTION_NAME)
+      if item.isempty? and package.include?("pattern:")
+         # package was a pattern definition which was not found, try to
+         # check if it is found as yum group before we handle this as an
+         # error
+         group_name = package.sub("pattern:", "group:")
+         item = pool.select(group_name, Solv::Selection::SELECTION_NAME)
+      end
       if item.isempty?
-        message = "Package #{package} not found in repository setup"
+        if package.include?("pattern:")
+          collection_name = package.sub("pattern:", "")
+          message = "Package Collection: '#{collection_name}' not found"
+        else
+          message = "Package: '#{package}' not found"
+        end
         if Dice.option["skip-missing"]
           Dice.logger.info("#{message}: skipped")
         else
