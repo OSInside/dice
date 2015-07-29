@@ -91,7 +91,7 @@ class Job
   def prepare_build
     Dice.logger.info("#{self.class}: Preparing build...")
     FileUtils.rm(archive) if File.file?(archive)
-    prepare_command = "rm -rf /tmp/kiwi_*.dice /var/lock/kiwi-init.lock"
+    prepare_command = "rm -rf /var/lock/kiwi-init.lock"
     begin
       Command.run(
         buildsystem.job_builder_command(prepare_command)
