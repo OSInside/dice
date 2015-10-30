@@ -66,22 +66,23 @@ describe RepositoryBase do
     it "creates a solvable with a randomized name" do
       dest_dir = "/some/dest-path"
       source_dir = "/some/source-path"
-      tool = "mytool"
+      tool = "rpmmd2solv"
       solvable = double(File)
       expect(FileUtils).to receive(:mkdir_p).with(dest_dir)
+      expect(Dir).to receive(:glob).with(source_dir + "/*").and_return(
+          ["primary.gz"]
+      )
       expect(File).to receive(:open).with(
         dest_dir + "/solvable-FFFFFFFF", "wb"
       ).and_return(solvable)
       expect(Cheetah).to receive(:run).with(
-        "bash", "-c", "gzip -cd --force #{source_dir}/* | #{tool}",
+        "bash", "-c", "gzip -cd --force primary.gz | #{tool}",
         :stdout => solvable
       )
       expect(solvable).to receive(:close)
       expect(@repo.create_solv(
         :tool => tool, :source_dir => source_dir, :dest_dir => dest_dir
-      )).to eq(
-        "solvable-FFFFFFFF"
-      )
+      ))
     end
 
     it "raises if solver tool failed" do

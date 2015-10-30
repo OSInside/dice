@@ -71,27 +71,32 @@ class RepositoryBase
     source_dir = args[:source_dir]
     dest_dir   = args[:dest_dir]
     FileUtils.mkdir_p(dest_dir)
-    rand_name = "solvable-" + (0...8).map { (65 + Kernel.rand(26)).chr }.join
-    solvable = File.open(dest_dir + "/" + rand_name, "wb")
     begin
       if tool == 'rpms2solv'
+        solvable = File.open(dest_dir + "/" + rand_solvable_name, "wb")
         Command.run(
           "bash", "-c", "#{tool} #{source_dir}/*.rpm",
           :stdout => solvable
         )
+        solvable.close
       else
-        Command.run(
-          "bash", "-c", "gzip -cd --force #{source_dir}/* | #{tool}",
-          :stdout => solvable
-        )
+        solv_files = Dir.glob(source_dir + "/*")
+        solv_files.each do |solv|
+          next if File.directory?(solv)
+          next if solv =~ /.rpm$/
+          solvable = File.open(dest_dir + "/" + rand_solvable_name, "wb")
+          Command.run(
+            "bash", "-c", "gzip -cd --force #{solv} | #{tool}",
+            :stdout => solvable
+          )
+          solvable.close
+        end
       end
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::SolvToolFailed.new(
         "Creating solvable failed: #{e.stderr}"
       )
     end
-    solvable.close
-    rand_name
   end
 
   def merge_solv(source_dir, timestamp = "static")
@@ -149,6 +154,10 @@ class RepositoryBase
   end
 
   private
+
+  def rand_solvable_name
+    return "solvable-" + (0...8).map { (65 + Kernel.rand(26)).chr }.join
+  end
 
   def check_404_header(source, dest)
     outfile = File.open(dest, "rb")
