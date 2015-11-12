@@ -37,6 +37,7 @@ BuildRequires:  %{rubygem <%= require[:name] %> <%= require[:operator] %> <%= re
 %define __requires_exclude ^rubygem
 Requires:       ruby >= 2.0
 Requires:       ruby-solv
+Requires:       curl
 Url:            http://www.suse.com
 Source0:        %{mod_full_name}.gem
 Source1:        %{mod_name}-rpmlintrc
