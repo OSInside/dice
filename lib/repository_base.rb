@@ -162,8 +162,14 @@ class RepositoryBase
   def check_404_header(source, dest)
     outfile = File.open(dest, "rb")
     # if there is a 404 not found information it will be in the first two lines
-    header = outfile.readline
-    header+= outfile.readline
+    begin
+      header = outfile.readline
+      header+= outfile.readline
+    rescue
+      # ignore errors in read and just look on what has been read so far
+      # source input could be compressed data which could confuse the
+      # readline call, but has no negative impact on this check
+    end
     outfile.close
     if header =~ /404 Not Found/
       raise Dice::Errors::CurlFileFailed.new(
