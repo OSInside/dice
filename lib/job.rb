@@ -23,7 +23,8 @@ class Job
     end
     logfile = File.open(build_log, "w")
     logfile.sync = true
-    kiwi_command = "/usr/sbin/kiwi #{build_opts}"
+    kiwi_environment = "export KIWI_IGNORE_OLD_MOUNTS=1"
+    kiwi_command = "bash -c '#{kiwi_environment}; /usr/sbin/kiwi #{build_opts}'"
     begin
       Command.run(
         buildsystem.job_builder_command(kiwi_command),

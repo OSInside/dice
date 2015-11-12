@@ -34,7 +34,7 @@ describe Job do
       expect(Command).to receive(:run).with(
         ["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
         "key", "vagrant@127.0.0.1",
-        "sudo /usr/sbin/kiwi --build /vagrant -d /tmp/#{@job_name} --logfile terminal"],
+        "sudo bash -c 'export KIWI_IGNORE_OLD_MOUNTS=1; /usr/sbin/kiwi --build /vagrant -d /tmp/#{@job_name} --logfile terminal'"],
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
