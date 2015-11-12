@@ -5,7 +5,7 @@ describe Repository do
     @rpmmd_repo = double(RpmMdRepository)
     @suse_repo = double(SuSERepository)
     @plaindir_repo = double(PlainDirRepository)
-    @uri = double(Uri)
+    @uri = double(RepoUri)
     allow(@uri).to receive(:name)
     allow(RpmMdRepository).to receive(:new).and_return(@rpmmd_repo)
     allow(SuSERepository).to receive(:new).and_return(@suse_repo)

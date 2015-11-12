@@ -15,7 +15,7 @@ require "json"
 require "inifile"
 require "time"
 
-require_relative "uri"
+require_relative "repo_uri"
 require_relative "cleaner"
 require_relative "semaphore/semaphore"
 require_relative "dice_options"

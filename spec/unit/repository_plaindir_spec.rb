@@ -7,7 +7,7 @@ describe PlainDirRepository do
     allow_any_instance_of(PlainDirRepository).to receive(:super)
     allow_any_instance_of(PlainDirRepository).to receive(:solv_meta)
       .and_return(@meta)
-    uri = double(Uri)
+    uri = double(RepoUri)
     allow(uri).to receive(:location)
     @repo = PlainDirRepository.new(uri)
   end

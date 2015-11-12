@@ -10,7 +10,7 @@ describe RpmMdRepository do
       .and_return(@meta)
     allow_any_instance_of(RpmMdRepository).to receive(:get_repoxml)
       .and_return(@rxml)
-    uri = double(Uri)
+    uri = double(RepoUri)
     @repo = RpmMdRepository.new(uri)
   end
 

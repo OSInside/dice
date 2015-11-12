@@ -17,7 +17,7 @@ class KiwiUri
         # Simple path, should be a distribution dir
         args[:name] = "dir://#{$1}/"
       end
-      Uri.new(args)
+      RepoUri.new(args)
     end
   end
 end

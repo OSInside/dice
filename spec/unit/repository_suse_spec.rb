@@ -7,7 +7,7 @@ describe SuSERepository do
     allow_any_instance_of(SuSERepository).to receive(:super)
     allow_any_instance_of(SuSERepository).to receive(:solv_meta)
       .and_return(@meta)
-    uri = double(Uri)
+    uri = double(RepoUri)
     @repo = SuSERepository.new(uri)
   end
 

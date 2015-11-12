@@ -1,4 +1,4 @@
-class Uri
+class RepoUri
   attr_reader :name, :type, :location, :repo_type
   attr_reader :allowed_local_types, :allowed_remote_types
   attr_reader :mount_point
