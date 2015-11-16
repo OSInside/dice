@@ -54,6 +54,20 @@ class DockerBuildSystem < BuildSystemBase
     recipe.reset_working_dir
   end
 
+  def archive_job_result(job_result_dir, archive_filename)
+    archive = File.basename(archive_filename)
+    result_command = "tar -C #{job_result_dir} -cf /vagrant/.dice/#{archive} ."
+    begin
+      Command.run(
+        job_builder_command(result_command)
+      )
+    rescue Cheetah::ExecutionFailed => e
+      raise Dice::Errors::ResultRetrievalFailed.new(
+        "Archiving result failed with: #{e.stderr}"
+      )
+    end
+  end
+
   def job_builder_command(action)
     container_name = recipe.build_name_from_path
     command = [

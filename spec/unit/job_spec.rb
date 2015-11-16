@@ -16,9 +16,9 @@ describe Job do
     allow(recipe).to receive(:basepath).and_return(description)
     allow(recipe).to receive(:change_working_dir)
 
-    system = VagrantBuildSystem.new(recipe)
+    @system = VagrantBuildSystem.new(recipe)
 
-    @job = Job.new(system)
+    @job = Job.new(@system)
     @job_name = @job.instance_variable_get(:@job_name)
     @bundle_name = @job.instance_variable_get(:@bundle_name)
   end
@@ -68,18 +68,12 @@ describe Job do
 
   describe "#get_result" do
     it "raises if result retrieval failed" do
-      result = double(File)
-      expect(File).to receive(:open).and_return(result)
-      expect(Command).to receive(:run).
-      with(["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200",
-        "-i", "key",
-        "vagrant@127.0.0.1",
-        "sudo tar --exclude image-root -C /tmp/#{@bundle_name} -c ."],
-        {:stdout=>result}).
-      and_raise(
-        Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
+      expect(@job).to receive(:bundle_name).and_return('some_bundle')
+      expect(@system).to receive(:archive_job_result).with(
+        "/tmp/some_bundle", "some-description-dir/.dice/build_results.tar"
+      ).and_raise(
+        Dice::Errors::ResultRetrievalFailed.new(nil)
       )
-      expect(result).to receive(:close)
       expect(@job).to receive(:cleanup_build)
       expect { @job.get_result }.to raise_error(
         Dice::Errors::ResultRetrievalFailed

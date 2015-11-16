@@ -68,23 +68,16 @@ class Job
 
   def get_result
     Dice.logger.info("#{self.class}: Retrieving results in #{archive}...")
-    result = File.open(archive, "w")
-    result_command = "tar --exclude image-root -C /tmp/#{bundle_name} -c ."
     begin
-      Command.run(
-        buildsystem.job_builder_command(result_command),
-        :stdout => result
-      )
-    rescue Cheetah::ExecutionFailed => e
+      buildsystem.archive_job_result("/tmp/" + bundle_name, archive)
+    rescue => e
       Dice.logger.info("#{self.class}: Archiving failed")
-      result.close
       cleanup_build
       raise Dice::Errors::ResultRetrievalFailed.new(
-        "Archiving result failed with: #{e.stderr}"
+        "Archiving result failed: #{e}"
       )
     end
     cleanup_build
-    result.close
   end
 
   private

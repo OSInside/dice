@@ -51,6 +51,23 @@ class BuildSystemBase
     @job ||= Job.new(self)
   end
 
+  def archive_job_result(job_result_dir, archive_filename)
+    result_command = "tar -C #{job_result_dir} -c ."
+    result = File.open(archive_filename, "w")
+    begin
+      Command.run(
+        job_builder_command(result_command),
+        :stdout => result
+      )
+    rescue Cheetah::ExecutionFailed => e
+      result.close
+      raise Dice::Errors::ResultRetrievalFailed.new(
+        "Archiving result failed with: #{e.stderr}"
+      )
+    end
+    result.close
+  end
+
   def job_builder_command(action)
     command = [
       "ssh",

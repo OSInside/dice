@@ -98,6 +98,24 @@ describe DockerBuildSystem do
     end
   end
 
+  describe "#archive_job_result" do
+    it "calls the archiving command suitable to this buildsystem" do
+      expect(Command).to receive(:run).with([
+        "docker", "run", "--rm=true", "--entrypoint=sudo",
+        "--privileged=true", "--name=some_description_dir",
+        "-v", "some/description/dir:/vagrant",
+        "-v", "/tmp:/tmp",
+        "schaefi/kiwi-build-box:latest",
+        "bash", "-c", "tar -C tmpdir -cf /vagrant/.dice/archive-name ."
+      ]).and_raise(
+        Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
+      )
+      expect {
+        @system.archive_job_result("tmpdir", "archive-name")
+      }.to raise_error(Dice::Errors::ResultRetrievalFailed)
+    end
+  end
+
   describe "#job_builder_command" do
     it "builds the commandline to run a command in docker" do
       expect(@system.job_builder_command("command_call")).to eq(

@@ -77,6 +77,24 @@ describe BuildSystemBase do
     end
   end
 
+  describe "#archive_job_result" do
+    it "calls the default archiving command" do
+      result = double(File)
+      expect(File).to receive(:open).and_return(result)
+      expect(Command).to receive(:run).with(
+        ["ssh", "-o", "StrictHostKeyChecking=no", "-p", "22", "-i",
+        "/home/ms/Project/dice/key/vagrant", "vagrant@VAGRANT",
+        "sudo tar -C tmpdir -c ."], {:stdout=>result}
+      ).and_raise(
+        Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
+      )
+      expect(result).to receive(:close)
+      expect {
+        @system.archive_job_result("tmpdir", "archive-name")
+      }.to raise_error(Dice::Errors::ResultRetrievalFailed)
+    end
+  end
+
   describe "#job_builder_command" do
     it "builds the commandline to run a command via ssh" do
       expect(@system.job_builder_command("command_call")).to match(
