@@ -92,7 +92,7 @@ describe RepositoryBase do
         Dice::Errors::SolvToolFailed.new(nil)
       )
       expect{ @repo.create_solv(
-        :tool => "", :source_dir => "", :dest_dir => ""
+        :tool => "rpms2solv", :source_dir => "", :dest_dir => ""
       ) }.to raise_error(
         Dice::Errors::SolvToolFailed
       )
