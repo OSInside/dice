@@ -9,6 +9,9 @@ class DockerBuildSystem < BuildSystemBase
   end
 
   def up
+    if Dice.option["skip-container-update"]
+      return
+    end
     Dice.logger.info(
       "#{self.class}: Pulling buildsystem from dockerhub #{recipe.basepath}..."
     )

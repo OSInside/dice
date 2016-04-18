@@ -83,14 +83,26 @@ class Cli
   LONGDESC
   arg "RECIPE-PATH"
   command :build do |c|
-    c.switch ["force", :f], :required => false, :negatable => false,
+    c.switch ["force", :f],
+      :required => false,
+      :negatable => false,
       :desc => "Force building even if status is up to data"
-    c.switch ["skip-missing", :i], :required => false, :negatable => false,
+    c.switch ["skip-missing", :i],
+      :required => false,
+      :negatable => false,
       :desc => "Skip packages not found in the repositories"
-    c.flag ["kiwitype", :t], :kiwitype => String, :required => false,
+    c.flag ["kiwitype", :t],
+      :kiwitype => String,
+      :required => false,
       :desc => "Set kiwi build type"
-    c.flag ["kiwiprofile", :p], :kiwiprofile => String, :required => false,
+    c.flag ["kiwiprofile", :p],
+      :kiwiprofile => String,
+      :required => false,
       :desc => "Set kiwi build profile"
+    c.switch ["skip-container-update", :s],
+      :required => false,
+      :negatable => false,
+      :desc => "Skip build system container update from dockerhub"
     c.action do |global_options,options,args|
       Dice.setup_options(options)
       description = shift_arg(args, "RECIPE-PATH")
@@ -111,7 +123,9 @@ class Cli
   LONGDESC
   arg "RECIPE-PATH"
   command :buildlog do |c|
-    c.switch ["show", :s], :required => false, :negatable => false,
+    c.switch ["show", :s],
+      :required => false,
+      :negatable => false,
       :desc => "Just show the log if present, skip test for build process"
     c.action do |global_options,options,args|
       Dice.setup_options(options)
@@ -151,7 +165,9 @@ class Cli
   LONGDESC
   arg "RECIPE-PATH"
   command :status do |c|
-    c.switch ["skip-missing", :i], :required => false, :negatable => false,
+    c.switch ["skip-missing", :i],
+      :required => false,
+      :negatable => false,
       :desc => "Skip packages not found in the repositories"
     c.action do |global_options,options,args|
       Dice.setup_options(options)
@@ -194,7 +210,9 @@ class Cli
   LONGDESC
   arg "RECIPE-PATH"
   command :cleanup do |c|
-    c.switch ["lock", :l], :required => false, :negatable => false,
+    c.switch ["lock", :l],
+      :required => false,
+      :negatable => false,
       :desc => "Cleanup stale semaphore lock if present"
     c.action do |global_options,options,args|
       Dice.setup_options(options)
