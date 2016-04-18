@@ -14,17 +14,18 @@ class Job
   def build
     prepare_build
     Dice.logger.info("#{self.class}: Building...")
-    build_opts = "--build /vagrant -d /tmp/#{job_name} --logfile terminal"
+    build_opts = "--debug"
     if Dice.option.kiwitype
       build_opts += " --type #{Dice.option.kiwitype}"
     end
     if Dice.option.kiwiprofile
-      build_opts += " --add-profile #{Dice.option.kiwiprofile}"
+      build_opts += " --profile #{Dice.option.kiwiprofile}"
     end
+    build_opts += " system build" +
+      " --description /vagrant --target-dir /tmp/#{job_name}"
     logfile = File.open(build_log, "w")
     logfile.sync = true
-    kiwi_environment = "export KIWI_IGNORE_OLD_MOUNTS=1"
-    kiwi_command = "bash -c '#{kiwi_environment}; /usr/sbin/kiwi #{build_opts}'"
+    kiwi_command = "kiwi #{build_opts}"
     begin
       Command.run(
         buildsystem.job_builder_command(kiwi_command),
@@ -46,9 +47,9 @@ class Job
     Dice.logger.info("#{self.class}: Bundle results...")
     logfile = File.open(build_log, "a")
     logfile.sync = true
-    bundle_opts = "--bundle-build /tmp/#{job_name} --bundle-id DiceBuild " +
-      "--destdir /tmp/#{bundle_name} --logfile terminal"
-    kiwi_command = "/usr/sbin/kiwi #{bundle_opts}"
+    bundle_opts = "--target-dir /tmp/#{job_name} --id DiceBuild " +
+      "--bundle-dir /tmp/#{bundle_name}"
+    kiwi_command = "kiwi result bundle #{bundle_opts}"
     begin
       Command.run(
         buildsystem.job_builder_command(kiwi_command),
