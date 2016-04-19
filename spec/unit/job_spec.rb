@@ -34,7 +34,7 @@ describe Job do
       expect(Command).to receive(:run).with(
         ["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
         "key", "vagrant@127.0.0.1",
-        "sudo kiwi --debug system build --description /vagrant --target-dir /tmp/#{@job_name}"],
+        "sudo bash -c 'LANG=en_US.UTF-8; kiwi --debug system build --description /vagrant --target-dir /tmp/#{@job_name}'"],
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
@@ -55,7 +55,7 @@ describe Job do
       expect(Command).to receive(:run).with(
         ["ssh", "-o", "StrictHostKeyChecking=no", "-p", "2200", "-i",
         "key", "vagrant@127.0.0.1",
-        "sudo kiwi result bundle --target-dir /tmp/#{@job_name} --id DiceBuild --bundle-dir /tmp/#{@bundle_name}"],
+        "sudo bash -c 'LANG=en_US.UTF-8; kiwi result bundle --target-dir /tmp/#{@job_name} --id DiceBuild --bundle-dir /tmp/#{@bundle_name}'"],
         {:stdout=>logfile, :stderr=>logfile}
       ).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)

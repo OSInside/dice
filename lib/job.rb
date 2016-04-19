@@ -25,7 +25,8 @@ class Job
       " --description /vagrant --target-dir /tmp/#{job_name}"
     logfile = File.open(build_log, "w")
     logfile.sync = true
-    kiwi_command = "kiwi #{build_opts}"
+    kiwi_environment = "LANG=en_US.UTF-8"
+    kiwi_command = "bash -c '#{kiwi_environment}; kiwi #{build_opts}'"
     begin
       Command.run(
         buildsystem.job_builder_command(kiwi_command),
@@ -49,7 +50,9 @@ class Job
     logfile.sync = true
     bundle_opts = "--target-dir /tmp/#{job_name} --id DiceBuild " +
       "--bundle-dir /tmp/#{bundle_name}"
-    kiwi_command = "kiwi result bundle #{bundle_opts}"
+    kiwi_environment = "LANG=en_US.UTF-8"
+    kiwi_command = "bash -c '#{kiwi_environment}; "+
+      "kiwi result bundle #{bundle_opts}'"
     begin
       Command.run(
         buildsystem.job_builder_command(kiwi_command),
