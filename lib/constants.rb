@@ -3,7 +3,7 @@ module Dice
   VAGRANT_BUILD = :VAGRANT
   DOCKER_BUILD = :DOCKER
 
-  DOCKER_BUILD_CONTAINER = "schaefi/kiwi-build-box:latest"
+  DOCKER_BUILD_CONTAINER = "opensuse/dice:latest"
 
   SSH_USER = "vagrant"
   SSH_PRIVATE_KEY_PATH = File.join(ROOT, "key/vagrant")

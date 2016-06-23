@@ -105,7 +105,7 @@ describe DockerBuildSystem do
         "--privileged=true", "--name=some_description_dir",
         "-v", "some/description/dir:/vagrant",
         "-v", "/tmp:/tmp",
-        "schaefi/kiwi-build-box:latest",
+        "opensuse/dice:latest",
         "bash", "-c", "tar -C tmpdir -cf /vagrant/.dice/archive-name ."
       ]).and_raise(
         Cheetah::ExecutionFailed.new(nil, nil, nil, nil)
