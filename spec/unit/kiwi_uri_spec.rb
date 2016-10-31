@@ -2,7 +2,7 @@ require_relative "spec_helper"
 
 describe KiwiUri do
   describe "#self.translate" do
-    it "translates dist obs url to http mime type pointing to opensuse.org" do
+    it "translates dist obs url to http pointing to opensuse.org" do
       expect(KiwiUri.translate(
         :name => "obs://openSUSE:13.1:Update/standard", :repo_type => "rpm-md"
       ).name).to eq(
@@ -10,7 +10,7 @@ describe KiwiUri do
       )
     end
 
-    it "translates dist rpm-md to http mime type pointing to opensuse.org" do
+    it "translates dist obs rpm-md to http pointing to opensuse.org" do
       expect(KiwiUri.translate(
         :name => "obs://13.1/repos", :repo_type => "rpm-md"
       ).name).to eq(
@@ -18,11 +18,20 @@ describe KiwiUri do
       )
     end
 
-    it "translates dist yast2 to http mime type pointing to opensuse.org" do
+    it "translates dist obs yast2 to http pointing to opensuse.org" do
       expect(KiwiUri.translate(
         :name => "obs://13.1/repos", :repo_type => "yast2"
       ).name).to eq(
         "http://download.opensuse.org/distribution/13.1/repos/"
+      )
+    end
+
+    it "leaves plain dist yast2 untouched" do
+      expect(KiwiUri.translate(
+        :name => "http://download.opensuse.org/distribution/13.1/repos",
+        :repo_type => "yast2"
+      ).name).to eq(
+        "http://download.opensuse.org/distribution/13.1/repos"
       )
     end
 
