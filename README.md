@@ -54,7 +54,7 @@ zypper as follows:
 
 ```
 $ zypper ar \
-  http://download.opensuse.org/repositories/Virtualization:/Appliances/<distribution>/ \
+  http://download.opensuse.org/repositories/Virtualization:/Appliances:/ContainerBuilder/<distribution>/ \
   dice
 
 $ zypper se dice
