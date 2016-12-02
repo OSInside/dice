@@ -138,11 +138,10 @@ for running a build in a virtual system do the following:
 
     This box is able to build images for the distributions:
 
-    * RHEL6
-    * RHEL7
-    * openSUSE 13.x
-    * SLES11
-    * SLES12
+    * RHEL >= 7
+    * CentOS >= 7
+    * openSUSE Tumbleweed / Leap
+    * SLES >= 12
 
   * As normal user add the box via docker
 
