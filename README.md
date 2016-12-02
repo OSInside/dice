@@ -147,8 +147,8 @@ for running a build in a virtual system do the following:
   * As normal user add the box via docker
 
     ```
-    $ cat Docker-openSUSE-13.1-docker.*.tar.xz |\
-      docker import - kiwi-build-box:new
+    $ cat Docker-Tumbleweed.XXXXXXX.docker.tar.xz |\
+      docker import - opensuse/dice:latest
     ```
 
 ### Generic Worker System
