@@ -132,7 +132,7 @@ for running a build in a virtual system do the following:
     ```
 
   * As normal user download the .tar.bz2 file which starts with
-    Docker-openSUSE-13.1 from here:
+    Docker-Tumbleweed from here:
 
     http://download.opensuse.org/repositories/Virtualization:/Appliances:/Images/images
 
@@ -251,20 +251,19 @@ end
 ## Dice it
 
 Given you have imported the vagrant docker build box as described in
-[Vagrant Virtual Worker System](#vagrant-virtual-worker-system) you can start an example build as normal user as follows:
+[Vagrant Virtual Worker System](#vagrant-virtual-worker-system) you can
+start an example build as normal user as follows:
 
 ```
-$ zypper in kiwi-templates
+$ git clone https://github.com/SUSE/kiwi-descriptions
 
-$ rsync -zavL /usr/share/kiwi/image/suse-13.1-JeOS /tmp
-
-$ dice build /tmp/suse-13.1-JeOS
+$ dice build suse/x86_64/suse-leap-42.1-JeOS
 ```
 
 you can check the progress with
 
 
 ```
-$ dice buildlog /tmp/suse-13.1-JeOS
+$ dice buildlog suse/x86_64/suse-leap-42.1-JeOS
 ```
 
