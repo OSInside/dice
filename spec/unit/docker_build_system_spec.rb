@@ -105,6 +105,7 @@ describe DockerBuildSystem do
         "--privileged=true", "--name=some_description_dir",
         "-v", "some/description/dir:/vagrant",
         "-v", "/tmp:/tmp",
+        "-v", "/dev:/dev",
         "opensuse/dice:latest",
         "bash", "-c", "tar -C tmpdir -cf /vagrant/.dice/archive-name ."
       ]).and_raise(
@@ -127,6 +128,7 @@ describe DockerBuildSystem do
           "--name=some_description_dir",
           "-v", "some/description/dir:/vagrant",
           "-v", "/tmp:/tmp",
+          "-v", "/dev:/dev",
           Dice::DOCKER_BUILD_CONTAINER,
           "bash", "-c", "command_call"
         ]

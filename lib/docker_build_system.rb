@@ -13,7 +13,7 @@ class DockerBuildSystem < BuildSystemBase
       return
     end
     Dice.logger.info(
-      "#{self.class}: Pulling buildsystem from dockerhub #{recipe.basepath}..."
+      "#{self.class}: Pulling buildsystem from dockerhub #{Dice::DOCKER_BUILD_CONTAINER}..."
     )
     begin
       up_output = Command.run(
@@ -81,6 +81,7 @@ class DockerBuildSystem < BuildSystemBase
       "--name=#{container_name}",
       "-v", "#{recipe.basepath}:/vagrant",
       "-v", "/tmp:/tmp",
+      "-v", "/dev:/dev",
       Dice::DOCKER_BUILD_CONTAINER,
       "bash", "-c", action
     ]
