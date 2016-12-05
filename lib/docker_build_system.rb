@@ -62,7 +62,7 @@ class DockerBuildSystem < BuildSystemBase
     result_command = "tar -C #{job_result_dir} -cf /vagrant/.dice/#{archive} ."
     begin
       Command.run(
-        job_builder_command(result_command)
+        archive_builder_command(result_command)
       )
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::ResultRetrievalFailed.new(
@@ -72,6 +72,11 @@ class DockerBuildSystem < BuildSystemBase
   end
 
   def job_builder_command(action)
+    action = action.sub('bash -c ', '')
+    action = action.gsub('\'', '')
+    action_list = action.split(';')
+    action_list.insert(1, 'udevd --daemon')
+    action = action_list.join(';')
     container_name = recipe.build_name_from_path
     command = [
       "docker", "run",
@@ -106,5 +111,23 @@ class DockerBuildSystem < BuildSystemBase
   def is_busy?
     # docker container is never busy, because started by us
     false
+  end
+
+  private
+
+  def archive_builder_command(action)
+    container_name = recipe.build_name_from_path
+    command = [
+      "docker", "run",
+      "--rm=true",
+      "--entrypoint=sudo",
+      "--privileged=true",
+      "--name=#{container_name}",
+      "-v", "#{recipe.basepath}:/vagrant",
+      "-v", "/tmp:/tmp",
+      Dice::DOCKER_BUILD_CONTAINER,
+      "bash", "-c", action
+    ]
+    command
   end
 end
