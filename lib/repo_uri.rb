@@ -1,10 +1,12 @@
 class RepoUri
-  attr_reader :name, :type, :location, :repo_type
+  attr_reader :name, :type, :location, :repo_type, :user, :pass
   attr_reader :allowed_local_types, :allowed_remote_types
   attr_reader :mount_point
 
   def initialize(args)
     @name = args[:name]
+    @user = args[:user]
+    @pass = args[:pass]
     @repo_type = args[:repo_type]
     set_uri_type_and_location
 

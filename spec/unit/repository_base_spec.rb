@@ -11,6 +11,11 @@ describe RepositoryBase do
     @uri = RepoUri.new(:name => "http://foo", :repo_type => "rpm-md")
     @source = "bar"
     @repo = RepositoryBase.new(@uri)
+    @uri_credentials = RepoUri.new(
+      :name => "http://foo", :repo_type => "rpm-md",
+      :user => "user", :pass => "pass"
+    )
+    @repo_credentials = RepositoryBase.new(@uri_credentials)
   end
 
   describe "#load_file" do
@@ -36,6 +41,19 @@ describe RepositoryBase do
     end
   end
 
+  describe "#load_file_with_credentials" do
+    it "reads in a file with basic auth supporting ruby open-uri" do
+      file = double(File)
+      expect(@repo_credentials).to receive(:open).with(
+        @uri.name + "/" + @source, "rb",
+        :http_basic_authentication=>["user", "pass"]
+      ).and_return(file)
+      expect(file).to receive(:read).and_return("data")
+      expect(file).to receive(:close)
+      expect(@repo_credentials.load_file(@source)).to eq("data")
+    end
+  end
+
   describe "#curl_file" do
     it "calls curl to download a file from the network and store it as file" do
       dest = "/some/path/somewhere"
@@ -43,11 +61,38 @@ describe RepositoryBase do
       expect(FileUtils).to receive(:mkdir_p).with("/some/path")
       expect(File).to receive(:open).with(dest, "wb").and_return(outfile)
       expect(Cheetah).to receive(:run).with(
-        "curl", "-L", @uri.name + "/" + @source, :stdout => outfile
+        ["curl", "-L", @uri.name + "/" + @source], :stdout => outfile
       )
       expect(outfile).to receive(:close)
       expect(@repo).to receive(:check_404_header)
       @repo.curl_file(:source => @source, :dest => dest)
+    end
+
+    it "raises if curl can't find the file" do
+      expect(FileUtils).to receive(:mkdir_p)
+      expect(File).to receive(:open)
+      expect(Cheetah).to receive(:run).and_raise(
+        Dice::Errors::CurlFileFailed.new(nil)
+      )
+      expect{ @repo.curl_file(:source => @source, :dest => "") }.to raise_error(
+        Dice::Errors::CurlFileFailed
+      )
+    end
+  end
+
+  describe "#curl_file_with_credentials" do
+    it "calls curl with user:pass to download a file" do
+      dest = "/some/path/somewhere"
+      outfile = double(File)
+      expect(FileUtils).to receive(:mkdir_p).with("/some/path")
+      expect(File).to receive(:open).with(dest, "wb").and_return(outfile)
+      expect(Cheetah).to receive(:run).with(
+        ["curl", "-L", "-u", "user:pass", @uri_credentials.name + "/" + @source],
+        :stdout => outfile
+      )
+      expect(outfile).to receive(:close)
+      expect(@repo_credentials).to receive(:check_404_header)
+      @repo_credentials.curl_file(:source => @source, :dest => dest)
     end
 
     it "raises if curl can't find the file" do
