@@ -27,7 +27,14 @@ class RepositoryBase
       location = uri.name
     end
     begin
-      handle = open(location + "/" + source, "rb")
+      if uri.user
+        handle = open(
+          location + "/" + source, "rb",
+          :http_basic_authentication=>[uri.user, uri.pass]
+        )
+      else
+        handle = open(location + "/" + source, "rb")
+      end
       data = handle.read
       handle.close
     rescue => e
@@ -52,8 +59,15 @@ class RepositoryBase
     elsif !uri.is_remote?
       location = "file://" + uri.location
     end
+    curl_opts = ["-L"]
+    if uri.user
+        curl_opts += ["-u", uri.user + ":" + uri.pass]
+    end
     begin
-      Command.run("curl", "-L", location + "/" + source, :stdout => outfile)
+      Command.run(
+          ["curl"] + curl_opts + [location + "/" + source],
+          :stdout => outfile
+      )
     rescue Cheetah::ExecutionFailed => e
       raise Dice::Errors::CurlFileFailed.new(
         "Downloading file: #{location}/#{source} failed: #{e.stderr}"

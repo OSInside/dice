@@ -11,10 +11,13 @@ class KiwiConfig
     repo_uri = []
     xml.elements.each("*/repository") do |repo|
       repo_type = repo.attributes["type"]
+      user = repo.attributes["username"]
+      pass = repo.attributes["password"]
       repo.elements.each("source") do |element|
         source_path = element.attributes["path"].gsub(/\?.*/,"")
         repo_uri << KiwiUri.translate(
-          :name => source_path, :repo_type => repo_type
+          :name => source_path, :repo_type => repo_type,
+          :user => user, :pass => pass
         )
       end
     end
