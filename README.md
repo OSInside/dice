@@ -53,7 +53,7 @@ Dice is available as rpm package, installation can be done via
 zypper as follows:
 
 ```
-$ zypper ar \
+$ zypper ar -f \
   obs://Virtualization:Appliances:ContainerBuilder \
   dice
 
