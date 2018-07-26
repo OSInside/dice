@@ -53,8 +53,8 @@ Dice is available as rpm package, installation can be done via
 zypper as follows:
 
 ```
-$ zypper ar \
-  http://download.opensuse.org/repositories/Virtualization:/Appliances:/ContainerBuilder/<distribution>/ \
+$ zypper ar -f \
+  obs://Virtualization:Appliances:ContainerBuilder \
   dice
 
 $ zypper se dice
