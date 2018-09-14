@@ -7,8 +7,13 @@ class Job
       Dice::META + "/" + Dice::BUILD_LOG
     @archive = buildsystem.recipe.basepath + "/" +
       Dice::META + "/" + Dice::BUILD_RESULT
-    @job_name = Dir::Tmpname.make_tmpname(['kiwi_build_', '.dice'], nil)
-    @bundle_name = Dir::Tmpname.make_tmpname(['kiwi_bundle_', '.dice'], nil)
+    @job_name = tmpname
+    @bundle_name = tmpname
+  end
+
+  def tmpname
+    t = Time.now.strftime("%Y%m%d")
+    "kiwi_build_#{t}-#{$$}-#{Kernel.rand(0x100000000).to_s(36)}.dice"
   end
 
   def build
