@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ["SUSE"]
   s.email       = ["ms@suse.com"]
   s.homepage    = "https://github.com/schaefi/dice/"
-  s.summary     = "light weight image build system"
+  s.summary     = "Light weight image build system"
   s.description = "
     Given there is the need to build a kiwi appliance for a customer,
     one wants to keep track of the updates from the distribution and
@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency "abstract_method", ">=1.2.1"
   s.add_dependency "json", ">=1.8.0"
   s.add_dependency "inifile", ">=2.0.2"
-  s.add_dependency "rice"
 
   s.files        = Dir["lib/**/*.rb", "lib/**/*.cpp", "lib/semaphore/mkmf-rice.rb", "bin/*", "completion/*", "key/*", "COPYING"]
   s.executables  = "dice"
@@ -35,4 +34,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rake", "< 11.0"
   s.add_development_dependency "packaging_rake_tasks"
+  s.add_development_dependency "rice"
 end
