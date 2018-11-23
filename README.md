@@ -1,6 +1,6 @@
 # Dice
 
-Dice is a simple build service for [KIWI](http://opensuse.github.com/kiwi)
+Dice is a simple build service for [KIWI](https://opensource.suse.com/kiwi)
 images using virtual instances controlled by vagrant or a directly
 contacted build machine. It can be used to fire up build jobs
 on e.g public cloud instances.
@@ -156,11 +156,8 @@ While the vagrant box files already contains all software and configurations
 to perform a build, a worker machine might not have it. In order to make a
 machine a dice worker the following software and configurations must exist:
 
-  * package kiwi
-  * package kiwi-desc-isoboot
-  * package kiwi-desc-netboot
-  * package kiwi-desc-vmxboot
-  * package kiwi-desc-oemboot
+  * package python3-kiwi
+  * package kiwi-boot-descriptions [optional]
   * package rsync
   * package tar
   * package psmisc
@@ -256,13 +253,13 @@ start an example build as normal user as follows:
 ```
 $ git clone https://github.com/SUSE/kiwi-descriptions
 
-$ dice build suse/x86_64/suse-leap-42.1-JeOS
+$ dice build suse/x86_64/suse-leap-15.0-JeOS
 ```
 
 you can check the progress with
 
 
 ```
-$ dice buildlog suse/x86_64/suse-leap-42.1-JeOS
+$ dice buildlog suse/x86_64/suse-leap-15.0-JeOS
 ```
 
